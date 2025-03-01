@@ -3,7 +3,7 @@ import { Toaster } from "@/components/ui/toaster";
 import { Toaster as Sonner } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
-import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
+import { BrowserRouter, Routes, Route } from "react-router-dom";
 import Index from "./pages/Index";
 import WorkoutPage from "./pages/WorkoutPage";
 import FoodPage from "./pages/FoodPage";
@@ -20,10 +20,14 @@ const queryClient = new QueryClient({
       staleTime: 5 * 60 * 1000,
     },
   },
-  logger: {
-    log: console.log,
-    warn: console.warn,
-    error: console.error,
+});
+
+// Add error handling via QueryClient methods instead of using the logger property
+queryClient.setDefaultOptions({
+  queries: {
+    onError: (error) => {
+      console.error("Query error:", error);
+    },
   },
 });
 
