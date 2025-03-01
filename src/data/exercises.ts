@@ -1,4 +1,3 @@
-
 export type ExerciseCategory = 
   | 'compound'
   | 'upper_push' 
@@ -19,9 +18,9 @@ export type MuscleGroup =
   | 'calves'
   | 'abs'
   | 'forearms'
-  | 'full_body';
-
-export type Difficulty = 'beginner' | 'intermediate' | 'advanced';
+  | 'full_body'
+  | 'lower_back'
+  | 'core';
 
 export interface Exercise {
   id: string;
@@ -66,7 +65,7 @@ export const exercisesDB: Exercise[] = [
     name: 'Romanian Deadlift',
     category: 'compound',
     primaryMuscle: 'hamstrings',
-    secondaryMuscles: ['glutes', 'lower back'],
+    secondaryMuscles: ['glutes', 'lower_back'],
     equipment: ['barbell'],
     description: 'A hip-hinge movement that targets the posterior chain',
     difficulty: 'intermediate',
@@ -162,7 +161,7 @@ export const exercisesDB: Exercise[] = [
     name: 'Plank',
     category: 'core',
     primaryMuscle: 'abs',
-    secondaryMuscles: ['shoulders', 'lower back'],
+    secondaryMuscles: ['shoulders', 'lower_back'],
     equipment: [],
     description: 'An isometric core exercise',
     difficulty: 'beginner',
