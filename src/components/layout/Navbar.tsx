@@ -56,8 +56,8 @@ export function Navbar({ toggleSidebar }: NavbarProps) {
             <Bell className="h-5 w-5" />
           </Button>
           <Button variant="ghost" size="icon" className="text-grip-neutral-600 hover:text-grip-neutral-800">
-            <div className="w-8 h-8 rounded-full bg-grip-blue/10 flex items-center justify-center">
-              <User className="h-4 w-4 text-grip-blue" />
+            <div className="w-8 h-8 rounded-full bg-grip-neutral-800/10 flex items-center justify-center">
+              <User className="h-4 w-4 text-grip-neutral-800" />
             </div>
           </Button>
         </div>
