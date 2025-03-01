@@ -5,43 +5,25 @@ import { Button } from "@/components/ui/button";
 import { fadeIn } from "@/lib/animations";
 import { cn } from "@/lib/utils";
 import { Progress } from "@/components/ui/progress";
+import { currentWorkoutMock, workoutTemplates } from "@/data/exercises";
+import { useState } from "react";
 
 export function WorkoutTracker() {
-  // Mock exercise data
-  const exercises = [
-    { 
-      name: "Barbell Squat", 
-      sets: [
-        { weight: 225, reps: 5, completed: true },
-        { weight: 225, reps: 5, completed: true },
-        { weight: 225, reps: 5, completed: false },
-      ] 
-    },
-    { 
-      name: "Romanian Deadlift", 
-      sets: [
-        { weight: 185, reps: 8, completed: true },
-        { weight: 185, reps: 8, completed: false },
-        { weight: 185, reps: 8, completed: false },
-      ] 
-    },
-    { 
-      name: "Leg Press", 
-      sets: [
-        { weight: 360, reps: 10, completed: false },
-        { weight: 360, reps: 10, completed: false },
-        { weight: 360, reps: 10, completed: false },
-      ] 
-    },
-  ];
-
-  // Mock workout templates
-  const workoutTemplates = [
-    { name: "Upper Body Strength", exercises: 8, lastPerformed: "2 days ago" },
-    { name: "Lower Body Strength", exercises: 6, lastPerformed: "Yesterday" },
-    { name: "Push Day", exercises: 7, lastPerformed: "4 days ago" },
-    { name: "Pull Day", exercises: 7, lastPerformed: "5 days ago" },
-  ];
+  // State for the mock data
+  const [currentWorkout] = useState(currentWorkoutMock);
+  
+  // Calculate completed sets
+  const completedSets = currentWorkout.reduce(
+    (total, exercise) => total + exercise.sets.filter(set => set.completed).length, 
+    0
+  );
+  
+  const totalSets = currentWorkout.reduce(
+    (total, exercise) => total + exercise.sets.length, 
+    0
+  );
+  
+  const progressPercentage = Math.round((completedSets / totalSets) * 100);
   
   console.log("WorkoutTracker rendering");
   
@@ -86,14 +68,16 @@ export function WorkoutTracker() {
             <div className="flex justify-between items-center mb-4">
               <div>
                 <h3 className="font-medium text-grip-neutral-700">Progress</h3>
-                <p className="text-sm text-grip-neutral-500">3 of 12 sets completed</p>
+                <p className="text-sm text-grip-neutral-500">
+                  {completedSets} of {totalSets} sets completed
+                </p>
               </div>
-              <Progress value={25} className="w-32 h-2 bg-grip-neutral-100" />
+              <Progress value={progressPercentage} className="w-32 h-2 bg-grip-neutral-100" />
             </div>
             
             <div className="space-y-4">
-              {exercises.map((exercise, index) => (
-                <div key={index} className="border border-grip-neutral-100 rounded-lg overflow-hidden">
+              {currentWorkout.map((exercise, index) => (
+                <div key={exercise.exerciseId} className="border border-grip-neutral-100 rounded-lg overflow-hidden">
                   <div className="bg-grip-neutral-50 px-4 py-3 flex justify-between items-center">
                     <h4 className="font-medium text-grip-neutral-700">{exercise.name}</h4>
                     <div className="text-sm text-grip-neutral-500">
@@ -172,13 +156,16 @@ export function WorkoutTracker() {
         </div>
         
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-          {workoutTemplates.map((template, index) => (
-            <Card key={index} className="grip-card hover:border-grip-neutral-800/30 transition-all duration-200 cursor-pointer">
+          {workoutTemplates.map((template) => (
+            <Card 
+              key={template.id} 
+              className="grip-card hover:border-grip-neutral-800/30 transition-all duration-200 cursor-pointer"
+            >
               <CardContent className="p-4 flex justify-between items-center">
                 <div>
                   <h3 className="font-medium text-grip-neutral-700">{template.name}</h3>
                   <p className="text-sm text-grip-neutral-500">
-                    {template.exercises} exercises • {template.lastPerformed}
+                    {template.exercises.length} exercises • {template.lastPerformed}
                   </p>
                 </div>
                 <ChevronRight className="h-5 w-5 text-grip-neutral-400" />
