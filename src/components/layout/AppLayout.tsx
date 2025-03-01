@@ -14,6 +14,9 @@ export function AppLayout({ children }: AppLayoutProps) {
     setSidebarOpen(!sidebarOpen);
   };
 
+  // Add console log to track AppLayout renders
+  console.log("AppLayout rendering");
+
   return (
     <div className="min-h-screen bg-grip-neutral-50 flex">
       <Sidebar isOpen={sidebarOpen} onClose={() => setSidebarOpen(false)} />
