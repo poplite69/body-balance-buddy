@@ -1,3 +1,4 @@
+
 export type ExerciseCategory = 
   | 'compound'
   | 'upper_push' 
@@ -21,6 +22,8 @@ export type MuscleGroup =
   | 'full_body'
   | 'lower_back'
   | 'core';
+
+export type Difficulty = 'beginner' | 'intermediate' | 'advanced';
 
 export interface Exercise {
   id: string;
