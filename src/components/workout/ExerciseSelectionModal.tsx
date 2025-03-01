@@ -86,7 +86,7 @@ export const ExerciseSelectionModal = ({
 
   return (
     <Dialog open={isOpen} onOpenChange={onClose}>
-      <DialogContent className="p-0 max-w-md mx-auto max-h-[80vh] overflow-hidden" closeButtonLabel="Close">
+      <DialogContent className="p-0 max-w-md mx-auto max-h-[80vh] overflow-hidden">
         <div className="sticky top-0 bg-white z-10 p-4 flex items-center">
           <Button variant="ghost" size="icon" onClick={onClose} className="mr-2">
             <X className="w-5 h-5" />
