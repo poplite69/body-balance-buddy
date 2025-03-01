@@ -11,6 +11,7 @@ import FoodPage from "./pages/FoodPage";
 import JournalPage from "./pages/JournalPage";
 import AICoachPage from "./pages/AICoachPage";
 import NotFound from "./pages/NotFound";
+import { initializeDatabase } from "./lib/databaseInit";
 
 // Create a new QueryClient instance with proper configuration for v5
 const queryClient = new QueryClient({
@@ -29,7 +30,7 @@ console.log("App is initializing");
 const App = () => {
   console.log("App is rendering");
   
-  // Setup for mobile
+  // Setup for mobile and initialize database
   useEffect(() => {
     // Prevent browser-level touch actions like pull-to-refresh
     document.body.addEventListener('touchmove', (e) => {
@@ -47,6 +48,9 @@ const App = () => {
       '--sab', 
       `env(safe-area-inset-bottom, 0px)`
     );
+    
+    // Initialize database connection and seed data
+    initializeDatabase().catch(console.error);
     
     // Log when app is ready
     console.log("Mobile app setup complete");
