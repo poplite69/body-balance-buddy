@@ -69,9 +69,11 @@ const CreateTemplatePage = () => {
     resetForm();
   };
 
+  console.log("Rendering CreateTemplatePage, selectedExercises:", selectedExercises.length);
+
   return (
     <AppLayout>
-      <div className="px-4 py-6 max-w-md mx-auto">
+      <div className="px-4 py-6 max-w-md mx-auto w-full">
         <div className="flex items-center justify-between mb-6">
           <Button 
             variant="ghost" 
