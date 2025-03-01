@@ -43,6 +43,8 @@ export function WorkoutTracker() {
     { name: "Pull Day", exercises: 7, lastPerformed: "5 days ago" },
   ];
   
+  console.log("WorkoutTracker rendering");
+  
   return (
     <div className="space-y-8">
       {/* Header */}
@@ -67,11 +69,11 @@ export function WorkoutTracker() {
       
       {/* Current workout */}
       <section className={cn("grip-section", fadeIn(0.1))}>
-        <Card className="grip-card overflow-hidden border-2 border-grip-blue/20">
+        <Card className="grip-card overflow-hidden border-2 border-grip-neutral-800/20">
           <CardHeader className="bg-grip-neutral-50 border-b border-grip-neutral-100">
             <div className="flex justify-between items-center">
               <CardTitle className="text-xl font-medium flex items-center text-grip-neutral-700">
-                <Dumbbell className="h-5 w-5 mr-2 text-grip-blue" />
+                <Dumbbell className="h-5 w-5 mr-2 text-grip-neutral-800" />
                 Current Workout: Lower Body
               </CardTitle>
               <div className="flex items-center text-sm text-grip-neutral-500">
@@ -106,7 +108,7 @@ export function WorkoutTracker() {
                           <div className={cn(
                             "w-6 h-6 rounded-full mr-3 flex items-center justify-center border",
                             set.completed 
-                              ? "bg-grip-blue border-grip-blue text-white" 
+                              ? "bg-grip-neutral-800 border-grip-neutral-800 text-white" 
                               : "border-grip-neutral-300 text-grip-neutral-400"
                           )}>
                             {setIndex + 1}
@@ -124,7 +126,7 @@ export function WorkoutTracker() {
                             Undo
                           </Button>
                         ) : (
-                          <Button size="sm" className="h-8 bg-grip-blue text-white hover:bg-grip-blue-dark">
+                          <Button size="sm" className="h-8 bg-grip-neutral-800 text-white hover:bg-grip-neutral-900">
                             Complete
                           </Button>
                         )}
@@ -136,7 +138,7 @@ export function WorkoutTracker() {
             </div>
             
             <div className="mt-6 flex gap-3">
-              <Button className="grip-button flex-1">
+              <Button className="grip-button flex-1 bg-grip-neutral-800 hover:bg-grip-neutral-900">
                 <Plus className="mr-2 h-4 w-4" />
                 Add Exercise
               </Button>
@@ -171,7 +173,7 @@ export function WorkoutTracker() {
         
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
           {workoutTemplates.map((template, index) => (
-            <Card key={index} className="grip-card hover:border-grip-blue/30 transition-all duration-200 cursor-pointer">
+            <Card key={index} className="grip-card hover:border-grip-neutral-800/30 transition-all duration-200 cursor-pointer">
               <CardContent className="p-4 flex justify-between items-center">
                 <div>
                   <h3 className="font-medium text-grip-neutral-700">{template.name}</h3>
@@ -184,9 +186,9 @@ export function WorkoutTracker() {
             </Card>
           ))}
           
-          <Card className="grip-card border-dashed border-grip-neutral-200 hover:border-grip-blue/30 transition-all duration-200 cursor-pointer">
+          <Card className="grip-card border-dashed border-grip-neutral-200 hover:border-grip-neutral-800/30 transition-all duration-200 cursor-pointer">
             <CardContent className="p-4 flex justify-center items-center">
-              <Button variant="ghost" className="text-grip-blue h-auto py-6">
+              <Button variant="ghost" className="text-grip-neutral-800 h-auto py-6">
                 <Plus className="h-5 w-5 mr-2" />
                 Create New Template
               </Button>
