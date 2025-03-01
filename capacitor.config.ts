@@ -16,6 +16,24 @@ const config: CapacitorConfig = {
       showSpinner: true,
       spinnerColor: "#000000"
     },
+    Keyboard: {
+      resize: "body",
+      resizeOnFullScreen: true
+    },
+    CapacitorHttp: {
+      enabled: true
+    },
+    PushNotifications: {
+      presentationOptions: ["badge", "sound", "alert"]
+    }
+  },
+  ios: {
+    contentInset: "always",
+    scheme: "grip", 
+    backgroundColor: "#FFFFFF"
+  },
+  android: {
+    backgroundColor: "#FFFFFF"
   }
 };
 
