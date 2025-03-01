@@ -130,12 +130,12 @@ export function Sidebar({ isOpen, onClose }: SidebarProps) {
 
           {/* Bottom content */}
           <div className="p-6 border-t border-grip-neutral-100">
-            <div className="bg-grip-blue-light/50 rounded-lg p-4">
+            <div className="bg-grip-neutral-100/50 rounded-lg p-4">
               <h4 className="font-medium text-grip-neutral-700 mb-1">Ready for more?</h4>
               <p className="text-sm text-grip-neutral-500 mb-3">
                 Connect your wearables to get deeper insights
               </p>
-              <Button className="w-full text-sm h-9 bg-white text-grip-blue hover:bg-grip-blue hover:text-white">
+              <Button className="w-full text-sm h-9 bg-white text-grip-neutral-800 hover:bg-grip-neutral-800 hover:text-white">
                 Connect devices
               </Button>
             </div>

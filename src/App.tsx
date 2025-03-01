@@ -11,13 +11,20 @@ import JournalPage from "./pages/JournalPage";
 import AICoachPage from "./pages/AICoachPage";
 import NotFound from "./pages/NotFound";
 
-const queryClient = new QueryClient();
+// Create a new QueryClient instance to manage data fetching
+const queryClient = new QueryClient({
+  defaultOptions: {
+    queries: {
+      refetchOnWindowFocus: false, // Prevents unnecessary refetches
+      retry: 1, // Only retry failed requests once
+      staleTime: 5 * 60 * 1000, // Data remains fresh for 5 minutes
+    },
+  },
+});
 
 const App = () => (
   <QueryClientProvider client={queryClient}>
     <TooltipProvider>
-      <Toaster />
-      <Sonner />
       <BrowserRouter>
         <Routes>
           <Route path="/" element={<Index />} />
@@ -27,6 +34,8 @@ const App = () => (
           <Route path="/coach" element={<AICoachPage />} />
           <Route path="*" element={<NotFound />} />
         </Routes>
+        <Toaster />
+        <Sonner />
       </BrowserRouter>
     </TooltipProvider>
   </QueryClientProvider>
