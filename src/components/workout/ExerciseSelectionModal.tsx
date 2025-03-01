@@ -8,6 +8,13 @@ import { ScrollArea } from "@/components/ui/scroll-area";
 import { X, Search, HelpCircle } from "lucide-react";
 import { Exercise, MuscleGroup, ExerciseCategory } from "@/data/types";
 import { exercisesDB } from "@/data/exercisesDatabase";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 
 interface ExerciseSelectionModalProps {
   isOpen: boolean;
@@ -115,30 +122,38 @@ export const ExerciseSelectionModal = ({
           
           <div className="flex space-x-3 mb-4">
             <div className="flex-1">
-              <select 
-                className="w-full py-2 px-3 rounded-md bg-gray-100 border-none text-gray-700"
+              <Select
                 value={selectedBodyPart}
-                onChange={(e) => setSelectedBodyPart(e.target.value as MuscleGroup | "all")}
+                onValueChange={(value) => setSelectedBodyPart(value as MuscleGroup | "all")}
               >
-                {bodyPartOptions.map(option => (
-                  <option key={option.value} value={option.value}>
-                    {option.label}
-                  </option>
-                ))}
-              </select>
+                <SelectTrigger className="bg-gray-100 border-none">
+                  <SelectValue placeholder="Select Body Part" />
+                </SelectTrigger>
+                <SelectContent>
+                  {bodyPartOptions.map(option => (
+                    <SelectItem key={option.value} value={option.value}>
+                      {option.label}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
             </div>
             <div className="flex-1">
-              <select 
-                className="w-full py-2 px-3 rounded-md bg-gray-100 border-none text-gray-700"
+              <Select
                 value={selectedCategory}
-                onChange={(e) => setSelectedCategory(e.target.value as ExerciseCategory | "all")}
+                onValueChange={(value) => setSelectedCategory(value as ExerciseCategory | "all")}
               >
-                {categoryOptions.map(option => (
-                  <option key={option.value} value={option.value}>
-                    {option.label}
-                  </option>
-                ))}
-              </select>
+                <SelectTrigger className="bg-gray-100 border-none">
+                  <SelectValue placeholder="Select Category" />
+                </SelectTrigger>
+                <SelectContent>
+                  {categoryOptions.map(option => (
+                    <SelectItem key={option.value} value={option.value}>
+                      {option.label}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
             </div>
           </div>
         </div>
