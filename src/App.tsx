@@ -11,22 +11,13 @@ import JournalPage from "./pages/JournalPage";
 import AICoachPage from "./pages/AICoachPage";
 import NotFound from "./pages/NotFound";
 
-// Create a new QueryClient instance with console logging for debugging
+// Create a new QueryClient instance with proper configuration for v5
 const queryClient = new QueryClient({
   defaultOptions: {
     queries: {
       refetchOnWindowFocus: false,
       retry: 1,
       staleTime: 5 * 60 * 1000,
-    },
-  },
-});
-
-// Add error handling via QueryClient methods instead of using the logger property
-queryClient.setDefaultOptions({
-  queries: {
-    onError: (error) => {
-      console.error("Query error:", error);
     },
   },
 });

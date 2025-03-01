@@ -1,22 +1,27 @@
 
 import { AppLayout } from "@/components/layout/AppLayout";
 import { WorkoutTracker } from "@/components/workout/WorkoutTracker";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 
 const WorkoutPage = () => {
-  // Add lifecycle logging
+  const [isLoaded, setIsLoaded] = useState(false);
+
+  // Enhanced lifecycle logging
   useEffect(() => {
-    console.log("WorkoutPage mounted");
+    console.log("WorkoutPage mounted with enhanced logging");
+    // Mark as loaded after initial render
+    setIsLoaded(true);
+    
     return () => {
-      console.log("WorkoutPage unmounted");
+      console.log("WorkoutPage unmounted with enhanced logging");
     };
   }, []);
 
-  console.log("WorkoutPage rendering");
+  console.log("WorkoutPage rendering, isLoaded:", isLoaded);
 
   return (
     <AppLayout>
-      <WorkoutTracker />
+      {isLoaded && <WorkoutTracker />}
     </AppLayout>
   );
 };
