@@ -5,9 +5,14 @@ import { exercisesDB } from '@/data/exercisesDatabase';
 export const seedExercises = async () => {
   try {
     // Check if exercises already exist
-    const { count } = await supabase
+    const { count, error: countError } = await supabase
       .from('exercises')
       .select('*', { count: 'exact', head: true });
+
+    if (countError) {
+      console.error('Error checking exercise count:', countError);
+      return;
+    }
 
     // If we already have exercises, don't seed again
     if (count && count > 0) {
@@ -44,6 +49,8 @@ export const seedExercises = async () => {
 
 export const initializeDatabase = async () => {
   try {
+    console.log('Starting database initialization...');
+    
     // Seed exercises table
     await seedExercises();
     

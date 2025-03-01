@@ -1,6 +1,7 @@
 
 import { createClient } from '@supabase/supabase-js';
 import { Database } from './database.types';
+import { initializeDatabase } from './databaseInit';
 
 // Initialize the Supabase client
 const supabaseUrl = import.meta.env.VITE_SUPABASE_URL;
@@ -15,12 +16,5 @@ export const supabase = createClient<Database>(
   supabaseAnonKey || ''
 );
 
-// Helper function to initialize database tables
-export const initializeDatabase = async () => {
-  try {
-    // Tables will be created via SQL below
-    console.log('Database initialized successfully');
-  } catch (error) {
-    console.error('Error initializing database:', error);
-  }
-};
+// Export the initialization function for convenience
+export { initializeDatabase };
