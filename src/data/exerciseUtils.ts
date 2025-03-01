@@ -35,3 +35,45 @@ export const sortExercisesByCompletion = (exercises: ExerciseWithSets[]): Exerci
     return bCompletionPercent - aCompletionPercent;
   });
 };
+
+// New helper function to filter exercises by search query
+export const filterExercisesByQuery = (exercises: Exercise[], query: string): Exercise[] => {
+  if (!query.trim()) return exercises;
+  
+  const normalizedQuery = query.toLowerCase();
+  return exercises.filter(exercise => 
+    exercise.name.toLowerCase().includes(normalizedQuery) || 
+    exercise.description.toLowerCase().includes(normalizedQuery) ||
+    exercise.primaryMuscle.toLowerCase().includes(normalizedQuery)
+  );
+};
+
+// Convert local Exercise format to Supabase database format
+export const convertToSupabaseExercise = (exercise: Exercise) => {
+  return {
+    id: exercise.id,
+    name: exercise.name,
+    category: exercise.category,
+    primary_muscle: exercise.primaryMuscle,
+    secondary_muscles: exercise.secondaryMuscles,
+    equipment: exercise.equipment,
+    description: exercise.description,
+    difficulty: exercise.difficulty,
+    instructions: exercise.instructions
+  };
+};
+
+// Convert Supabase exercise format to local Exercise format
+export const convertFromSupabaseExercise = (dbExercise: any): Exercise => {
+  return {
+    id: dbExercise.id,
+    name: dbExercise.name,
+    category: dbExercise.category as ExerciseCategory,
+    primaryMuscle: dbExercise.primary_muscle as MuscleGroup,
+    secondaryMuscles: dbExercise.secondary_muscles as MuscleGroup[],
+    equipment: dbExercise.equipment || [],
+    description: dbExercise.description || '',
+    difficulty: dbExercise.difficulty as 'beginner' | 'intermediate' | 'advanced',
+    instructions: dbExercise.instructions || ''
+  };
+};

@@ -1,61 +1,45 @@
 
-import { supabase } from './supabase';
-import { exercisesDB } from '@/data/exercisesDatabase';
+import { supabase } from "./supabase";
+import { exercisesDB } from "../data/exercisesDatabase";
+import { convertToSupabaseExercise } from "../data/exerciseUtils";
 
-export const seedExercises = async () => {
-  try {
-    // Check if exercises already exist
-    const { count, error: countError } = await supabase
-      .from('exercises')
-      .select('*', { count: 'exact', head: true });
-
-    if (countError) {
-      console.error('Error checking exercise count:', countError);
-      return;
-    }
-
-    // If we already have exercises, don't seed again
-    if (count && count > 0) {
-      console.log(`Database already has ${count} exercises`);
-      return;
-    }
-
-    // Prepare exercises for insertion
-    const exercisesToInsert = exercisesDB.map(exercise => ({
-      name: exercise.name,
-      category: exercise.category,
-      primary_muscle: exercise.primaryMuscle,
-      secondary_muscles: exercise.secondaryMuscles,
-      equipment: exercise.equipment,
-      description: exercise.description,
-      difficulty: exercise.difficulty,
-      instructions: exercise.instructions
-    }));
-
-    // Insert exercises
-    const { error } = await supabase
-      .from('exercises')
-      .insert(exercisesToInsert);
-
-    if (error) {
-      console.error('Error seeding exercises:', error);
-    } else {
-      console.log(`Successfully seeded ${exercisesToInsert.length} exercises`);
-    }
-  } catch (error) {
-    console.error('Error in seed process:', error);
-  }
-};
-
+// Initialize the database with our starter data (exercises, etc.)
 export const initializeDatabase = async () => {
+  console.log("Initializing database...");
+  
   try {
-    console.log('Starting database initialization...');
+    // First check if the exercises table has data
+    const { data: existingExercises, error: checkError } = await supabase
+      .from('exercises')
+      .select('id')
+      .limit(1);
+      
+    if (checkError) {
+      console.error("Error checking exercises table:", checkError);
+      return;
+    }
     
-    // Seed exercises table
-    await seedExercises();
+    // If there are no exercises, insert the default ones
+    if (!existingExercises || existingExercises.length === 0) {
+      console.log("No exercises found, inserting default exercises...");
+      
+      // Convert exercises to Supabase format and insert
+      const supabaseExercises = exercisesDB.map(convertToSupabaseExercise);
+      
+      const { error: insertError } = await supabase
+        .from('exercises')
+        .insert(supabaseExercises);
+        
+      if (insertError) {
+        console.error("Error inserting exercises:", insertError);
+      } else {
+        console.log("Successfully inserted default exercises");
+      }
+    } else {
+      console.log("Database already has exercises, skipping initialization");
+    }
     
-    console.log('Database initialization complete');
   } catch (error) {
-    console.error('Database initialization failed:', error);
+    console.error("Error initializing database:", error);
   }
 };

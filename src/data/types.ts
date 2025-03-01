@@ -52,6 +52,19 @@ export interface ExerciseWithSets {
 export interface WorkoutTemplate {
   id: string;
   name: string;
+  description?: string;
   exercises: string[];
-  lastPerformed: string;
+  lastPerformed?: string;
+  isPublic?: boolean;
+  createdAt?: string;
+}
+
+export interface TemplateExercise {
+  id: string;
+  templateId: string;
+  exerciseId: string;
+  position: number;
+  suggestedSets: number;
+  suggestedReps: number;
+  suggestedRest?: number;
 }

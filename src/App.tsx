@@ -10,6 +10,7 @@ import WorkoutPage from "./pages/WorkoutPage";
 import FoodPage from "./pages/FoodPage";
 import JournalPage from "./pages/JournalPage";
 import AICoachPage from "./pages/AICoachPage";
+import CreateTemplatePage from "./pages/CreateTemplatePage";
 import NotFound from "./pages/NotFound";
 import { initializeDatabase } from "./lib/databaseInit";
 
@@ -63,6 +64,7 @@ const App = () => {
           <Routes>
             <Route path="/" element={<Index />} />
             <Route path="/workout" element={<WorkoutPage />} />
+            <Route path="/create-template" element={<CreateTemplatePage />} />
             <Route path="/nutrition" element={<FoodPage />} />
             <Route path="/journal" element={<JournalPage />} />
             <Route path="/coach" element={<AICoachPage />} />
