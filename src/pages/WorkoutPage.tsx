@@ -6,14 +6,19 @@ import { useEffect, useState } from "react";
 const WorkoutPage = () => {
   const [isLoaded, setIsLoaded] = useState(false);
 
-  // Enhanced lifecycle logging
+  // Enhanced lifecycle logging with immediate loading state
   useEffect(() => {
     console.log("WorkoutPage mounted with enhanced logging");
-    // Mark as loaded after initial render
-    setIsLoaded(true);
+    
+    // Set loaded state in the next tick to ensure proper rendering
+    const timer = setTimeout(() => {
+      setIsLoaded(true);
+      console.log("WorkoutPage setting isLoaded to true");
+    }, 0);
     
     return () => {
       console.log("WorkoutPage unmounted with enhanced logging");
+      clearTimeout(timer);
     };
   }, []);
 
@@ -21,7 +26,13 @@ const WorkoutPage = () => {
 
   return (
     <AppLayout>
-      {isLoaded && <WorkoutTracker />}
+      {isLoaded ? (
+        <WorkoutTracker />
+      ) : (
+        <div className="flex justify-center items-center h-64">
+          <p className="text-grip-neutral-500">Loading workout tracker...</p>
+        </div>
+      )}
     </AppLayout>
   );
 };
