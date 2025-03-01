@@ -1,5 +1,5 @@
 
-import { Exercise, ExerciseCategory, MuscleGroup } from './types';
+import { Exercise, ExerciseCategory, ExerciseWithSets, MuscleGroup } from './types';
 import { exercisesDB } from './exercisesDatabase';
 
 // Helper function to get exercise details by ID
@@ -19,4 +19,19 @@ export const getExercisesByMuscle = (muscleGroup: MuscleGroup): Exercise[] => {
       exercise.primaryMuscle === muscleGroup || 
       exercise.secondaryMuscles.includes(muscleGroup)
   );
+};
+
+// New helper function to sort workout exercises by completion status
+export const sortExercisesByCompletion = (exercises: ExerciseWithSets[]): ExerciseWithSets[] => {
+  return [...exercises].sort((a, b) => {
+    // Calculate completion percentage for each exercise
+    const aCompletedSets = a.sets.filter(set => set.completed).length;
+    const aCompletionPercent = aCompletedSets / a.sets.length;
+    
+    const bCompletedSets = b.sets.filter(set => set.completed).length;
+    const bCompletionPercent = bCompletedSets / b.sets.length;
+    
+    // Sort descending (most complete first)
+    return bCompletionPercent - aCompletionPercent;
+  });
 };

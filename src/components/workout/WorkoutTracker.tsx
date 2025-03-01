@@ -1,5 +1,5 @@
 
-import { CalendarDays, ChevronRight, Dumbbell, Filter, Plus, RotateCcw, Search, Timer } from "lucide-react";
+import { CalendarDays, ChevronRight, Dumbbell, Filter, Plus, RotateCcw, Search, Timer, ArrowUpDown } from "lucide-react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { fadeIn } from "@/lib/animations";
@@ -7,10 +7,12 @@ import { cn } from "@/lib/utils";
 import { Progress } from "@/components/ui/progress";
 import { currentWorkoutMock, workoutTemplates } from "@/data/exercises";
 import { useState } from "react";
+import { sortExercisesByCompletion } from "@/data/exerciseUtils";
 
 export function WorkoutTracker() {
   // State for the mock data
-  const [currentWorkout] = useState(currentWorkoutMock);
+  const [currentWorkout, setCurrentWorkout] = useState(currentWorkoutMock);
+  const [isSorted, setIsSorted] = useState(false);
   
   // Calculate completed sets
   const completedSets = currentWorkout.reduce(
@@ -24,6 +26,16 @@ export function WorkoutTracker() {
   );
   
   const progressPercentage = Math.round((completedSets / totalSets) * 100);
+  
+  // Add sorting functionality
+  const handleSortExercises = () => {
+    if (isSorted) {
+      setCurrentWorkout([...currentWorkoutMock]);
+    } else {
+      setCurrentWorkout(sortExercisesByCompletion(currentWorkout));
+    }
+    setIsSorted(!isSorted);
+  };
   
   console.log("WorkoutTracker rendering");
   
@@ -58,9 +70,20 @@ export function WorkoutTracker() {
                 <Dumbbell className="h-5 w-5 mr-2 text-grip-neutral-800" />
                 Current Workout: Lower Body
               </CardTitle>
-              <div className="flex items-center text-sm text-grip-neutral-500">
-                <Timer className="h-4 w-4 mr-1" />
-                32:45
+              <div className="flex items-center gap-2">
+                <Button 
+                  variant="outline" 
+                  size="sm" 
+                  className="h-8"
+                  onClick={handleSortExercises}
+                >
+                  <ArrowUpDown className="h-4 w-4 mr-1" />
+                  {isSorted ? "Reset Order" : "Sort by Progress"}
+                </Button>
+                <div className="flex items-center text-sm text-grip-neutral-500">
+                  <Timer className="h-4 w-4 mr-1" />
+                  32:45
+                </div>
               </div>
             </div>
           </CardHeader>
