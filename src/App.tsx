@@ -6,10 +6,30 @@ import AuthPage from "./pages/AuthPage";
 import { AppLayout } from "./components/layout/AppLayout";
 import ProtectedRoute from "./components/auth/ProtectedRoute";
 import { Toaster } from "sonner";
+import { useEffect } from "react";
+import { supabase } from "./integrations/supabase/client";
 import "./App.css";
 
 function App() {
-  console.log("App is rendering - mobile first version");
+  // Enable service worker for offline capabilities
+  useEffect(() => {
+    if ('serviceWorker' in navigator) {
+      window.addEventListener('load', () => {
+        // This would be where we register the service worker
+        // For now, we're just logging that it's available
+        console.log('Service worker is available for offline capabilities');
+      });
+    }
+    
+    // Listen for connection changes with Supabase
+    const { subscription } = supabase.channel('system').subscribe((status) => {
+      console.log('Supabase realtime status:', status);
+    });
+    
+    return () => {
+      subscription.unsubscribe();
+    };
+  }, []);
   
   return (
     <Router>
