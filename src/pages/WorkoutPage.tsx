@@ -1,5 +1,6 @@
 
 import React from 'react';
+import { useNavigate } from 'react-router-dom';
 import { Plus, Clock, MoreHorizontal } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardFooter } from '@/components/ui/card';
@@ -26,6 +27,7 @@ type Workout = {
 
 const WorkoutPage = () => {
   const { user } = useAuth();
+  const navigate = useNavigate();
   
   // Fetch workout templates
   const { data: templates, isLoading: templatesLoading } = useQuery({
@@ -89,8 +91,7 @@ const WorkoutPage = () => {
 
   // Start empty workout handler
   const handleStartEmptyWorkout = () => {
-    // TODO: Implement starting a new empty workout
-    console.log('Starting empty workout');
+    navigate('/active-workout');
   };
   
   // Template option handler

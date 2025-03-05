@@ -1,6 +1,7 @@
 
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 import WorkoutPage from "./pages/WorkoutPage";
+import ActiveWorkoutPage from "./pages/ActiveWorkoutPage";
 import HomePage from "./pages/HomePage";
 import AuthPage from "./pages/AuthPage";
 import { AppLayout } from "./components/layout/AppLayout";
@@ -52,6 +53,16 @@ function App() {
             <AppLayout>
               <ProtectedRoute>
                 <WorkoutPage />
+              </ProtectedRoute>
+            </AppLayout>
+          } 
+        />
+        <Route 
+          path="/active-workout" 
+          element={
+            <AppLayout showBottomNav={false}>
+              <ProtectedRoute>
+                <ActiveWorkoutPage />
               </ProtectedRoute>
             </AppLayout>
           } 
