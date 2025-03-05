@@ -1,15 +1,15 @@
 
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { Timer, MoreHorizontal, ChevronDown, ChevronUp, X } from 'lucide-react';
+import { Timer, MoreHorizontal, ChevronDown, ChevronUp } from 'lucide-react';
 import { Button } from '@/components/ui/button';
-import { Card, CardContent } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
 import { useToast } from '@/components/ui/use-toast';
 import { supabase } from '@/integrations/supabase/client';
 import { useAuth } from '@/context/AuthContext';
 import WorkoutTimer from '@/components/workout/WorkoutTimer';
 import ExerciseSelector from '@/components/workout/ExerciseSelector';
+import WorkoutExerciseCard from '@/components/workout/WorkoutExerciseCard';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 
 interface Exercise {
@@ -19,11 +19,17 @@ interface Exercise {
   [key: string]: any;
 }
 
+interface WorkoutExercise {
+  id: string;
+  exercise_id: string;
+  exercise: Exercise;
+}
+
 interface ActiveWorkout {
   id: string;
   name: string;
   start_time: string;
-  exercises: Exercise[];
+  workoutExercises: WorkoutExercise[];
   notes?: string;
   duration: number;
 }
@@ -39,7 +45,7 @@ const ActiveWorkoutPage: React.FC = () => {
     id: '',
     name: 'New Workout',
     start_time: new Date().toISOString(),
-    exercises: [],
+    workoutExercises: [],
     duration: 0
   });
   const [isExerciseSelectorOpen, setIsExerciseSelectorOpen] = useState(false);
@@ -88,6 +94,38 @@ const ActiveWorkoutPage: React.FC = () => {
     
     createWorkout();
   }, [user, toast]);
+
+  // Fetch workout exercises whenever workout ID changes
+  useEffect(() => {
+    const fetchWorkoutExercises = async () => {
+      if (!workout.id) return;
+      
+      try {
+        const { data, error } = await supabase
+          .from('workout_exercises')
+          .select(`
+            id,
+            exercise_id,
+            exercise:exercises(*)
+          `)
+          .eq('workout_id', workout.id)
+          .order('position');
+          
+        if (error) throw error;
+        
+        if (data) {
+          setWorkout(prev => ({
+            ...prev,
+            workoutExercises: data
+          }));
+        }
+      } catch (error) {
+        console.error('Error fetching workout exercises:', error);
+      }
+    };
+    
+    fetchWorkoutExercises();
+  }, [workout.id]);
   
   // Update workout name
   const handleNameChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -149,9 +187,13 @@ const ActiveWorkoutPage: React.FC = () => {
         .insert({
           workout_id: workout.id,
           exercise_id: exercise.id,
-          position: workout.exercises.length
+          position: workout.workoutExercises.length
         })
-        .select()
+        .select(`
+          id,
+          exercise_id,
+          exercise:exercises(*)
+        `)
         .single();
       
       if (error) throw error;
@@ -159,7 +201,7 @@ const ActiveWorkoutPage: React.FC = () => {
       // Update local state
       setWorkout(prev => ({
         ...prev,
-        exercises: [...prev.exercises, exercise]
+        workoutExercises: [...prev.workoutExercises, workoutExercise]
       }));
       
       toast({
@@ -252,6 +294,30 @@ const ActiveWorkoutPage: React.FC = () => {
   const handleCancelWorkout = () => {
     cancelWorkoutMutation.mutate();
   };
+
+  // Remove exercise
+  const handleRemoveExercise = async (exerciseId: string) => {
+    if (!workout.id) return;
+    
+    try {
+      await supabase
+        .from('workout_exercises')
+        .delete()
+        .eq('id', exerciseId);
+        
+      setWorkout(prev => ({
+        ...prev,
+        workoutExercises: prev.workoutExercises.filter(ex => ex.id !== exerciseId)
+      }));
+      
+      toast({
+        title: 'Exercise removed',
+        description: 'Exercise has been removed from your workout.'
+      });
+    } catch (error) {
+      console.error('Error removing exercise:', error);
+    }
+  };
   
   return (
     <div className="flex flex-col h-full min-h-[90vh] max-w-md mx-auto px-4 pb-20">
@@ -268,7 +334,7 @@ const ActiveWorkoutPage: React.FC = () => {
           </Button>
           
           <Button 
-            className="bg-green-500 hover:bg-green-600 h-12 px-8"
+            className="bg-green-500 hover:bg-green-600 h-12 px-8 rounded-full"
             onClick={handleFinishWorkout}
             disabled={finishWorkoutMutation.isPending}
           >
@@ -322,22 +388,15 @@ const ActiveWorkoutPage: React.FC = () => {
       
       {/* Exercise list */}
       <div className="flex-1">
-        {workout.exercises.length > 0 ? (
+        {workout.workoutExercises.length > 0 ? (
           <div className="space-y-3 my-4">
-            {workout.exercises.map((exercise, index) => (
-              <Card key={`${exercise.id}-${index}`}>
-                <CardContent className="p-4">
-                  <div className="flex items-center justify-between">
-                    <div>
-                      <h3 className="font-medium">{exercise.name}</h3>
-                      <p className="text-sm text-muted-foreground">{exercise.primary_muscle}</p>
-                    </div>
-                    <Button variant="ghost" size="icon">
-                      <X className="h-4 w-4" />
-                    </Button>
-                  </div>
-                </CardContent>
-              </Card>
+            {workout.workoutExercises.map((workoutExercise) => (
+              <WorkoutExerciseCard
+                key={workoutExercise.id}
+                workoutId={workout.id}
+                exercise={workoutExercise.exercise}
+                workoutExerciseId={workoutExercise.id}
+              />
             ))}
           </div>
         ) : (
