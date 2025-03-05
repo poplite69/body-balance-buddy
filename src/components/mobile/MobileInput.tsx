@@ -1,10 +1,10 @@
 
 import React, { useState } from 'react';
-import { Input, type InputProps } from "@/components/ui/input";
+import { Input } from "@/components/ui/input";
 import { cn } from '@/lib/utils';
 import { X } from 'lucide-react';
 
-interface MobileInputProps extends Omit<InputProps, 'onChange'> {
+interface MobileInputProps extends React.ComponentPropsWithoutRef<typeof Input> {
   onChangeText?: (value: string) => void;
   showClearButton?: boolean;
 }
