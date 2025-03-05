@@ -1,6 +1,7 @@
 
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 import WorkoutPage from "./pages/WorkoutPage";
+import HomePage from "./pages/HomePage";
 import "./App.css";
 
 function App() {
@@ -9,7 +10,7 @@ function App() {
   return (
     <Router>
       <Routes>
-        <Route path="/" element={<div className="p-8">Home Page</div>} />
+        <Route path="/" element={<HomePage />} />
         <Route path="/workout" element={<WorkoutPage />} />
         <Route path="*" element={<div className="p-8">404 Not Found</div>} />
       </Routes>
