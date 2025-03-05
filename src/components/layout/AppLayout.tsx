@@ -1,34 +1,28 @@
 
-import { ReactNode, useEffect } from "react";
-import { Navbar } from "./Navbar";
-import { Sidebar } from "./Sidebar";
+import React, { ReactNode } from 'react';
+import { useAuth } from '@/context/AuthContext';
+import BottomNav from './BottomNav';
+import { cn } from '@/lib/utils';
 
 interface AppLayoutProps {
   children: ReactNode;
+  showBottomNav?: boolean;
 }
 
-export function AppLayout({ children }: AppLayoutProps) {
-  useEffect(() => {
-    console.log("AppLayout mounted with children:", children ? "has children" : "no children");
-    
-    return () => {
-      console.log("AppLayout unmounted");
-    };
-  }, [children]);
+export function AppLayout({ children, showBottomNav = true }: AppLayoutProps) {
+  const { user } = useAuth();
 
-  console.log("AppLayout rendering with children type:", children ? typeof children : "no children");
-  
   return (
-    <div className="min-h-screen bg-grip-neutral-50 flex">
-      <Sidebar isOpen={false} onClose={() => {}} />
+    <div className="min-h-screen bg-background flex flex-col">
+      <main className={cn(
+        "flex-1",
+        showBottomNav && "pb-16" // Add padding when bottom nav is visible
+      )}>
+        {children}
+      </main>
       
-      <div className="flex flex-col flex-1 md:pl-72 min-h-screen">
-        <Navbar toggleSidebar={() => {}} />
-        
-        <main className="flex-1 pt-16 px-4 md:px-8 pb-8">
-          {children}
-        </main>
-      </div>
+      {/* Show bottom nav for authenticated users on mobile */}
+      {user && showBottomNav && <BottomNav />}
     </div>
   );
 }
