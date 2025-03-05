@@ -1,5 +1,5 @@
 
-import { ReactNode } from "react";
+import { ReactNode, useEffect } from "react";
 import { Navbar } from "./Navbar";
 import { Sidebar } from "./Sidebar";
 
@@ -8,7 +8,15 @@ interface AppLayoutProps {
 }
 
 export function AppLayout({ children }: AppLayoutProps) {
-  console.log("AppLayout rendering");
+  useEffect(() => {
+    console.log("AppLayout mounted with children:", children ? "has children" : "no children");
+    
+    return () => {
+      console.log("AppLayout unmounted");
+    };
+  }, [children]);
+
+  console.log("AppLayout rendering with children type:", children ? typeof children : "no children");
   
   return (
     <div className="min-h-screen bg-grip-neutral-50 flex">
