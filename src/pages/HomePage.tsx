@@ -1,3 +1,4 @@
+
 import React from 'react';
 import { Button } from "@/components/ui/button";
 import { Link } from "react-router-dom";
@@ -50,7 +51,7 @@ const HomePage = () => {
       <section className="py-24 px-4 md:px-8 max-w-5xl mx-auto">
         <div className="flex flex-col gap-2">
           <Link to="/workout" className="mb-6 text-sm flex items-center hover:underline w-fit gap-1 text-muted-foreground">
-            Get started with Grip
+            Loved by 10k+ athletes like you
             <ArrowRight className="h-3 w-3 ml-1" />
           </Link>
           <h1 className="text-4xl md:text-6xl font-bold tracking-tight mb-6">
