@@ -22,12 +22,15 @@ function App() {
     }
     
     // Listen for connection changes with Supabase
-    const { subscription } = supabase.channel('system').subscribe((status) => {
+    const channel = supabase.channel('system');
+    
+    channel.subscribe((status) => {
       console.log('Supabase realtime status:', status);
     });
     
     return () => {
-      subscription.unsubscribe();
+      // Clean up the subscription by removing the channel
+      supabase.removeChannel(channel);
     };
   }, []);
   
