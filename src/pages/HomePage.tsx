@@ -50,14 +50,14 @@ const HomePage = () => {
       {/* Hero Section */}
       <section className="py-24 px-4 md:px-8 max-w-5xl mx-auto">
         <div className="flex flex-col gap-2">
-          <p className="mb-6 text-sm flex items-center w-fit gap-1 text-muted-foreground">
+          <p className="mb-3 text-sm flex items-center w-fit gap-1 text-muted-foreground">
             Loved by 10k+ athletes like you
             <ArrowRight className="h-3 w-3 ml-1" />
           </p>
-          <h1 className="text-4xl md:text-6xl font-bold tracking-tight mb-6">
+          <h1 className="text-4xl md:text-6xl font-bold tracking-tight mb-3">
             Track your fitness journey
           </h1>
-          <p className="text-muted-foreground text-lg mb-10 max-w-2xl">
+          <p className="text-muted-foreground text-lg mb-5 max-w-2xl">
             A beautifully designed fitness tracking application that helps you monitor workouts, 
             analyze progress, and achieve your goals.
           </p>
