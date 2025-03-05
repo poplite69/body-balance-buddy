@@ -10,6 +10,8 @@ import CreateTemplatePage from "./pages/CreateTemplatePage";
 import "./App.css";
 
 function App() {
+  console.log("App is rendering");
+  
   return (
     <Router>
       <Routes>
