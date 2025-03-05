@@ -1,25 +1,12 @@
 
-import { AppLayout } from "@/components/layout/AppLayout";
-import { WorkoutTracker } from "@/components/workout/WorkoutTracker";
-import { useEffect } from "react";
+import React from 'react';
 
 const WorkoutPage = () => {
-  useEffect(() => {
-    console.log("WorkoutPage mounted - component is in the DOM");
-    
-    return () => {
-      console.log("WorkoutPage unmounted - component is removed from the DOM");
-    };
-  }, []);
-
-  console.log("WorkoutPage rendering - before return statement");
-  
   return (
-    <AppLayout>
-      <div className="workout-page-container">
-        <WorkoutTracker />
-      </div>
-    </AppLayout>
+    <div className="p-8">
+      <h1 className="text-2xl font-bold mb-4">Workout Page</h1>
+      <p>This page is being rebuilt as part of our cleanup process.</p>
+    </div>
   );
 };
 

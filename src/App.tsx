@@ -1,27 +1,17 @@
 
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
-import Index from "./pages/Index";
-import NotFound from "./pages/NotFound";
 import WorkoutPage from "./pages/WorkoutPage";
-import FoodPage from "./pages/FoodPage";
-import JournalPage from "./pages/JournalPage";
-import AICoachPage from "./pages/AICoachPage";
-import CreateTemplatePage from "./pages/CreateTemplatePage";
 import "./App.css";
 
 function App() {
-  console.log("App is rendering - setting up routes");
+  console.log("App is rendering - clean version");
   
   return (
     <Router>
       <Routes>
-        <Route path="/" element={<Index />} />
+        <Route path="/" element={<div className="p-8">Home Page</div>} />
         <Route path="/workout" element={<WorkoutPage />} />
-        <Route path="/food" element={<FoodPage />} />
-        <Route path="/journal" element={<JournalPage />} />
-        <Route path="/ai-coach" element={<AICoachPage />} />
-        <Route path="/create-template" element={<CreateTemplatePage />} />
-        <Route path="*" element={<NotFound />} />
+        <Route path="*" element={<div className="p-8">404 Not Found</div>} />
       </Routes>
     </Router>
   );
