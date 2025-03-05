@@ -16,7 +16,7 @@ const HomePage = () => {
     <div className="min-h-screen bg-background text-foreground">
       {/* Header */}
       <header className="border-b border-border px-4 py-3 flex justify-between items-center">
-        <Link to="/" className="text-2xl font-bold text-primary">
+        <Link to="/" className="text-2xl font-bold text-foreground">
           Grip
         </Link>
         <div className="flex gap-4">
@@ -59,7 +59,7 @@ const HomePage = () => {
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
             {/* Feature 1 */}
             <div className="p-6 rounded-lg border border-border">
-              <Dumbbell className="h-12 w-12 mb-4 text-primary" />
+              <Dumbbell className="h-12 w-12 mb-4 text-foreground" />
               <h3 className="text-xl font-bold mb-2">Workout Tracking</h3>
               <p className="text-muted-foreground">
                 Log your exercises, sets, reps, and weights to keep a detailed record of all your training sessions.
@@ -68,7 +68,7 @@ const HomePage = () => {
             
             {/* Feature 2 */}
             <div className="p-6 rounded-lg border border-border">
-              <BarChart className="h-12 w-12 mb-4 text-primary" />
+              <BarChart className="h-12 w-12 mb-4 text-foreground" />
               <h3 className="text-xl font-bold mb-2">Progress Analytics</h3>
               <p className="text-muted-foreground">
                 Visualize your progress with detailed charts and metrics to understand your improvement over time.
@@ -77,7 +77,7 @@ const HomePage = () => {
             
             {/* Feature 3 */}
             <div className="p-6 rounded-lg border border-border">
-              <Calendar className="h-12 w-12 mb-4 text-primary" />
+              <Calendar className="h-12 w-12 mb-4 text-foreground" />
               <h3 className="text-xl font-bold mb-2">Workout Planning</h3>
               <p className="text-muted-foreground">
                 Create custom workout templates and schedule your training sessions to stay consistent.
@@ -86,7 +86,7 @@ const HomePage = () => {
 
             {/* Feature 4 */}
             <div className="p-6 rounded-lg border border-border">
-              <Clock className="h-12 w-12 mb-4 text-primary" />
+              <Clock className="h-12 w-12 mb-4 text-foreground" />
               <h3 className="text-xl font-bold mb-2">Rest Timer</h3>
               <p className="text-muted-foreground">
                 Track rest periods between sets to optimize your workout intensity and recovery.
@@ -95,7 +95,7 @@ const HomePage = () => {
 
             {/* Feature 5 */}
             <div className="p-6 rounded-lg border border-border">
-              <Heart className="h-12 w-12 mb-4 text-primary" />
+              <Heart className="h-12 w-12 mb-4 text-foreground" />
               <h3 className="text-xl font-bold mb-2">Health Metrics</h3>
               <p className="text-muted-foreground">
                 Monitor key health indicators like heart rate, weight, and body measurements to track overall wellness.
@@ -119,7 +119,7 @@ const HomePage = () => {
       <footer className="py-8 px-4 border-t border-border">
         <div className="max-w-6xl mx-auto flex flex-col md:flex-row justify-between items-center">
           <div className="mb-4 md:mb-0">
-            <p className="text-2xl font-bold text-primary">Grip</p>
+            <p className="text-2xl font-bold text-foreground">Grip</p>
             <p className="text-sm text-muted-foreground">Your fitness journey starts here</p>
           </div>
           
