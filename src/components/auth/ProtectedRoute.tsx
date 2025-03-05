@@ -2,6 +2,7 @@
 import React, { ReactNode } from 'react';
 import { Navigate } from 'react-router-dom';
 import { useAuth } from '@/context/AuthContext';
+import { MobileSkeletonList } from "@/components/mobile/MobileSkeletonList";
 import { Skeleton } from "@/components/ui/skeleton";
 
 interface ProtectedRouteProps {
@@ -11,14 +12,21 @@ interface ProtectedRouteProps {
 const ProtectedRoute = ({ children }: ProtectedRouteProps) => {
   const { user, loading } = useAuth();
   
-  // Show loading skeleton while checking authentication status
+  // Show mobile-optimized loading skeleton while checking authentication status
   if (loading) {
     return (
-      <div className="w-full h-screen flex flex-col items-center justify-center p-4">
-        <Skeleton className="h-12 w-4/5 mb-4" />
-        <Skeleton className="h-40 w-full mb-4" />
-        <Skeleton className="h-40 w-full mb-2" />
-        <Skeleton className="h-12 w-3/5" />
+      <div className="w-full p-4 space-y-4">
+        {/* Mobile-like header skeleton */}
+        <div className="flex items-center justify-between">
+          <Skeleton className="h-8 w-3/5" />
+          <Skeleton className="h-8 w-8 rounded-full" />
+        </div>
+        
+        {/* Content area skeleton */}
+        <Skeleton className="h-32 w-full rounded-lg" />
+        
+        {/* List skeleton - optimized for mobile */}
+        <MobileSkeletonList rows={4} />
       </div>
     );
   }
