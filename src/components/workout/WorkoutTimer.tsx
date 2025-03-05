@@ -45,7 +45,9 @@ const WorkoutTimer: React.FC<WorkoutTimerProps> = ({
   };
   
   return (
-    <div className="font-mono text-2xl">{formatTime(seconds)}</div>
+    <div className="font-mono text-2xl font-semibold text-primary">
+      {formatTime(seconds)}
+    </div>
   );
 };
 
