@@ -6,6 +6,7 @@ import { Input } from "@/components/ui/input";
 import { CardContent, CardFooter, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 import { Label } from "@/components/ui/label";
 import { Alert, AlertDescription } from "@/components/ui/alert";
+import { toast } from "sonner";
 
 const SignUpForm = () => {
   const [email, setEmail] = useState('');
@@ -15,25 +16,14 @@ const SignUpForm = () => {
   const [error, setError] = useState<string | null>(null);
   const [success, setSuccess] = useState<string | null>(null);
 
-  const validateEmail = (email: string): boolean => {
-    // Basic email validation regex
-    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-    return emailRegex.test(email);
-  };
-
   const handleSignUp = async (e: React.FormEvent) => {
     e.preventDefault();
     setLoading(true);
     setError(null);
     
-    // Client-side validation
-    if (!validateEmail(email)) {
-      setError('Please enter a valid email address');
-      setLoading(false);
-      return;
-    }
-    
     try {
+      console.log("Attempting to sign up with email:", email);
+      
       const { data, error } = await supabase.auth.signUp({
         email,
         password,
@@ -47,9 +37,16 @@ const SignUpForm = () => {
       if (error) throw error;
       
       setSuccess('Registration successful! Please check your email for verification.');
+      toast.success('Registration successful! Please check your email for verification.');
     } catch (error: any) {
-      setError(error.message || 'An error occurred during sign up');
       console.error('Sign up error:', error);
+      
+      // Provide a more user-friendly error message for specific errors
+      if (error.message?.includes("invalid")) {
+        setError("This email format cannot be used with our authentication provider. Please try another email address.");
+      } else {
+        setError(error.message || 'An error occurred during sign up');
+      }
     } finally {
       setLoading(false);
     }
