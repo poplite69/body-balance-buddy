@@ -1,9 +1,7 @@
-
 import React from 'react';
 import { Button } from "@/components/ui/button";
 import { Link } from "react-router-dom";
 import { 
-  Dumbbell, 
   ArrowRight,
   ExternalLink,
   LogOut
@@ -22,7 +20,6 @@ const HomePage = () => {
       {/* Header */}
       <header className="border-b border-border/40 px-4 py-3 flex justify-between items-center">
         <Link to="/" className="text-lg font-bold text-foreground flex items-center gap-2">
-          <Dumbbell className="h-5 w-5" />
           Grip
         </Link>
         <div className="flex gap-4">
@@ -143,7 +140,6 @@ const HomePage = () => {
         <div className="max-w-5xl mx-auto flex flex-col md:flex-row justify-between items-center">
           <div className="mb-8 md:mb-0">
             <p className="text-lg font-bold text-foreground flex items-center gap-2">
-              <Dumbbell className="h-4 w-4" />
               Grip
             </p>
             <p className="text-sm text-muted-foreground mt-1">

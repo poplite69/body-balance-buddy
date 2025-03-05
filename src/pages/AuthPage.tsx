@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
 import { supabase } from '@/integrations/supabase/client';
@@ -8,8 +7,8 @@ import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle }
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Label } from "@/components/ui/label";
 import { Alert, AlertDescription } from "@/components/ui/alert";
-import { Dumbbell } from 'lucide-react';
 import { Link } from 'react-router-dom';
+import { Dumbbell } from 'lucide-react';
 
 const AuthPage = () => {
   const [email, setEmail] = useState('');
@@ -106,7 +105,6 @@ const AuthPage = () => {
   return (
     <div className="flex flex-col items-center justify-center min-h-screen bg-background p-4">
       <Link to="/" className="flex items-center gap-2 mb-8">
-        <Dumbbell className="h-6 w-6" />
         <span className="text-xl font-bold">Grip</span>
       </Link>
       
