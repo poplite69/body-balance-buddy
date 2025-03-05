@@ -5,11 +5,18 @@ import { Link } from "react-router-dom";
 import { 
   Dumbbell, 
   ArrowRight,
-  Github,
-  ExternalLink
+  ExternalLink,
+  LogOut
 } from "lucide-react";
+import { useAuth } from '@/context/AuthContext';
 
 const HomePage = () => {
+  const { user, signOut } = useAuth();
+
+  const handleSignOut = async () => {
+    await signOut();
+  };
+
   return (
     <div className="min-h-screen bg-background text-foreground">
       {/* Header */}
@@ -19,12 +26,26 @@ const HomePage = () => {
           Grip
         </Link>
         <div className="flex gap-4">
-          <Button asChild variant="ghost" size="sm">
-            <Link to="/auth">Sign In</Link>
-          </Button>
-          <Button asChild size="sm">
-            <Link to="/auth">Create Account</Link>
-          </Button>
+          {user ? (
+            <>
+              <Button asChild variant="ghost" size="sm">
+                <Link to="/workout">Workouts</Link>
+              </Button>
+              <Button variant="ghost" size="sm" onClick={handleSignOut}>
+                <LogOut className="h-4 w-4 mr-2" />
+                Sign Out
+              </Button>
+            </>
+          ) : (
+            <>
+              <Button asChild variant="ghost" size="sm">
+                <Link to="/auth">Sign In</Link>
+              </Button>
+              <Button asChild size="sm">
+                <Link to="/auth?tab=signup">Create Account</Link>
+              </Button>
+            </>
+          )}
         </div>
       </header>
 
@@ -43,9 +64,15 @@ const HomePage = () => {
             analyze progress, and achieve your goals.
           </p>
           <div className="flex flex-wrap gap-4">
-            <Button asChild size="lg">
-              <Link to="/auth">Get Started</Link>
-            </Button>
+            {user ? (
+              <Button asChild size="lg">
+                <Link to="/workout">My Workouts</Link>
+              </Button>
+            ) : (
+              <Button asChild size="lg">
+                <Link to="/auth">Get Started</Link>
+              </Button>
+            )}
             <Button asChild variant="outline" size="lg">
               <Link to="/workout">
                 Try Demo
