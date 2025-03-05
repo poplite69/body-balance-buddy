@@ -50,10 +50,10 @@ const HomePage = () => {
       {/* Hero Section */}
       <section className="py-24 px-4 md:px-8 max-w-5xl mx-auto">
         <div className="flex flex-col gap-2">
-          <Link to="/workout" className="mb-6 text-sm flex items-center hover:underline w-fit gap-1 text-muted-foreground">
+          <p className="mb-6 text-sm flex items-center w-fit gap-1 text-muted-foreground">
             Loved by 10k+ athletes like you
             <ArrowRight className="h-3 w-3 ml-1" />
-          </Link>
+          </p>
           <h1 className="text-4xl md:text-6xl font-bold tracking-tight mb-6">
             Track your fitness journey
           </h1>
