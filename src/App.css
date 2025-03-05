@@ -9,11 +9,6 @@
   text-align: left;
 }
 
-/* Basic layout styles */
-.p-8 {
-  padding: 2rem;
-}
-
 /* Set the app to use dark mode by default */
 :root {
   color-scheme: dark;

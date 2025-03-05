@@ -33,7 +33,7 @@
     --input: 240 3.7% 15.9%;
     --ring: 240 4.9% 83.9%;
 
-    --radius: 0.6rem;
+    --radius: 0.5rem;
     
     /* Mobile safe area variables */
     --sat: env(safe-area-inset-top, 0px);
