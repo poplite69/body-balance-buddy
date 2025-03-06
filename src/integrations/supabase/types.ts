@@ -48,6 +48,119 @@ export type Database = {
         }
         Relationships: []
       }
+      favorite_foods: {
+        Row: {
+          created_at: string | null
+          food_item_id: string
+          id: string
+          user_id: string
+        }
+        Insert: {
+          created_at?: string | null
+          food_item_id: string
+          id?: string
+          user_id: string
+        }
+        Update: {
+          created_at?: string | null
+          food_item_id?: string
+          id?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "favorite_foods_food_item_id_fkey"
+            columns: ["food_item_id"]
+            isOneToOne: false
+            referencedRelation: "food_items"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      food_items: {
+        Row: {
+          brand: string | null
+          calories: number | null
+          carbs_g: number | null
+          cholesterol_mg: number | null
+          created_at: string | null
+          data_layer: string
+          external_id: string | null
+          fat_g: number | null
+          fiber_g: number | null
+          id: string
+          is_verified: boolean | null
+          last_used_at: string | null
+          name: string
+          package_size: number | null
+          package_unit: string | null
+          piece_unit: string | null
+          piece_weight: number | null
+          protein_g: number | null
+          search_count: number | null
+          serving_size: number
+          serving_unit: string
+          sodium_mg: number | null
+          source: string
+          sugar_g: number | null
+          updated_at: string | null
+        }
+        Insert: {
+          brand?: string | null
+          calories?: number | null
+          carbs_g?: number | null
+          cholesterol_mg?: number | null
+          created_at?: string | null
+          data_layer: string
+          external_id?: string | null
+          fat_g?: number | null
+          fiber_g?: number | null
+          id?: string
+          is_verified?: boolean | null
+          last_used_at?: string | null
+          name: string
+          package_size?: number | null
+          package_unit?: string | null
+          piece_unit?: string | null
+          piece_weight?: number | null
+          protein_g?: number | null
+          search_count?: number | null
+          serving_size: number
+          serving_unit: string
+          sodium_mg?: number | null
+          source: string
+          sugar_g?: number | null
+          updated_at?: string | null
+        }
+        Update: {
+          brand?: string | null
+          calories?: number | null
+          carbs_g?: number | null
+          cholesterol_mg?: number | null
+          created_at?: string | null
+          data_layer?: string
+          external_id?: string | null
+          fat_g?: number | null
+          fiber_g?: number | null
+          id?: string
+          is_verified?: boolean | null
+          last_used_at?: string | null
+          name?: string
+          package_size?: number | null
+          package_unit?: string | null
+          piece_unit?: string | null
+          piece_weight?: number | null
+          protein_g?: number | null
+          search_count?: number | null
+          serving_size?: number
+          serving_unit?: string
+          sodium_mg?: number | null
+          source?: string
+          sugar_g?: number | null
+          updated_at?: string | null
+        }
+        Relationships: []
+      }
       profiles: {
         Row: {
           age: number | null
@@ -92,6 +205,48 @@ export type Database = {
           weight?: number | null
         }
         Relationships: []
+      }
+      recipe_ingredients: {
+        Row: {
+          created_at: string | null
+          food_item_id: string
+          id: string
+          quantity: number
+          recipe_id: string
+          unit: string
+        }
+        Insert: {
+          created_at?: string | null
+          food_item_id: string
+          id?: string
+          quantity: number
+          recipe_id: string
+          unit: string
+        }
+        Update: {
+          created_at?: string | null
+          food_item_id?: string
+          id?: string
+          quantity?: number
+          recipe_id?: string
+          unit?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "recipe_ingredients_food_item_id_fkey"
+            columns: ["food_item_id"]
+            isOneToOne: false
+            referencedRelation: "food_items"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "recipe_ingredients_recipe_id_fkey"
+            columns: ["recipe_id"]
+            isOneToOne: false
+            referencedRelation: "user_recipes"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       template_exercises: {
         Row: {
@@ -140,6 +295,119 @@ export type Database = {
             referencedColumns: ["id"]
           },
         ]
+      }
+      user_food_logs: {
+        Row: {
+          calories: number | null
+          carbs_g: number | null
+          consumed_at: string
+          created_at: string | null
+          fat_g: number | null
+          fiber_g: number | null
+          food_item_id: string
+          id: string
+          meal_type: string
+          portion_size: number
+          portion_unit: string
+          protein_g: number | null
+          sugar_g: number | null
+          updated_at: string | null
+          user_id: string
+        }
+        Insert: {
+          calories?: number | null
+          carbs_g?: number | null
+          consumed_at: string
+          created_at?: string | null
+          fat_g?: number | null
+          fiber_g?: number | null
+          food_item_id: string
+          id?: string
+          meal_type: string
+          portion_size: number
+          portion_unit: string
+          protein_g?: number | null
+          sugar_g?: number | null
+          updated_at?: string | null
+          user_id: string
+        }
+        Update: {
+          calories?: number | null
+          carbs_g?: number | null
+          consumed_at?: string
+          created_at?: string | null
+          fat_g?: number | null
+          fiber_g?: number | null
+          food_item_id?: string
+          id?: string
+          meal_type?: string
+          portion_size?: number
+          portion_unit?: string
+          protein_g?: number | null
+          sugar_g?: number | null
+          updated_at?: string | null
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "user_food_logs_food_item_id_fkey"
+            columns: ["food_item_id"]
+            isOneToOne: false
+            referencedRelation: "food_items"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      user_recipes: {
+        Row: {
+          created_at: string | null
+          description: string | null
+          id: string
+          is_favorite: boolean | null
+          is_public: boolean | null
+          name: string
+          preparation_steps: string | null
+          servings: number
+          total_calories: number | null
+          total_carbs_g: number | null
+          total_fat_g: number | null
+          total_protein_g: number | null
+          updated_at: string | null
+          user_id: string
+        }
+        Insert: {
+          created_at?: string | null
+          description?: string | null
+          id?: string
+          is_favorite?: boolean | null
+          is_public?: boolean | null
+          name: string
+          preparation_steps?: string | null
+          servings: number
+          total_calories?: number | null
+          total_carbs_g?: number | null
+          total_fat_g?: number | null
+          total_protein_g?: number | null
+          updated_at?: string | null
+          user_id: string
+        }
+        Update: {
+          created_at?: string | null
+          description?: string | null
+          id?: string
+          is_favorite?: boolean | null
+          is_public?: boolean | null
+          name?: string
+          preparation_steps?: string | null
+          servings?: number
+          total_calories?: number | null
+          total_carbs_g?: number | null
+          total_fat_g?: number | null
+          total_protein_g?: number | null
+          updated_at?: string | null
+          user_id?: string
+        }
+        Relationships: []
       }
       workout_exercises: {
         Row: {
@@ -312,7 +580,52 @@ export type Database = {
       [_ in never]: never
     }
     Functions: {
-      [_ in never]: never
+      gtrgm_compress: {
+        Args: {
+          "": unknown
+        }
+        Returns: unknown
+      }
+      gtrgm_decompress: {
+        Args: {
+          "": unknown
+        }
+        Returns: unknown
+      }
+      gtrgm_in: {
+        Args: {
+          "": unknown
+        }
+        Returns: unknown
+      }
+      gtrgm_options: {
+        Args: {
+          "": unknown
+        }
+        Returns: undefined
+      }
+      gtrgm_out: {
+        Args: {
+          "": unknown
+        }
+        Returns: unknown
+      }
+      set_limit: {
+        Args: {
+          "": number
+        }
+        Returns: number
+      }
+      show_limit: {
+        Args: Record<PropertyKey, never>
+        Returns: number
+      }
+      show_trgm: {
+        Args: {
+          "": string
+        }
+        Returns: string[]
+      }
     }
     Enums: {
       [_ in never]: never
