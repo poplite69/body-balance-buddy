@@ -1,6 +1,6 @@
 
 import React, { useState } from 'react';
-import { X, Search, Plus, Info } from 'lucide-react';
+import { Search, Plus, Info } from 'lucide-react';
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
 import { Skeleton } from '@/components/ui/skeleton';
@@ -15,12 +15,14 @@ interface ExerciseSelectorProps {
   id?: string;
   onClose?: () => void;
   onSelectExercise: (exercise: Exercise) => void;
+  zIndex?: number;
 }
 
 const ExerciseSelector: React.FC<ExerciseSelectorProps> = ({ 
   id,
   onClose = () => {},
-  onSelectExercise 
+  onSelectExercise,
+  zIndex
 }) => {
   const [searchQuery, setSearchQuery] = useState('');
   const { showTray } = useTray();
@@ -67,8 +69,8 @@ const ExerciseSelector: React.FC<ExerciseSelectorProps> = ({
       id={id || ''}
       title="Select Exercise"
       onClose={onClose}
-      height="auto"
       position="bottom"
+      zIndex={zIndex}
     >
       <div className="space-y-4">
         <div className="relative">

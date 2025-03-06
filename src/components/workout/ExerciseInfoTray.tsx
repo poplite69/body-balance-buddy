@@ -1,3 +1,4 @@
+
 import React from 'react';
 import Tray from '@/components/tray/Tray';
 import { Button } from '@/components/ui/button';
@@ -11,13 +12,15 @@ interface ExerciseInfoTrayProps {
   exercise: Exercise;
   position?: TrayPosition;
   onClose?: () => void;
+  zIndex?: number;
 }
 
 const ExerciseInfoTray: React.FC<ExerciseInfoTrayProps> = ({
   id,
   exercise,
   position = 'bottom',
-  onClose = () => {}
+  onClose = () => {},
+  zIndex
 }) => {
   const handleYouTubeClick = () => {
     const query = `How to do ${exercise.name} exercise`;
@@ -37,7 +40,7 @@ const ExerciseInfoTray: React.FC<ExerciseInfoTrayProps> = ({
       title={exercise.name}
       position={position}
       onClose={onClose}
-      height={400}
+      zIndex={zIndex}
     >
       <div className="space-y-4">
         {exercise.description && (

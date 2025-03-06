@@ -14,6 +14,7 @@ const ConfirmationTray: React.FC<ConfirmationTrayProps> = ({
   onCancel,
   onClose,
   danger = false,
+  zIndex,
   ...props
 }) => {
   // We need to ensure onClose exists
@@ -34,7 +35,7 @@ const ConfirmationTray: React.FC<ConfirmationTrayProps> = ({
       id={id || ''}
       title={title}
       onClose={handleClose}
-      height={240}
+      zIndex={zIndex}
       {...props}
     >
       <div className="space-y-4">

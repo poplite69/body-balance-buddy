@@ -13,6 +13,7 @@ export interface ConfirmationTrayProps {
   onCancel?: () => void;
   onClose?: () => void;
   danger?: boolean;
+  zIndex?: number;
 }
 
 export interface BaseTrayProps {
@@ -22,9 +23,9 @@ export interface BaseTrayProps {
   onBack?: () => void;
   showBackButton?: boolean;
   position?: 'bottom' | 'top' | 'left' | 'right';
-  height?: number | string;
   children: React.ReactNode;
   elevation?: 1 | 2 | 3;
+  zIndex?: number;
 }
 
 export type TrayComponent = React.ComponentType<any>;
@@ -40,7 +41,7 @@ export interface TrayContextValue {
   trays: TrayItem[];
   showTray: <P extends Record<string, any>>(
     TrayComponent: React.ComponentType<P>,
-    props: Omit<P, 'id' | 'onClose' | 'showBackButton' | 'onBack' | 'parentId'>
+    props: Omit<P, 'id' | 'onClose' | 'showBackButton' | 'onBack' | 'parentId' | 'zIndex'>
   ) => string;
   closeTray: (id: string) => void;
   closeAllTrays: () => void;
