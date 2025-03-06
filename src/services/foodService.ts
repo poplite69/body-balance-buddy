@@ -1,8 +1,8 @@
 
 import { supabase } from "@/integrations/supabase/client";
-import { FoodItem, FoodLog, MealType } from "@/types/food";
+import { FoodItem, FoodLog, FoodSource, MealType, DataLayer } from "@/types/food";
 
-// Search for food items both in local database and potentially via API in the future
+// Search for food items in the database
 export async function searchFoodItems(query: string, limit = 20): Promise<FoodItem[]> {
   if (!query || query.length < 2) return [];
 
@@ -23,7 +23,12 @@ export async function searchFoodItems(query: string, limit = 20): Promise<FoodIt
     updateSearchCounts(data.map(item => item.id));
   }
   
-  return data || [];
+  // Cast the response to match our FoodItem type
+  return data?.map(item => ({
+    ...item,
+    source: item.source as FoodSource,
+    data_layer: item.data_layer as DataLayer
+  })) || [];
 }
 
 // Get a user's food logs for a specific day
@@ -51,7 +56,16 @@ export async function getFoodLogsForDay(userId: string, date: string): Promise<F
     throw error;
   }
   
-  return data || [];
+  // Cast the response to match our FoodLog type
+  return data?.map(log => ({
+    ...log,
+    meal_type: log.meal_type as MealType,
+    food_item: log.food_item ? {
+      ...log.food_item,
+      source: log.food_item.source as FoodSource,
+      data_layer: log.food_item.data_layer as DataLayer
+    } : undefined
+  })) || [];
 }
 
 // Log a food item to the user's food log
@@ -104,7 +118,7 @@ export async function logFood(
   const { data, error } = await supabase
     .from('user_food_logs')
     .insert([logEntry])
-    .select()
+    .select('*, food_item:food_item_id(*)')
     .single();
     
   if (error) {
@@ -115,7 +129,16 @@ export async function logFood(
   // Update food item usage in the background
   updateFoodItemUsage(foodItemId);
   
-  return data;
+  // Cast the response to match our FoodLog type
+  return {
+    ...data,
+    meal_type: data.meal_type as MealType,
+    food_item: data.food_item ? {
+      ...data.food_item,
+      source: data.food_item.source as FoodSource,
+      data_layer: data.food_item.data_layer as DataLayer
+    } : undefined
+  };
 }
 
 // Delete a food log entry
@@ -139,7 +162,7 @@ async function updateSearchCounts(foodItemIds: string[]): Promise<void> {
     const { error } = await supabase
       .from('food_items')
       .update({
-        search_count: supabase.rpc('increment', { inc_amount: 1, row_id: id }),
+        search_count: supabase.rpc('increment_counter', { row_id: id }),
         last_used_at: new Date().toISOString()
       })
       .eq('id', id);
@@ -155,7 +178,7 @@ async function updateFoodItemUsage(foodItemId: string): Promise<void> {
   const { error } = await supabase
     .from('food_items')
     .update({
-      search_count: supabase.rpc('increment', { inc_amount: 1, row_id: foodItemId }),
+      search_count: supabase.rpc('increment_counter', { row_id: foodItemId }),
       last_used_at: new Date().toISOString()
     })
     .eq('id', foodItemId);
