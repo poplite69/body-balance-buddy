@@ -1,12 +1,14 @@
 
 import React, { useState } from 'react';
-import { X, Search, Plus } from 'lucide-react';
+import { X, Search, Plus, Info } from 'lucide-react';
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
 import { Skeleton } from '@/components/ui/skeleton';
 import { useQuery } from '@tanstack/react-query';
 import { supabase } from '@/integrations/supabase/client';
+import { useTray } from '@/components/tray/TrayProvider';
+import ExerciseInfoTray from './ExerciseInfoTray';
 
 interface ExerciseSelectorProps {
   isOpen: boolean;
@@ -20,6 +22,7 @@ const ExerciseSelector: React.FC<ExerciseSelectorProps> = ({
   onSelectExercise 
 }) => {
   const [searchQuery, setSearchQuery] = useState('');
+  const { showTray } = useTray();
   
   const { data: exercises, isLoading } = useQuery({
     queryKey: ['exercises', searchQuery],
@@ -47,6 +50,11 @@ const ExerciseSelector: React.FC<ExerciseSelectorProps> = ({
   
   const handleSearch = (e: React.ChangeEvent<HTMLInputElement>) => {
     setSearchQuery(e.target.value);
+  };
+
+  const handleInfoClick = (exercise: any, e: React.MouseEvent) => {
+    e.stopPropagation(); // Prevent triggering the parent onClick
+    showTray(ExerciseInfoTray, { exercise });
   };
   
   return (
@@ -86,13 +94,23 @@ const ExerciseSelector: React.FC<ExerciseSelectorProps> = ({
                   className="flex items-center justify-between p-3 rounded-md hover:bg-accent cursor-pointer"
                   onClick={() => handleSelectExercise(exercise)}
                 >
-                  <div>
+                  <div className="flex items-center">
                     <p className="font-medium">{exercise.name}</p>
-                    <p className="text-sm text-muted-foreground">{exercise.primary_muscle}</p>
+                    <Button 
+                      variant="ghost" 
+                      size="icon" 
+                      className="h-6 w-6 ml-1"
+                      onClick={(e) => handleInfoClick(exercise, e)}
+                    >
+                      <Info className="h-3.5 w-3.5" />
+                    </Button>
                   </div>
-                  <Button variant="ghost" size="icon">
-                    <Plus className="h-4 w-4" />
-                  </Button>
+                  <div className="flex items-center">
+                    <p className="text-sm text-muted-foreground mr-2">{exercise.primary_muscle}</p>
+                    <Button variant="ghost" size="icon">
+                      <Plus className="h-4 w-4" />
+                    </Button>
+                  </div>
                 </div>
               ))
             ) : (

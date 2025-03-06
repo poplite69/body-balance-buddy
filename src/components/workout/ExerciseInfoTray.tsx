@@ -5,20 +5,20 @@ import { Button } from '@/components/ui/button';
 import { BrowserService } from '@/services/BrowserService';
 import { Exercise } from './types';
 import { TrayPosition } from '@/components/tray/types';
-import { Youtube, Video, ExternalLink } from 'lucide-react';
+import { Youtube, Video } from 'lucide-react';
 
 interface ExerciseInfoTrayProps {
   id?: string;
   exercise: Exercise;
   position?: TrayPosition;
-  onClose: () => void;
+  onClose?: () => void;
 }
 
 const ExerciseInfoTray: React.FC<ExerciseInfoTrayProps> = ({
   id,
   exercise,
   position = 'bottom',
-  onClose
+  onClose = () => {}
 }) => {
   const handleYouTubeClick = () => {
     const query = `How to do ${exercise.name} exercise`;
