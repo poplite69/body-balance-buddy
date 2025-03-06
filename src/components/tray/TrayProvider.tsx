@@ -9,7 +9,7 @@ export const TrayProvider: React.FC<{ children: React.ReactNode }> = ({ children
   const [trays, setTrays] = useState<TrayItem[]>([]);
   
   // Show a new tray
-  const showTray = <T extends {}>(TrayComponent: TrayComponent, props: T): string => {
+  const showTray = <T extends { id?: string }>(TrayComponent: TrayComponent, props: T): string => {
     const id = props.id || uuidv4();
     
     const newTray: TrayItem = {
@@ -17,6 +17,7 @@ export const TrayProvider: React.FC<{ children: React.ReactNode }> = ({ children
       component: TrayComponent,
       props: {
         ...props,
+        id, // Ensure id is always passed to the component
         onClose: () => closeTray(id),
         ...(trays.length > 0 ? { 
           showBackButton: true,

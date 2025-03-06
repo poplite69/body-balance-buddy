@@ -42,7 +42,7 @@ export interface TrayItem {
 
 export interface TrayContextValue {
   trays: TrayItem[];
-  showTray: <T>(TrayComponent: TrayComponent, props: T) => string;
+  showTray: <T extends { id?: string }>(TrayComponent: TrayComponent, props: T) => string;
   closeTray: (id: string) => void;
   closeAllTrays: () => void;
   goBack: () => void;

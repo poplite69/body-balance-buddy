@@ -5,6 +5,7 @@ import { Button } from '@/components/ui/button';
 import { ConfirmationTrayProps } from './types';
 
 const ConfirmationTray: React.FC<ConfirmationTrayProps> = ({
+  id,
   title,
   message,
   confirmText = 'Confirm',
@@ -15,20 +16,24 @@ const ConfirmationTray: React.FC<ConfirmationTrayProps> = ({
   danger = false,
   ...props
 }) => {
+  // We need to ensure onClose exists
+  const handleClose = onClose || (() => {});
+  
   const handleCancel = () => {
     if (onCancel) onCancel();
-    onClose();
+    handleClose();
   };
   
   const handleConfirm = () => {
     onConfirm();
-    onClose();
+    handleClose();
   };
   
   return (
     <Tray 
+      id={id || ''}
       title={title}
-      onClose={onClose}
+      onClose={handleClose}
       height={240}
       {...props}
     >
