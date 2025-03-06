@@ -3,3 +3,5 @@
 export * from './search';
 export * from './log';
 export * from './utility';
+export * from './localSearch';
+export * from './dbManagement';

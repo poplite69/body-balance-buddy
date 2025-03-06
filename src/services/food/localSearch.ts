@@ -5,6 +5,15 @@ import { FoodItem, FoodSource, DataLayer } from "@/types/food";
 const SEARCH_CACHE_KEY = "food_search_cache";
 const FOOD_ITEM_CACHE_KEY = "food_item_cache";
 
+// Cache types
+interface SearchCacheEntry {
+  timestamp: number;
+  results: FoodItem[];
+}
+
+type SearchCache = Map<string, SearchCacheEntry>;
+type FoodItemCache = Map<string, FoodItem>;
+
 // Local cache expiration time (24 hours)
 const CACHE_EXPIRATION = 24 * 60 * 60 * 1000;
 
@@ -13,21 +22,25 @@ function initializeCache() {
   try {
     // Initialize search cache
     const storedSearchCache = localStorage.getItem(SEARCH_CACHE_KEY);
-    const searchCache = storedSearchCache ? 
-      new Map(Object.entries(JSON.parse(storedSearchCache))) : 
-      new Map<string, { timestamp: number, results: FoodItem[] }>();
+    const searchCache: SearchCache = storedSearchCache ? 
+      new Map(Object.entries(JSON.parse(storedSearchCache)).map(([key, value]) => [
+        key, value as SearchCacheEntry
+      ])) : 
+      new Map<string, SearchCacheEntry>();
     
     // Initialize food item cache
     const storedFoodItemCache = localStorage.getItem(FOOD_ITEM_CACHE_KEY);
-    const foodItemCache = storedFoodItemCache ? 
-      new Map(Object.entries(JSON.parse(storedFoodItemCache))) : 
+    const foodItemCache: FoodItemCache = storedFoodItemCache ? 
+      new Map(Object.entries(JSON.parse(storedFoodItemCache)).map(([key, value]) => [
+        key, value as FoodItem
+      ])) : 
       new Map<string, FoodItem>();
     
     return { searchCache, foodItemCache };
   } catch (error) {
     console.error("Error initializing cache from localStorage:", error);
     return { 
-      searchCache: new Map<string, { timestamp: number, results: FoodItem[] }>(),
+      searchCache: new Map<string, SearchCacheEntry>(),
       foodItemCache: new Map<string, FoodItem>() 
     };
   }
@@ -93,7 +106,11 @@ export function cacheSearchResults(query: string, results: FoodItem[]): void {
   // Prune cache if it gets too large (keep most recent 50 searches)
   if (searchCache.size > 50) {
     const keysToDelete = [...searchCache.keys()]
-      .sort((a, b) => (searchCache.get(a)?.timestamp || 0) - (searchCache.get(b)?.timestamp || 0))
+      .sort((a, b) => {
+        const aTime = searchCache.get(a)?.timestamp || 0;
+        const bTime = searchCache.get(b)?.timestamp || 0;
+        return aTime - bTime;
+      })
       .slice(0, searchCache.size - 50);
       
     keysToDelete.forEach(key => searchCache.delete(key));
