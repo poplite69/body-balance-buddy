@@ -36,6 +36,10 @@ const WorkoutExerciseCard: React.FC<WorkoutExerciseCardProps> = ({
   ]);
   const [loading, setLoading] = useState(true);
   const [savingSet, setSavingSet] = useState<string | null>(null);
+  // Track the most recently completed set in current workout
+  const [lastCompletedSet, setLastCompletedSet] = useState<WorkoutSet | null>(null);
+  // Track previous workout data
+  const [previousWorkoutSets, setPreviousWorkoutSets] = useState<WorkoutSet[]>([]);
 
   // Fetch previous workout data for this exercise and create workout_exercise record if needed
   useEffect(() => {
@@ -108,6 +112,9 @@ const WorkoutExerciseCard: React.FC<WorkoutExerciseCardProps> = ({
                 reps: null,
                 completed: false
               }));
+              
+              // Store previous sets for later reference when adding new sets
+              setPreviousWorkoutSets(previousSets);
             }
           }
         }
@@ -115,6 +122,15 @@ const WorkoutExerciseCard: React.FC<WorkoutExerciseCardProps> = ({
         // If we have existing sets, use those
         if (existingSets && existingSets.length > 0) {
           setSets(existingSets);
+          
+          // Find the last completed set in the existing sets
+          const completedSets = existingSets.filter(set => 
+            set.weight !== null && set.reps !== null
+          );
+          
+          if (completedSets.length > 0) {
+            setLastCompletedSet(completedSets[completedSets.length - 1]);
+          }
         } 
         // Otherwise, if we have previous completed sets, use the first one as a template
         else if (previousSets.length > 0) {
@@ -182,12 +198,49 @@ const WorkoutExerciseCard: React.FC<WorkoutExerciseCardProps> = ({
     initializeExercise();
   }, [workoutId, exercise.id, workoutExerciseId]);
 
+  // Determine the best values to prefill for a new set based on priorities
+  const getBestPrefillValues = () => {
+    // Priority 1: Use the most recent completed set in the current workout
+    if (lastCompletedSet) {
+      return {
+        previous_weight: lastCompletedSet.weight,
+        previous_reps: lastCompletedSet.reps
+      };
+    }
+    
+    // Priority 2: Use the last set from the previous workout 
+    if (previousWorkoutSets.length > 0) {
+      const lastPrevSet = previousWorkoutSets[previousWorkoutSets.length - 1];
+      return {
+        previous_weight: lastPrevSet.previous_weight,
+        previous_reps: lastPrevSet.previous_reps
+      };
+    }
+    
+    // Priority 3: Use values from the most recently added set in current workout
+    if (sets.length > 0) {
+      const lastSet = sets[sets.length - 1];
+      if (lastSet.weight !== null || lastSet.reps !== null) {
+        return {
+          previous_weight: lastSet.weight,
+          previous_reps: lastSet.reps
+        };
+      }
+    }
+    
+    // Default: empty values
+    return {
+      previous_weight: null,
+      previous_reps: null
+    };
+  };
+
   const addSet = async () => {
     try {
       const newSetNumber = sets.length + 1;
       
-      // Find previous data for this set number if exists
-      const previousSet = sets.find(s => s.set_number === newSetNumber - 1);
+      // Get prefill values based on our priority logic
+      const prefillValues = getBestPrefillValues();
       
       const newSet = {
         workout_exercise_id: workoutExerciseId,
@@ -195,8 +248,8 @@ const WorkoutExerciseCard: React.FC<WorkoutExerciseCardProps> = ({
         weight: null,
         reps: null,
         completed: false,
-        previous_weight: previousSet?.weight || null,
-        previous_reps: previousSet?.reps || null
+        previous_weight: prefillValues.previous_weight,
+        previous_reps: prefillValues.previous_reps
       };
       
       // Add to database
@@ -230,6 +283,11 @@ const WorkoutExerciseCard: React.FC<WorkoutExerciseCardProps> = ({
     updatedSets[index] = set;
     
     setSets(updatedSets);
+    
+    // If this set is now complete (has both weight and reps), update lastCompletedSet
+    if (isSetComplete(set)) {
+      setLastCompletedSet(set);
+    }
     
     // Update in database
     if (set.id) {
