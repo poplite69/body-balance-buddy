@@ -1,3 +1,4 @@
+
 import { Card, CardContent } from "@/components/ui/card";
 import { Progress } from "@/components/ui/progress";
 import { FoodLog } from "@/types/food";
@@ -14,11 +15,16 @@ export function DailyNutritionSummary({ foodLogs, calorieGoal = 2400 }: Nutritio
   const totalCarbs = foodLogs.reduce((sum, log) => sum + (log.carbs_g || 0), 0);
   const totalFat = foodLogs.reduce((sum, log) => sum + (log.fat_g || 0), 0);
   
-  // Calculate macronutrient percentages
+  // Calculate macronutrient percentages by calories
   const proteinCalories = totalProtein * 4;
   const carbsCalories = totalCarbs * 4;
   const fatCalories = totalFat * 9;
   const totalMacroCalories = proteinCalories + carbsCalories + fatCalories;
+  
+  // Calculate percentages for the progress bar (relative to total calories consumed)
+  const proteinPercentage = totalMacroCalories > 0 ? Math.round((proteinCalories / totalMacroCalories) * 100) : 0;
+  const carbsPercentage = totalMacroCalories > 0 ? Math.round((carbsCalories / totalMacroCalories) * 100) : 0;
+  const fatPercentage = totalMacroCalories > 0 ? Math.round((fatCalories / totalMacroCalories) * 100) : 0;
   
   // Calculate remaining calories
   const remainingCalories = calorieGoal - totalCalories;
@@ -31,6 +37,13 @@ export function DailyNutritionSummary({ foodLogs, calorieGoal = 2400 }: Nutritio
   // Calculate progress percentage (capped at 100%)
   const calorieProgress = Math.min(Math.round((totalCalories / calorieGoal) * 100), 100);
   
+  // Progress bar segments
+  const progressSegments = [
+    { value: proteinPercentage, color: '#10b981' }, // emerald-500 for protein
+    { value: carbsPercentage, color: '#3b82f6' },   // blue-500 for carbs
+    { value: fatPercentage, color: '#f59e0b' }      // amber-500 for fat
+  ];
+  
   return (
     <Card className="bg-card border shadow-sm">
       <CardContent className="p-4">
@@ -39,16 +52,22 @@ export function DailyNutritionSummary({ foodLogs, calorieGoal = 2400 }: Nutritio
           <div>
             <div className="flex justify-between text-sm mb-1">
               <span className="font-medium">Daily Progress</span>
-              <span>{totalCalories} / {calorieGoal} cal</span>
+              <span className="text-blue-500">{totalCalories} / {calorieGoal} cal</span>
             </div>
-            <Progress value={calorieProgress} className="h-2" />
+            <Progress segments={progressSegments} value={calorieProgress} className="h-2" />
           </div>
           
           {/* Macros Summary */}
-          <div className="flex justify-start gap-4 pt-1">
-            <span className="text-sm">{roundedProtein}P</span>
-            <span className="text-sm">{roundedCarbs}C</span>
-            <span className="text-sm">{roundedFat}F</span>
+          <div className="flex justify-between pt-1">
+            {/* Total macros (right aligned) */}
+            <div className="text-sm text-blue-500">{roundedProtein}P {roundedCarbs}C {roundedFat}F</div>
+            
+            {/* Individual macros with colors */}
+            <div className="flex gap-3">
+              <span className="text-sm text-emerald-500">{roundedProtein}P</span>
+              <span className="text-sm text-blue-500">{roundedCarbs}C</span>
+              <span className="text-sm text-amber-500">{roundedFat}F</span>
+            </div>
           </div>
         </div>
       </CardContent>

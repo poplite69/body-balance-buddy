@@ -60,8 +60,8 @@ export function MealSection({
         <div>
           <h3 className="text-lg font-medium">{title}</h3>
           {foodLogs.length > 0 && (
-            <div className="flex gap-3 text-sm text-muted-foreground">
-              <span>{totalCalories} cal</span>
+            <div className="flex gap-3 text-sm">
+              <span className="text-blue-500">{totalCalories} cal</span>
               <span className="text-emerald-500">{roundedProtein}P</span>
               <span className="text-blue-500">{roundedCarbs}C</span>
               <span className="text-amber-500">{roundedFat}F</span>
@@ -95,7 +95,7 @@ export function MealSection({
                 </div>
                 <div className="flex items-center gap-3">
                   <div className="flex items-center gap-2 text-sm">
-                    <span>{log.calories} cal</span>
+                    <span className="text-blue-500">{log.calories} cal</span>
                     <span className="text-emerald-500">{Math.round(log.protein_g || 0)}P</span>
                     <span className="text-blue-500">{Math.round(log.carbs_g || 0)}C</span>
                     <span className="text-amber-500">{Math.round(log.fat_g || 0)}F</span>
