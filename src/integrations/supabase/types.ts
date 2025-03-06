@@ -580,6 +580,10 @@ export type Database = {
       [_ in never]: never
     }
     Functions: {
+      create_increment_function: {
+        Args: Record<PropertyKey, never>
+        Returns: undefined
+      }
       gtrgm_compress: {
         Args: {
           "": unknown
@@ -609,6 +613,12 @@ export type Database = {
           "": unknown
         }
         Returns: unknown
+      }
+      increment_counter: {
+        Args: {
+          row_id: string
+        }
+        Returns: number
       }
       set_limit: {
         Args: {
