@@ -1,11 +1,11 @@
+
 import React from 'react';
 import Tray from '@/components/tray/Tray';
 import { Button } from '@/components/ui/button';
 import { BrowserService } from '@/services/BrowserService';
 import { Exercise } from './types';
 import { TrayPosition } from '@/components/tray/types';
-import { Youtube, Video } from 'lucide-react';
-import { ExternalLink, Video } from 'lucide-react';
+import { Youtube, Video, ExternalLink } from 'lucide-react';
 
 interface ExerciseInfoTrayProps {
   id?: string;
