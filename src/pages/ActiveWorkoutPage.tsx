@@ -438,11 +438,7 @@ const ActiveWorkoutPage: React.FC = () => {
       />
       
       <WorkoutActionButtons 
-        onAddExercises={() => {
-          // Use showTray to open the ExerciseSelector tray
-          const { showTray } = useTray();
-          showTray(ExerciseSelector, { onSelectExercise: handleAddExercise });
-        }}
+        onAddExercise={handleAddExercise}
         onCancelWorkout={handleCancelWorkout}
         cancelIsPending={cancelWorkoutMutation.isPending}
       />

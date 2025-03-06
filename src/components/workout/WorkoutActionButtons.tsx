@@ -4,20 +4,25 @@ import { Plus, X } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { useTray } from '@/components/tray/TrayProvider';
 import ExerciseSelector from './ExerciseSelector';
+import { Exercise } from './types';
 
 interface WorkoutActionButtonsProps {
   onCancelWorkout: () => void;
   cancelIsPending: boolean;
+  onAddExercise: (exercise: Exercise) => void;
 }
 
 const WorkoutActionButtons: React.FC<WorkoutActionButtonsProps> = ({
   onCancelWorkout,
-  cancelIsPending
+  cancelIsPending,
+  onAddExercise
 }) => {
   const { showTray } = useTray();
   
   const handleAddExercises = () => {
-    showTray(ExerciseSelector, {});
+    showTray(ExerciseSelector, {
+      onSelectExercise: onAddExercise
+    });
   };
   
   return (
