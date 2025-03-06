@@ -1,11 +1,11 @@
-
 import { useState, useEffect } from "react";
 import { searchFoodItems } from "@/services/food";
+import { clearCache } from "@/services/food/localSearch";
 import { FoodItem } from "@/types/food";
 import { Card, CardContent } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
-import { Search, X, Clock, ArrowDownUp } from "lucide-react";
+import { Search, X, Clock, ArrowDownUp, TrashIcon } from "lucide-react";
 import { toast } from "sonner";
 import { Badge } from "@/components/ui/badge";
 
@@ -83,6 +83,11 @@ export function FoodSearch({ onFoodSelect }: FoodSearchProps) {
     toast.success("Search history cleared");
   };
 
+  const handleClearCache = () => {
+    clearCache();
+    toast.success("Search cache cleared");
+  };
+
   return (
     <Card className="w-full">
       <CardContent className="pt-4">
@@ -117,14 +122,25 @@ export function FoodSearch({ onFoodSelect }: FoodSearchProps) {
               <div className="text-sm font-medium flex items-center gap-1">
                 <Clock className="h-3 w-3" /> Recent Searches
               </div>
-              <Button 
-                variant="ghost" 
-                size="sm" 
-                className="h-6 text-xs"
-                onClick={clearRecentSearches}
-              >
-                Clear
-              </Button>
+              <div className="flex gap-2">
+                <Button 
+                  variant="ghost" 
+                  size="sm" 
+                  className="h-6 text-xs"
+                  onClick={handleClearCache}
+                  title="Clear all cached food data"
+                >
+                  <TrashIcon className="h-3 w-3 mr-1" /> Cache
+                </Button>
+                <Button 
+                  variant="ghost" 
+                  size="sm" 
+                  className="h-6 text-xs"
+                  onClick={clearRecentSearches}
+                >
+                  Clear
+                </Button>
+              </div>
             </div>
             <div className="flex flex-wrap gap-2">
               {recentSearches.map((term, i) => (

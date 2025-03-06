@@ -1,16 +1,60 @@
+
 import { FoodItem, FoodSource, DataLayer } from "@/types/food";
 
-// In-memory cache to store recent searches and results
-const searchCache = new Map<string, {
-  timestamp: number,
-  results: FoodItem[]
-}>();
+// Cache keys for localStorage
+const SEARCH_CACHE_KEY = "food_search_cache";
+const FOOD_ITEM_CACHE_KEY = "food_item_cache";
 
-// Cache for individual food items
-const foodItemCache = new Map<string, FoodItem>();
+// Local cache expiration time (24 hours)
+const CACHE_EXPIRATION = 24 * 60 * 60 * 1000;
 
-// Local cache expiration time (30 minutes)
-const CACHE_EXPIRATION = 30 * 60 * 1000;
+// Initialize caches from localStorage or create empty ones
+function initializeCache() {
+  try {
+    // Initialize search cache
+    const storedSearchCache = localStorage.getItem(SEARCH_CACHE_KEY);
+    const searchCache = storedSearchCache ? 
+      new Map(Object.entries(JSON.parse(storedSearchCache))) : 
+      new Map<string, { timestamp: number, results: FoodItem[] }>();
+    
+    // Initialize food item cache
+    const storedFoodItemCache = localStorage.getItem(FOOD_ITEM_CACHE_KEY);
+    const foodItemCache = storedFoodItemCache ? 
+      new Map(Object.entries(JSON.parse(storedFoodItemCache))) : 
+      new Map<string, FoodItem>();
+    
+    return { searchCache, foodItemCache };
+  } catch (error) {
+    console.error("Error initializing cache from localStorage:", error);
+    return { 
+      searchCache: new Map<string, { timestamp: number, results: FoodItem[] }>(),
+      foodItemCache: new Map<string, FoodItem>() 
+    };
+  }
+}
+
+// Get caches
+const { searchCache, foodItemCache } = initializeCache();
+
+// Helper to save search cache to localStorage
+function saveSearchCache() {
+  try {
+    const cacheObject = Object.fromEntries(searchCache);
+    localStorage.setItem(SEARCH_CACHE_KEY, JSON.stringify(cacheObject));
+  } catch (error) {
+    console.error("Error saving search cache to localStorage:", error);
+  }
+}
+
+// Helper to save food item cache to localStorage
+function saveFoodItemCache() {
+  try {
+    const cacheObject = Object.fromEntries(foodItemCache);
+    localStorage.setItem(FOOD_ITEM_CACHE_KEY, JSON.stringify(cacheObject));
+  } catch (error) {
+    console.error("Error saving food item cache to localStorage:", error);
+  }
+}
 
 /**
  * Get food items from local cache
@@ -54,6 +98,10 @@ export function cacheSearchResults(query: string, results: FoodItem[]): void {
       
     keysToDelete.forEach(key => searchCache.delete(key));
   }
+  
+  // Save to localStorage
+  saveSearchCache();
+  saveFoodItemCache();
 }
 
 /**
@@ -99,4 +147,15 @@ export function performLocalSearch(query: string, limit = 20): FoodItem[] | null
   }
   
   return results.length > 0 ? results : null;
+}
+
+/**
+ * Clear all cached data
+ */
+export function clearCache(): void {
+  searchCache.clear();
+  foodItemCache.clear();
+  localStorage.removeItem(SEARCH_CACHE_KEY);
+  localStorage.removeItem(FOOD_ITEM_CACHE_KEY);
+  console.log("Food search cache cleared");
 }
