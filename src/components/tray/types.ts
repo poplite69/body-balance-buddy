@@ -15,6 +15,13 @@ export interface ConfirmationTrayProps {
   danger?: boolean;
 }
 
+export interface ExerciseSelectorTrayProps {
+  id?: string;
+  onClose: () => void;
+  onSelectExercise: (exercise: any) => void;
+  position?: TrayPosition;
+}
+
 export interface BaseTrayProps {
   id?: string;
   title: string;
