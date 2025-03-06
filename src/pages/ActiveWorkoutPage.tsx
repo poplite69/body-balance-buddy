@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Timer, MoreHorizontal, ChevronDown, ChevronUp } from 'lucide-react';
@@ -429,14 +430,15 @@ const ActiveWorkoutPage: React.FC = () => {
           <Button 
             variant="secondary" 
             size="icon" 
-            className="rounded-full h-12 w-12"
+            className="h-12 w-12"
             onClick={() => setIsTimerActive(prev => !prev)}
           >
             <Timer className="h-6 w-6" />
           </Button>
           
           <Button 
-            className="bg-green-500 hover:bg-green-600 h-12 px-8 rounded-full"
+            variant="default"
+            className="h-12 px-8"
             onClick={handlePreFinishCheck}
             disabled={finishWorkoutMutation.isPending}
           >
@@ -510,7 +512,8 @@ const ActiveWorkoutPage: React.FC = () => {
       
       {/* Add exercises button */}
       <Button 
-        className="w-full py-6 my-4 bg-blue-50 text-blue-500 hover:bg-blue-100 hover:text-blue-600"
+        variant="outline"
+        className="w-full py-6 my-4"
         onClick={() => setIsExerciseSelectorOpen(true)}
       >
         Add Exercises

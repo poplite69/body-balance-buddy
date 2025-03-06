@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect } from 'react';
 import { Check, Plus, Link, MoreHorizontal } from 'lucide-react';
 import { Card, CardContent } from '@/components/ui/card';
@@ -381,7 +382,7 @@ const WorkoutExerciseCard: React.FC<WorkoutExerciseCardProps> = ({
                   <Button
                     variant={set.completed ? "default" : "outline"}
                     size="icon"
-                    className={`rounded-md h-8 w-8 ${set.completed ? 'bg-primary hover:bg-primary/90' : 'border-muted'}`}
+                    className="h-8 w-8"
                     onClick={() => updateSet(index, 'completed', !set.completed)}
                     disabled={savingSet === set.id}
                   >
@@ -394,7 +395,7 @@ const WorkoutExerciseCard: React.FC<WorkoutExerciseCardProps> = ({
             {/* Add set button */}
             <Button
               variant="ghost"
-              className="w-full mt-1 h-8 text-xs bg-muted/50 text-muted-foreground hover:bg-muted"
+              className="w-full mt-1 h-8 text-xs text-muted-foreground hover:bg-accent"
               onClick={addSet}
             >
               <Plus className="h-3.5 w-3.5 mr-1" /> Add Set
