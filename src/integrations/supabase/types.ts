@@ -621,9 +621,17 @@ export type Database = {
       [_ in never]: never
     }
     Functions: {
+      cleanup_orphaned_food_records: {
+        Args: Record<PropertyKey, never>
+        Returns: undefined
+      }
       create_increment_function: {
         Args: Record<PropertyKey, never>
         Returns: undefined
+      }
+      get_food_database_stats: {
+        Args: Record<PropertyKey, never>
+        Returns: Json
       }
       gtrgm_compress: {
         Args: {
@@ -676,6 +684,10 @@ export type Database = {
           "": string
         }
         Returns: string[]
+      }
+      update_food_usage_statistics: {
+        Args: Record<PropertyKey, never>
+        Returns: undefined
       }
     }
     Enums: {

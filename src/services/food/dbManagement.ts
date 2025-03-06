@@ -282,32 +282,32 @@ export async function runFoodDatabaseMaintenance(): Promise<{ success: boolean, 
     
     // 1. Clean up orphaned records - using stored procedure
     console.log("Calling cleanup function");
-    const { error: cleanupError } = await supabase.rpc('cleanup_orphaned_food_records');
+    const cleanupResult = await supabase.rpc('cleanup_orphaned_food_records');
     
-    if (cleanupError) {
-      report.push(`Error cleaning up orphaned records: ${cleanupError.message}`);
+    if (cleanupResult.error) {
+      report.push(`Error cleaning up orphaned records: ${cleanupResult.error.message}`);
     } else {
       report.push("Orphaned records cleaned successfully");
     }
     
     // 2. Update usage statistics - using stored procedure
     console.log("Calling update stats function");
-    const { error: statsError } = await supabase.rpc('update_food_usage_statistics');
+    const statsResult = await supabase.rpc('update_food_usage_statistics');
     
-    if (statsError) {
-      report.push(`Error updating food usage statistics: ${statsError.message}`);
+    if (statsResult.error) {
+      report.push(`Error updating food usage statistics: ${statsResult.error.message}`);
     } else {
       report.push("Food usage statistics updated successfully");
     }
     
     // 3. Generate report on database health - using stored procedure
-    const { data: statsData, error: statsQueryError } = await supabase.rpc('get_food_database_stats');
+    const statsQueryResult = await supabase.rpc('get_food_database_stats');
     
-    if (statsQueryError || !statsData) {
-      report.push(`Error retrieving database statistics: ${statsQueryError?.message || "No data returned"}`);
+    if (statsQueryResult.error || !statsQueryResult.data) {
+      report.push(`Error retrieving database statistics: ${statsQueryResult.error?.message || "No data returned"}`);
     } else {
       // Cast the returned data to our interface
-      const stats = statsData as FoodDatabaseStats;
+      const stats = statsQueryResult.data as FoodDatabaseStats;
       
       report.push(`Total food items: ${stats.total_count}`);
       report.push(`Core items: ${stats.core_count}`);
