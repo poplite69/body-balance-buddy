@@ -25,6 +25,9 @@ const config: CapacitorConfig = {
     },
     PushNotifications: {
       presentationOptions: ["badge", "sound", "alert"]
+    },
+    Browser: {
+      toolbarColor: "#33C3F0"
     }
   },
   ios: {
