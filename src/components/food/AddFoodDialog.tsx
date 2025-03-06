@@ -1,11 +1,10 @@
-
 import { useState, useEffect } from "react";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
 import { FoodItem, MealType } from "@/types/food";
 import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
 import { toast } from "sonner";
-import { logFood } from "@/services/foodService";
+import { logFood } from "@/services/food";
 import { useAuth } from "@/context/AuthContext";
 import { PortionSelect } from "./PortionSelect";
 

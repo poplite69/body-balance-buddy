@@ -1,6 +1,6 @@
 
 import { useState } from "react";
-import { searchFoodItems } from "@/services/foodService";
+import { searchFoodItems } from "@/services/food";
 import { FoodItem } from "@/types/food";
 import { Card, CardContent } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";

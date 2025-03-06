@@ -8,7 +8,7 @@ import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover
 import { cn } from "@/lib/utils";
 import { MealSection } from "./MealSection";
 import { DailyNutritionSummary } from "./DailyNutritionSummary";
-import { getFoodLogsForDay } from "@/services/foodService";
+import { getFoodLogsForDay } from "@/services/food";
 import { FoodLog, MealType } from "@/types/food";
 import { useAuth } from "@/context/AuthContext";
 import { toast } from "sonner";

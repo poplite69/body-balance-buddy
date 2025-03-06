@@ -4,7 +4,7 @@ import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Plus, Trash2 } from "lucide-react";
 import { FoodLog, FoodItem, MealType } from "@/types/food";
-import { deleteFoodLog } from "@/services/foodService";
+import { deleteFoodLog } from "@/services/food";
 import { toast } from "sonner";
 import { FoodSearch } from "./FoodSearch";
 import { AddFoodDialog } from "./AddFoodDialog";
