@@ -4,7 +4,6 @@ import { X, ChevronLeft } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { cn } from '@/lib/utils';
 import { BaseTrayProps } from './types';
-import './tray.css';
 
 const Tray: React.FC<BaseTrayProps> = ({
   title,
@@ -12,10 +11,9 @@ const Tray: React.FC<BaseTrayProps> = ({
   onBack,
   showBackButton = false,
   position = 'bottom',
+  height = 'auto',
   children,
   elevation = 2,
-  id,
-  zIndex,
 }) => {
   const trayRef = useRef<HTMLDivElement>(null);
   const [isVisible, setIsVisible] = useState(false);
@@ -29,49 +27,58 @@ const Tray: React.FC<BaseTrayProps> = ({
     return () => clearTimeout(timer);
   }, []);
   
+  // Handle outside click
+  useEffect(() => {
+    const handleClickOutside = (event: MouseEvent) => {
+      if (trayRef.current && !trayRef.current.contains(event.target as Node)) {
+        handleClose();
+      }
+    };
+    
+    document.addEventListener('mousedown', handleClickOutside);
+    return () => {
+      document.removeEventListener('mousedown', handleClickOutside);
+    };
+  }, [onClose]);
+  
   const handleClose = () => {
     setIsVisible(false);
     setTimeout(() => {
       onClose();
-    }, 300); // Match the transition duration
+    }, 200); // Delay to allow animation to complete
   };
   
   // Calculate positioning classes based on position prop
   const getPositionClasses = () => {
     switch (position) {
       case 'bottom':
-        return 'bottom-[30px]';
+        return 'bottom-[60px]';
       case 'top':
-        return 'top-[30px]';
+        return 'top-[60px]';
       case 'left':
-        return 'left-[30px]';
+        return 'left-[60px]';
       case 'right':
-        return 'right-[30px]';
+        return 'right-[60px]';
       default:
-        return 'bottom-[30px]';
+        return 'bottom-[60px]';
     }
   };
   
   return (
-    <div 
-      className="fixed inset-0 flex items-end justify-center bg-black/60 transition-opacity duration-300"
-      style={{ 
-        opacity: isVisible ? 1 : 0,
-        zIndex: zIndex || 50
-      }}
-    >
+    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 transition-opacity duration-200"
+         style={{ opacity: isVisible ? 1 : 0 }}>
       <div 
         ref={trayRef}
         data-elevation={elevation}
-        id={id}
         className={cn(
-          'tray-floating transition-all duration-300 ease-out',
+          'absolute mx-4 tray-floating transition-all duration-300 ease-out bg-background',
           getPositionClasses(),
-          isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-10',
+          isVisible ? 'opacity-100 transform-none' : 'opacity-0 translate-y-5',
+          'w-auto max-w-md'
         )}
         style={{ 
-          maxHeight: 'calc(85vh - 60px)',
-          zIndex: (zIndex || 50) + 1,
+          height: typeof height === 'number' ? `${height}px` : height,
+          maxHeight: 'calc(85vh - 120px)',
         }}
       >
         {/* Tray header */}
@@ -82,12 +89,7 @@ const Tray: React.FC<BaseTrayProps> = ({
                 variant="ghost" 
                 size="icon" 
                 className="mr-2" 
-                onClick={() => {
-                  setIsVisible(false);
-                  setTimeout(() => {
-                    if (onBack) onBack();
-                  }, 200);
-                }}
+                onClick={onBack}
               >
                 <ChevronLeft className="h-5 w-5" />
               </Button>
@@ -104,7 +106,7 @@ const Tray: React.FC<BaseTrayProps> = ({
           </Button>
         </div>
         
-        {/* Tray content with auto height */}
+        {/* Tray content */}
         <div className="p-4 overflow-y-auto" style={{ maxHeight: 'calc(85vh - 180px)' }}>
           {children}
         </div>

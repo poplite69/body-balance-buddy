@@ -1,30 +1,19 @@
 
-import React, { createContext, useContext, useState, useEffect } from 'react';
+import React, { createContext, useContext, useState } from 'react';
 import { TrayContextValue, TrayItem, TrayComponent } from './types';
 import { v4 as uuidv4 } from 'uuid';
 
 const TrayContext = createContext<TrayContextValue | undefined>(undefined);
 
-const BASE_Z_INDEX = 50;
-
 export const TrayProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   const [trays, setTrays] = useState<TrayItem[]>([]);
-  
-  // Cleanup function for when component unmounts
-  useEffect(() => {
-    return () => {
-      // Clean up any remaining trays
-      setTrays([]);
-    };
-  }, []);
   
   // Show a new tray with generic props typing
   const showTray = <P extends Record<string, any>>(
     TrayComponent: React.ComponentType<P>, 
-    props: Omit<P, 'id' | 'onClose' | 'showBackButton' | 'onBack' | 'parentId' | 'zIndex'>
+    props: Omit<P, 'id' | 'onClose' | 'showBackButton' | 'onBack' | 'parentId'>
   ): string => {
     const id = props.id || uuidv4();
-    const zIndex = BASE_Z_INDEX + trays.length * 10;
     
     const newTray: TrayItem = {
       id,
@@ -32,7 +21,6 @@ export const TrayProvider: React.FC<{ children: React.ReactNode }> = ({ children
       props: {
         ...props,
         id, // Ensure id is always passed to the component
-        zIndex,
         onClose: () => closeTray(id),
         ...(trays.length > 0 ? { 
           showBackButton: true,
@@ -42,7 +30,6 @@ export const TrayProvider: React.FC<{ children: React.ReactNode }> = ({ children
       }
     };
     
-    // Add the new tray to the stack
     setTrays(current => [...current, newTray]);
     return id;
   };
@@ -87,11 +74,7 @@ export const TrayProvider: React.FC<{ children: React.ReactNode }> = ({ children
         <div className="tray-container">
           {trays.map((tray, index) => {
             const TrayComp = tray.component;
-            // Only render the current tray - this prevents seeing multiple trays at once
-            if (index === trays.length - 1) {
-              return <TrayComp key={tray.id} {...tray.props} />;
-            }
-            return null;
+            return <TrayComp key={tray.id} {...tray.props} />;
           })}
         </div>
       )}

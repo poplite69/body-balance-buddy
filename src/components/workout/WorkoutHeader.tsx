@@ -1,9 +1,10 @@
+
 import React from 'react';
 import { Timer, MoreHorizontal, ChevronDown, ChevronUp } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import WorkoutTimer from '@/components/workout/WorkoutTimer';
-import { ActiveWorkout } from '@/hooks/useActiveWorkout';
+import { ActiveWorkout } from '@/pages/ActiveWorkoutPage';
 
 interface WorkoutHeaderProps {
   workout: ActiveWorkout;
