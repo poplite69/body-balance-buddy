@@ -7,10 +7,11 @@ import { Skeleton } from "@/components/ui/skeleton";
 
 interface ProtectedRouteProps {
   children: ReactNode;
+  requireAdmin?: boolean;
 }
 
-const ProtectedRoute = ({ children }: ProtectedRouteProps) => {
-  const { user, loading } = useAuth();
+const ProtectedRoute = ({ children, requireAdmin = false }: ProtectedRouteProps) => {
+  const { user, loading, isAdmin } = useAuth();
   
   // Show mobile-optimized loading skeleton while checking authentication status
   if (loading) {
@@ -36,7 +37,19 @@ const ProtectedRoute = ({ children }: ProtectedRouteProps) => {
     return <Navigate to="/auth" replace />;
   }
   
-  // User is authenticated, render the children
+  // Check admin access if required
+  if (requireAdmin && !isAdmin) {
+    return (
+      <div className="container py-6 max-w-4xl mx-auto">
+        <div className="p-8 bg-red-50 border border-red-200 rounded-md text-red-700 text-center">
+          <h2 className="text-xl font-bold mb-2">Admin Access Required</h2>
+          <p>You don't have permission to access this page.</p>
+        </div>
+      </div>
+    );
+  }
+  
+  // User is authenticated and has proper permissions, render the children
   return <>{children}</>;
 };
 

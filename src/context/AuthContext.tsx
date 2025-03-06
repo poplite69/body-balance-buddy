@@ -1,4 +1,3 @@
-
 import React, { createContext, useState, useEffect, useContext } from 'react';
 import { supabase } from '@/integrations/supabase/client';
 import { Session, User } from '@supabase/supabase-js';
@@ -10,6 +9,7 @@ interface AuthContextType {
   signOut: () => Promise<void>;
   loading: boolean;
   isOnline: boolean;
+  isAdmin: boolean; // New property to check if user is admin
 }
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
@@ -19,6 +19,31 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
   const [user, setUser] = useState<User | null>(null);
   const [loading, setLoading] = useState(true);
   const [isOnline, setIsOnline] = useState(navigator.onLine);
+  const [isAdmin, setIsAdmin] = useState(false);
+
+  // Check if user is admin
+  useEffect(() => {
+    if (user) {
+      // For now, we use a simple check based on email
+      // Later, you would implement a proper role-based system
+      const adminEmails = ['admin@example.com']; // Replace with actual admin emails
+      setIsAdmin(adminEmails.includes(user.email || ''));
+      
+      // This comment is for demonstration purposes:
+      // In a real implementation, you would fetch roles from a database table
+      // const fetchUserRole = async () => {
+      //   const { data } = await supabase
+      //     .from('user_roles')
+      //     .select('role')
+      //     .eq('user_id', user.id)
+      //     .single();
+      //   setIsAdmin(data?.role === 'admin');
+      // };
+      // fetchUserRole();
+    } else {
+      setIsAdmin(false);
+    }
+  }, [user]);
 
   useEffect(() => {
     // Monitor online/offline status
@@ -118,7 +143,8 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
     user,
     signOut,
     loading,
-    isOnline
+    isOnline,
+    isAdmin
   };
 
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;

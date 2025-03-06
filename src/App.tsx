@@ -1,9 +1,11 @@
+
 import { Routes, Route } from "react-router-dom";
 import WorkoutPage from "./pages/WorkoutPage";
 import ActiveWorkoutPage from "./pages/ActiveWorkoutPage";
 import HomePage from "./pages/HomePage";
 import AuthPage from "./pages/AuthPage";
 import FoodPage from "./pages/FoodPage";
+import DatabaseAdminPage from "./pages/DatabaseAdminPage";
 import { AppLayout } from "./components/layout/AppLayout";
 import ProtectedRoute from "./components/auth/ProtectedRoute";
 import { Toaster } from "sonner";
@@ -74,6 +76,16 @@ function App() {
             <AppLayout showBottomNav={false}>
               <ProtectedRoute>
                 <ActiveWorkoutPage />
+              </ProtectedRoute>
+            </AppLayout>
+          } 
+        />
+        <Route 
+          path="/admin/database" 
+          element={
+            <AppLayout showBottomNav={false}>
+              <ProtectedRoute requireAdmin={true}>
+                <DatabaseAdminPage />
               </ProtectedRoute>
             </AppLayout>
           } 
