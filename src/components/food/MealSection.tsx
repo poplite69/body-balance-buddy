@@ -62,9 +62,9 @@ export function MealSection({
           {foodLogs.length > 0 && (
             <div className="flex gap-3 text-sm text-muted-foreground">
               <span>{totalCalories} cal</span>
-              <span className="text-emerald-500">P: {roundedProtein}g</span>
-              <span className="text-blue-500">C: {roundedCarbs}g</span>
-              <span className="text-amber-500">F: {roundedFat}g</span>
+              <span className="text-emerald-500">{roundedProtein}P</span>
+              <span className="text-blue-500">{roundedCarbs}C</span>
+              <span className="text-amber-500">{roundedFat}F</span>
             </div>
           )}
         </div>
@@ -96,9 +96,9 @@ export function MealSection({
                 <div className="flex items-center gap-3">
                   <div className="flex items-center gap-2 text-sm">
                     <span>{log.calories} cal</span>
-                    <span className="text-emerald-500">P: {Math.round(log.protein_g || 0)}g</span>
-                    <span className="text-blue-500">C: {Math.round(log.carbs_g || 0)}g</span> 
-                    <span className="text-amber-500">F: {Math.round(log.fat_g || 0)}g</span>
+                    <span className="text-emerald-500">{Math.round(log.protein_g || 0)}P</span>
+                    <span className="text-blue-500">{Math.round(log.carbs_g || 0)}C</span>
+                    <span className="text-amber-500">{Math.round(log.fat_g || 0)}F</span>
                   </div>
                   <Button 
                     variant="ghost" 

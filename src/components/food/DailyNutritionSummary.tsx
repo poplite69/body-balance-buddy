@@ -1,4 +1,3 @@
-
 import { Card, CardContent } from "@/components/ui/card";
 import { Progress } from "@/components/ui/progress";
 import { FoodLog } from "@/types/food";
@@ -36,26 +35,6 @@ export function DailyNutritionSummary({ foodLogs, calorieGoal = 2400 }: Nutritio
     <Card className="bg-card border shadow-sm">
       <CardContent className="p-4">
         <div className="space-y-3">
-          {/* Daily Budget */}
-          <div className="flex justify-between">            
-            <div className="flex flex-col">
-              <span className="text-xs text-muted-foreground">BUDGET</span>
-              <span className="text-xl font-bold text-primary">{calorieGoal}</span>
-            </div>
-            
-            <div className="flex flex-col">
-              <span className="text-xs text-muted-foreground">FOOD</span>
-              <span className="text-xl font-bold">{totalCalories}</span>
-            </div>
-            
-            <div className="flex flex-col">
-              <span className="text-xs text-muted-foreground">REMAINING</span>
-              <span className={`text-xl font-bold ${remainingCalories >= 0 ? 'text-green-500' : 'text-red-500'}`}>
-                {remainingCalories}
-              </span>
-            </div>
-          </div>
-          
           {/* Progress Bar */}
           <div>
             <div className="flex justify-between text-sm mb-1">
@@ -65,7 +44,7 @@ export function DailyNutritionSummary({ foodLogs, calorieGoal = 2400 }: Nutritio
             <Progress value={calorieProgress} className="h-2" />
           </div>
           
-          {/* Macros Summary (compact format) */}
+          {/* Macros Summary */}
           <div className="flex justify-start gap-4 pt-1">
             <span className="text-sm">{roundedProtein}P</span>
             <span className="text-sm">{roundedCarbs}C</span>
