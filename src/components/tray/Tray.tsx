@@ -13,6 +13,7 @@ const Tray: React.FC<BaseTrayProps> = ({
   position = 'bottom',
   height = 'auto',
   children,
+  elevation = 2,
 }) => {
   const trayRef = useRef<HTMLDivElement>(null);
   const [isVisible, setIsVisible] = useState(false);
@@ -30,7 +31,7 @@ const Tray: React.FC<BaseTrayProps> = ({
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
       if (trayRef.current && !trayRef.current.contains(event.target as Node)) {
-        onClose();
+        handleClose();
       }
     };
     
@@ -68,6 +69,7 @@ const Tray: React.FC<BaseTrayProps> = ({
          style={{ opacity: isVisible ? 1 : 0 }}>
       <div 
         ref={trayRef}
+        data-elevation={elevation}
         className={cn(
           'absolute mx-4 tray-floating transition-all duration-300 ease-out bg-background',
           getPositionClasses(),
@@ -77,7 +79,6 @@ const Tray: React.FC<BaseTrayProps> = ({
         style={{ 
           height: typeof height === 'number' ? `${height}px` : height,
           maxHeight: 'calc(85vh - 120px)',
-          boxShadow: '0px 4px 20px rgba(0, 0, 0, 0.18)',
         }}
       >
         {/* Tray header */}
