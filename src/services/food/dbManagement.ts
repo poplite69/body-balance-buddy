@@ -164,19 +164,20 @@ export async function findDuplicateFoodItems(foodItem: FoodItem): Promise<FoodIt
         if (brandMatch) score += 2;
         if (similarCalories) score += 1;
         
-        // Cast item to FoodItem type to ensure source is handled correctly
         return { 
-          ...item, 
-          source: item.source as FoodSource,
-          data_layer: item.data_layer as DataLayer,
+          ...item,
           similarityScore: score 
         };
       })
       .filter(item => item.similarityScore >= 3) // Threshold for considering as duplicate
       .sort((a, b) => b.similarityScore - a.similarityScore);
     
-    // Remove the similarityScore property before returning
-    return potentialDuplicates.map(({ similarityScore, ...item }) => item as FoodItem);
+    // Properly cast and remove the similarityScore property before returning
+    return potentialDuplicates.map(({ similarityScore, ...item }) => ({
+      ...item,
+      source: item.source as FoodSource,
+      data_layer: item.data_layer as DataLayer
+    } as FoodItem));
   } catch (error) {
     console.error("Exception finding duplicates:", error);
     return [];
@@ -279,51 +280,41 @@ export async function runFoodDatabaseMaintenance(): Promise<{ success: boolean, 
   try {
     const report: string[] = ["Food database maintenance report:"];
     
-    // 1. Clean up orphaned records
-    // Use raw SQL execution for database functions instead of RPC
-    const cleanupResult = await supabase.rpc('create_increment_function');
+    // 1. Clean up orphaned records - using stored procedure
     console.log("Calling cleanup function");
+    const { error: cleanupError } = await supabase.rpc('cleanup_orphaned_food_records');
     
-    if (cleanupResult.error) {
-      report.push(`Error cleaning up orphaned records: ${cleanupResult.error.message}`);
+    if (cleanupError) {
+      report.push(`Error cleaning up orphaned records: ${cleanupError.message}`);
     } else {
       report.push("Orphaned records cleaned successfully");
     }
     
-    // 2. Update usage statistics
-    // Use raw SQL execution for database functions
-    const statsResult = await supabase.rpc('create_increment_function');
+    // 2. Update usage statistics - using stored procedure
     console.log("Calling update stats function");
+    const { error: statsError } = await supabase.rpc('update_food_usage_statistics');
     
-    if (statsResult.error) {
-      report.push(`Error updating food usage statistics: ${statsResult.error.message}`);
+    if (statsError) {
+      report.push(`Error updating food usage statistics: ${statsError.message}`);
     } else {
       report.push("Food usage statistics updated successfully");
     }
     
-    // 3. Generate report on database health
-    // Query food items directly instead of using custom functions
-    const { data: allFood } = await supabase.from('food_items').select('*');
-    const { data: coreFood } = await supabase.from('food_items').select('*').eq('data_layer', 'core');
-    const { data: apiFood } = await supabase.from('food_items').select('*').eq('data_layer', 'api_cache');
-    const { data: userFood } = await supabase.from('food_items').select('*').eq('data_layer', 'user');
-    const { data: unusedFood } = await supabase.from('food_items')
-      .select('*')
-      .or('last_used_at.is.null,last_used_at.lt.' + new Date(Date.now() - 90 * 24 * 60 * 60 * 1000).toISOString());
+    // 3. Generate report on database health - using stored procedure
+    const { data: statsData, error: statsQueryError } = await supabase.rpc('get_food_database_stats');
     
-    const stats: FoodDatabaseStats = {
-      total_count: allFood?.length || 0,
-      core_count: coreFood?.length || 0,
-      api_count: apiFood?.length || 0,
-      user_count: userFood?.length || 0,
-      unused_count: unusedFood?.length || 0
-    };
-    
-    report.push(`Total food items: ${stats.total_count}`);
-    report.push(`Core items: ${stats.core_count}`);
-    report.push(`API cached items: ${stats.api_count}`);
-    report.push(`User created items: ${stats.user_count}`);
-    report.push(`Items with no usage in 90+ days: ${stats.unused_count}`);
+    if (statsQueryError || !statsData) {
+      report.push(`Error retrieving database statistics: ${statsQueryError?.message || "No data returned"}`);
+    } else {
+      // Cast the returned data to our interface
+      const stats = statsData as FoodDatabaseStats;
+      
+      report.push(`Total food items: ${stats.total_count}`);
+      report.push(`Core items: ${stats.core_count}`);
+      report.push(`API cached items: ${stats.api_count}`);
+      report.push(`User created items: ${stats.user_count}`);
+      report.push(`Items with no usage in 90+ days: ${stats.unused_count}`);
+    }
     
     return { 
       success: true, 
