@@ -36,7 +36,7 @@ const ConfirmationTray: React.FC<ConfirmationTrayProps> = ({
       title={title}
       onClose={handleClose}
       zIndex={zIndex}
-      elevation={2}
+      elevation={danger ? 3 : 2}
       {...props}
     >
       <div className="space-y-4">

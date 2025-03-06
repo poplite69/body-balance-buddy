@@ -39,15 +39,15 @@ const Tray: React.FC<BaseTrayProps> = ({
   const getPositionClasses = () => {
     switch (position) {
       case 'bottom':
-        return 'bottom-0 sm:bottom-[30px]';
+        return 'bottom-[30px]';
       case 'top':
-        return 'top-0 sm:top-[30px]';
+        return 'top-[30px]';
       case 'left':
-        return 'left-0 sm:left-[30px]';
+        return 'left-[30px]';
       case 'right':
-        return 'right-0 sm:right-[30px]';
+        return 'right-[30px]';
       default:
-        return 'bottom-0 sm:bottom-[30px]';
+        return 'bottom-[30px]';
     }
   };
   
