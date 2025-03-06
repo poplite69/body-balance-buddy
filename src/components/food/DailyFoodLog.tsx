@@ -1,4 +1,3 @@
-
 import { useState, useEffect } from "react";
 import { Card } from "@/components/ui/card";
 import { Progress } from "@/components/ui/progress";
@@ -58,15 +57,6 @@ export function DailyFoodLog({ date, onDateChange }: DailyFoodLogProps) {
     <div className="space-y-5">
       {/* Daily Summary Card */}
       <DailyNutritionSummary foodLogs={foodLogs} calorieGoal={calorieGoal} />
-      
-      {/* Progress bar for calories */}
-      <div>
-        <div className="flex justify-between text-sm mb-1">
-          <span className="font-medium">Daily Progress</span>
-          <span>{totalCalories} / {calorieGoal} cal</span>
-        </div>
-        <Progress value={calorieProgress} className="h-2" />
-      </div>
       
       {/* Meal Sections */}
       <div className="space-y-6">

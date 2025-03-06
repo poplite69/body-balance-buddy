@@ -1,7 +1,7 @@
 
 import { Card, CardContent } from "@/components/ui/card";
+import { Progress } from "@/components/ui/progress";
 import { FoodLog } from "@/types/food";
-import { PieChart, Pie, Cell, ResponsiveContainer } from "recharts";
 
 interface NutritionSummaryProps {
   foodLogs: FoodLog[];
@@ -21,10 +21,6 @@ export function DailyNutritionSummary({ foodLogs, calorieGoal = 2400 }: Nutritio
   const fatCalories = totalFat * 9;
   const totalMacroCalories = proteinCalories + carbsCalories + fatCalories;
   
-  const proteinPercentage = totalMacroCalories > 0 ? Math.round((proteinCalories / totalMacroCalories) * 100) : 0;
-  const carbsPercentage = totalMacroCalories > 0 ? Math.round((carbsCalories / totalMacroCalories) * 100) : 0;
-  const fatPercentage = totalMacroCalories > 0 ? Math.round((fatCalories / totalMacroCalories) * 100) : 0;
-  
   // Calculate remaining calories
   const remainingCalories = calorieGoal - totalCalories;
   
@@ -33,12 +29,15 @@ export function DailyNutritionSummary({ foodLogs, calorieGoal = 2400 }: Nutritio
   const roundedCarbs = Math.round(totalCarbs);
   const roundedFat = Math.round(totalFat);
   
+  // Calculate progress percentage (capped at 100%)
+  const calorieProgress = Math.min(Math.round((totalCalories / calorieGoal) * 100), 100);
+  
   return (
     <Card className="bg-card border shadow-sm">
       <CardContent className="p-4">
-        <div className="flex justify-between items-center">
-          {/* Budget & Calories */}
-          <div className="flex gap-8">
+        <div className="space-y-3">
+          {/* Calories Summary */}
+          <div className="flex justify-between items-center">
             <div className="flex flex-col">
               <span className="text-xs text-muted-foreground">BUDGET</span>
               <span className="text-xl font-bold text-primary">{calorieGoal}</span>
@@ -57,8 +56,17 @@ export function DailyNutritionSummary({ foodLogs, calorieGoal = 2400 }: Nutritio
             </div>
           </div>
           
-          {/* Macros Summary */}
-          <div className="flex gap-8">
+          {/* Progress Bar */}
+          <div>
+            <div className="flex justify-between text-sm mb-1">
+              <span className="font-medium">Daily Progress</span>
+              <span>{totalCalories} / {calorieGoal} cal</span>
+            </div>
+            <Progress value={calorieProgress} className="h-2" />
+          </div>
+          
+          {/* Macros Summary (moved below progress bar) */}
+          <div className="flex justify-center gap-8 pt-1">
             <div className="flex flex-col items-center">
               <span className="text-xs text-muted-foreground">P</span>
               <span className="text-md font-medium">{roundedProtein}g</span>
