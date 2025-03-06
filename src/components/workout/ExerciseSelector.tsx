@@ -9,6 +9,7 @@ import { useQuery } from '@tanstack/react-query';
 import { supabase } from '@/integrations/supabase/client';
 import { useTray } from '@/components/tray/TrayProvider';
 import ExerciseInfoTray from './ExerciseInfoTray';
+import { Exercise } from './types';
 
 interface ExerciseSelectorProps {
   isOpen: boolean;
@@ -52,9 +53,13 @@ const ExerciseSelector: React.FC<ExerciseSelectorProps> = ({
     setSearchQuery(e.target.value);
   };
 
-  const handleInfoClick = (exercise: any, e: React.MouseEvent) => {
+  const handleInfoClick = (exercise: Exercise, e: React.MouseEvent) => {
     e.stopPropagation(); // Prevent triggering the parent onClick
-    showTray(ExerciseInfoTray, { exercise });
+    // The TypeScript error comes from here - we need to provide all the required props
+    showTray(ExerciseInfoTray, { 
+      exercise: exercise,
+      position: 'bottom'
+    });
   };
   
   return (

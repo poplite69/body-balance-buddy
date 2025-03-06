@@ -1,4 +1,3 @@
-
 import React from 'react';
 import Tray from '@/components/tray/Tray';
 import { Button } from '@/components/ui/button';
