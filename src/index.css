@@ -140,8 +140,6 @@
   .tray-floating {
     @apply rounded-[16px] border border-white/10 overflow-hidden;
     width: calc(100% - 32px);
-    left: 16px;
-    right: 16px;
   }
   
   /* Base tray shadow styles - using data-elevation attribute */

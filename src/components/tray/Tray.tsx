@@ -39,24 +39,24 @@ const Tray: React.FC<BaseTrayProps> = ({
   const getPositionClasses = () => {
     switch (position) {
       case 'bottom':
-        return 'bottom-[60px]';
+        return 'bottom-0 sm:bottom-[30px]';
       case 'top':
-        return 'top-[60px]';
+        return 'top-0 sm:top-[30px]';
       case 'left':
-        return 'left-[60px]';
+        return 'left-0 sm:left-[30px]';
       case 'right':
-        return 'right-[60px]';
+        return 'right-0 sm:right-[30px]';
       default:
-        return 'bottom-[60px]';
+        return 'bottom-0 sm:bottom-[30px]';
     }
   };
   
   return (
     <div 
-      className="fixed inset-0 flex items-end justify-center bg-black/60 transition-opacity duration-300"
+      className="fixed inset-0 flex items-end justify-center bg-black/60 transition-opacity duration-300 z-50"
       style={{ 
         opacity: isVisible ? 1 : 0,
-        zIndex: zIndex || 50 
+        zIndex: zIndex || 50
       }}
     >
       <div 
@@ -64,14 +64,16 @@ const Tray: React.FC<BaseTrayProps> = ({
         data-elevation={elevation}
         id={id}
         className={cn(
-          'w-full mx-4 tray-floating transition-all duration-300 ease-out bg-background',
+          'fixed w-[calc(100%-32px)] mx-auto tray-floating transition-all duration-300 ease-out bg-background',
           getPositionClasses(),
           isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-10',
           'max-w-md'
         )}
         style={{ 
-          maxHeight: 'calc(85vh - 120px)',
-          zIndex: (zIndex || 50) + 1
+          maxHeight: 'calc(85vh - 60px)',
+          zIndex: (zIndex || 50) + 1,
+          left: '16px',
+          right: '16px'
         }}
       >
         {/* Tray header */}
