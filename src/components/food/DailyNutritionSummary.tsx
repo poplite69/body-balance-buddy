@@ -28,78 +28,50 @@ export function DailyNutritionSummary({ foodLogs, calorieGoal = 2400 }: Nutritio
   // Calculate remaining calories
   const remainingCalories = calorieGoal - totalCalories;
   
-  // Prepare data for pie chart
-  const macroData = [
-    { name: 'Protein', value: proteinCalories, color: '#10b981' },
-    { name: 'Carbs', value: carbsCalories, color: '#3b82f6' },
-    { name: 'Fat', value: fatCalories, color: '#f59e0b' }
-  ].filter(item => item.value > 0);
+  // Round values to whole numbers
+  const roundedProtein = Math.round(totalProtein);
+  const roundedCarbs = Math.round(totalCarbs);
+  const roundedFat = Math.round(totalFat);
   
   return (
     <Card className="bg-card border shadow-sm">
       <CardContent className="p-4">
-        <div className="grid grid-cols-2 md:grid-cols-6 gap-4 items-center">
-          {/* Calories Summary */}
-          <div className="col-span-2 flex flex-col items-center justify-center">
-            <h3 className="text-sm font-medium text-muted-foreground mb-1">BUDGET</h3>
-            <p className="text-2xl font-bold text-primary">{calorieGoal}</p>
-          </div>
-          
-          <div className="col-span-2 flex flex-col items-center justify-center">
-            <h3 className="text-sm font-medium text-muted-foreground mb-1">FOOD</h3>
-            <p className="text-2xl font-bold">{totalCalories}</p>
-          </div>
-          
-          <div className="col-span-2 flex flex-col items-center justify-center">
-            <h3 className="text-sm font-medium text-muted-foreground mb-1">REMAINING</h3>
-            <p className={`text-2xl font-bold ${remainingCalories >= 0 ? 'text-green-500' : 'text-red-500'}`}>
-              {remainingCalories >= 0 ? remainingCalories : remainingCalories}
-            </p>
+        <div className="flex justify-between items-center">
+          {/* Budget & Calories */}
+          <div className="flex gap-8">
+            <div className="flex flex-col">
+              <span className="text-xs text-muted-foreground">BUDGET</span>
+              <span className="text-xl font-bold text-primary">{calorieGoal}</span>
+            </div>
+            
+            <div className="flex flex-col">
+              <span className="text-xs text-muted-foreground">FOOD</span>
+              <span className="text-xl font-bold">{totalCalories}</span>
+            </div>
+            
+            <div className="flex flex-col">
+              <span className="text-xs text-muted-foreground">REMAINING</span>
+              <span className={`text-xl font-bold ${remainingCalories >= 0 ? 'text-green-500' : 'text-red-500'}`}>
+                {remainingCalories}
+              </span>
+            </div>
           </div>
           
           {/* Macros Summary */}
-          <div className="col-span-2 md:col-span-3 grid grid-cols-3 gap-2 mt-4 md:mt-0">
+          <div className="flex gap-8">
             <div className="flex flex-col items-center">
-              <div className="text-md font-medium">{totalProtein.toFixed(1)}g</div>
-              <div className="text-xs text-muted-foreground">Protein</div>
-              <div className="text-sm">{proteinPercentage}%</div>
+              <span className="text-xs text-muted-foreground">P</span>
+              <span className="text-md font-medium">{roundedProtein}g</span>
             </div>
             <div className="flex flex-col items-center">
-              <div className="text-md font-medium">{totalCarbs.toFixed(1)}g</div>
-              <div className="text-xs text-muted-foreground">Carbs</div>
-              <div className="text-sm">{carbsPercentage}%</div>
+              <span className="text-xs text-muted-foreground">C</span>
+              <span className="text-md font-medium">{roundedCarbs}g</span>
             </div>
             <div className="flex flex-col items-center">
-              <div className="text-md font-medium">{totalFat.toFixed(1)}g</div>
-              <div className="text-xs text-muted-foreground">Fat</div>
-              <div className="text-sm">{fatPercentage}%</div>
+              <span className="text-xs text-muted-foreground">F</span>
+              <span className="text-md font-medium">{roundedFat}g</span>
             </div>
           </div>
-          
-          {/* Pie Chart */}
-          {totalMacroCalories > 0 && (
-            <div className="col-span-2 md:col-span-3 flex justify-center">
-              <div className="w-28 h-28">
-                <ResponsiveContainer width="100%" height="100%">
-                  <PieChart>
-                    <Pie
-                      data={macroData}
-                      cx="50%"
-                      cy="50%"
-                      innerRadius={25}
-                      outerRadius={40}
-                      paddingAngle={2}
-                      dataKey="value"
-                    >
-                      {macroData.map((entry, index) => (
-                        <Cell key={`cell-${index}`} fill={entry.color} />
-                      ))}
-                    </Pie>
-                  </PieChart>
-                </ResponsiveContainer>
-              </div>
-            </div>
-          )}
         </div>
       </CardContent>
     </Card>

@@ -55,12 +55,12 @@ export function DailyFoodLog({ date, onDateChange }: DailyFoodLogProps) {
   const calorieProgress = Math.min(Math.round((totalCalories / calorieGoal) * 100), 100);
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-5">
       {/* Daily Summary Card */}
       <DailyNutritionSummary foodLogs={foodLogs} calorieGoal={calorieGoal} />
       
       {/* Progress bar for calories */}
-      <div className="mb-6">
+      <div>
         <div className="flex justify-between text-sm mb-1">
           <span className="font-medium">Daily Progress</span>
           <span>{totalCalories} / {calorieGoal} cal</span>
@@ -69,7 +69,7 @@ export function DailyFoodLog({ date, onDateChange }: DailyFoodLogProps) {
       </div>
       
       {/* Meal Sections */}
-      <div className="space-y-4">
+      <div className="space-y-6">
         <MealSection 
           title="Breakfast" 
           mealType="breakfast" 
