@@ -18,7 +18,7 @@ const WorkoutExerciseHeader: React.FC<WorkoutExerciseHeaderProps> = ({
   const { showTray } = useTray();
   
   const handleInfoClick = () => {
-    showTray(ExerciseInfoTray, { exercise });
+    showTray(ExerciseInfoTray, { exercise: exercise });
   };
   
   return (
