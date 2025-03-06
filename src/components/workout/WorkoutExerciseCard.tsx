@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from 'react';
 import { Check, Plus, Link, MoreHorizontal } from 'lucide-react';
 import { Card, CardContent } from '@/components/ui/card';
@@ -70,7 +69,7 @@ const WorkoutExerciseCard: React.FC<WorkoutExerciseCardProps> = ({
 
         if (setsError) throw setsError;
 
-        // Find the last workout where this exercise was used
+        // Find the last workout where this exercise was used and was completed
         const { data: previousWorkout, error: previousError } = await supabase
           .from('workouts')
           .select('id')
@@ -90,14 +89,17 @@ const WorkoutExerciseCard: React.FC<WorkoutExerciseCardProps> = ({
             .single();
             
           if (!prevExError && prevExercise) {
-            // Get sets from previous workout
+            // Get COMPLETED sets from previous workout (both weight and reps must be filled)
             const { data: prevSets, error: prevSetsError } = await supabase
               .from('workout_sets')
               .select('set_number, weight, reps')
               .eq('workout_exercise_id', prevExercise.id)
+              .not('weight', 'is', null)
+              .not('reps', 'is', null)
               .order('set_number');
               
-            if (!prevSetsError && prevSets) {
+            if (!prevSetsError && prevSets && prevSets.length > 0) {
+              // Only use completed sets from previous workout
               previousSets = prevSets.map(set => ({
                 ...set,
                 previous_weight: set.weight,
@@ -114,21 +116,37 @@ const WorkoutExerciseCard: React.FC<WorkoutExerciseCardProps> = ({
         if (existingSets && existingSets.length > 0) {
           setSets(existingSets);
         } 
-        // Otherwise, if we have previous sets, use those as a template
+        // Otherwise, if we have previous completed sets, use the first one as a template
         else if (previousSets.length > 0) {
-          // Create initial sets based on previous workout
-          setSets(previousSets);
+          // Create initial set based on first previous set
+          setSets([previousSets[0]]);
           
-          // Also create them in the database
-          const newSets = previousSets.map(set => ({
+          // Create the set in the database
+          const initialSet = {
             workout_exercise_id: exerciseId,
-            set_number: set.set_number,
+            set_number: 1,
             weight: null,
             reps: null,
             completed: false
-          }));
+          };
           
-          await supabase.from('workout_sets').insert(newSets);
+          const { data: newSet } = await supabase
+            .from('workout_sets')
+            .insert(initialSet)
+            .select()
+            .single();
+            
+          if (newSet) {
+            setSets([{
+              id: newSet.id,
+              set_number: 1,
+              weight: null,
+              reps: null,
+              completed: false,
+              previous_weight: previousSets[0].previous_weight,
+              previous_reps: previousSets[0].previous_reps
+            }]);
+          }
         } 
         // Otherwise, just start with one empty set
         else {
@@ -229,6 +247,16 @@ const WorkoutExerciseCard: React.FC<WorkoutExerciseCardProps> = ({
         setSavingSet(null);
       }
     }
+  };
+
+  // Helper to check if a set is complete (has both weight and reps)
+  const isSetComplete = (set: WorkoutSet) => {
+    return set.weight !== null && set.reps !== null;
+  };
+
+  // Get number of incomplete sets
+  const getIncompleteSetsCount = () => {
+    return sets.filter(set => !isSetComplete(set)).length;
   };
 
   return (

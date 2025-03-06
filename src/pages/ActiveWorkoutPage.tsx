@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Timer, MoreHorizontal, ChevronDown, ChevronUp } from 'lucide-react';
@@ -11,6 +10,13 @@ import WorkoutTimer from '@/components/workout/WorkoutTimer';
 import ExerciseSelector from '@/components/workout/ExerciseSelector';
 import WorkoutExerciseCard from '@/components/workout/WorkoutExerciseCard';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
+import {
+  Dialog,
+  DialogContent,
+  DialogTitle,
+  DialogDescription,
+  DialogFooter,
+} from '@/components/ui/dialog';
 
 interface Exercise {
   id: string;
@@ -23,6 +29,14 @@ interface WorkoutExercise {
   id: string;
   exercise_id: string;
   exercise: Exercise;
+}
+
+interface WorkoutSet {
+  id: string;
+  weight: number | null;
+  reps: number | null;
+  completed: boolean;
+  workout_exercise_id: string;
 }
 
 interface ActiveWorkout {
@@ -50,6 +64,8 @@ const ActiveWorkoutPage: React.FC = () => {
   });
   const [isExerciseSelectorOpen, setIsExerciseSelectorOpen] = useState(false);
   const [isTimerActive, setIsTimerActive] = useState(true);
+  const [isFinishDialogOpen, setIsFinishDialogOpen] = useState(false);
+  const [incompleteSets, setIncompleteSets] = useState<number>(0);
   
   // Create workout on initial load
   useEffect(() => {
@@ -218,10 +234,95 @@ const ActiveWorkoutPage: React.FC = () => {
     }
   };
   
+  // Check for incomplete sets
+  const checkForIncompleteSets = async (): Promise<number> => {
+    if (!workout.id) return 0;
+    
+    try {
+      // Get all sets for this workout
+      let incompleteSetsCount = 0;
+      
+      for (const workoutExercise of workout.workoutExercises) {
+        const { data: sets, error } = await supabase
+          .from('workout_sets')
+          .select('id, weight, reps')
+          .eq('workout_exercise_id', workoutExercise.id);
+          
+        if (error) throw error;
+        
+        if (sets) {
+          // Count sets that have either weight or reps but not both
+          const incompleteSetsByExercise = sets.filter(set => 
+            (set.weight !== null && set.reps === null) || 
+            (set.weight === null && set.reps !== null)
+          ).length;
+          
+          incompleteSetsCount += incompleteSetsByExercise;
+        }
+      }
+      
+      return incompleteSetsCount;
+    } catch (error) {
+      console.error('Error checking for incomplete sets:', error);
+      return 0;
+    }
+  };
+  
+  // Handle pre-finish check
+  const handlePreFinishCheck = async () => {
+    const incompleteCount = await checkForIncompleteSets();
+    
+    if (incompleteCount > 0) {
+      setIncompleteSets(incompleteCount);
+      setIsFinishDialogOpen(true);
+    } else {
+      // No incomplete sets, proceed with finishing
+      finishWorkoutMutation.mutate();
+    }
+  };
+  
+  // Clean up incomplete sets
+  const cleanUpIncompleteSets = async () => {
+    if (!workout.id) return;
+    
+    try {
+      // Loop through all workout exercises
+      for (const workoutExercise of workout.workoutExercises) {
+        // Get all sets for this exercise
+        const { data: sets, error } = await supabase
+          .from('workout_sets')
+          .select('id, weight, reps')
+          .eq('workout_exercise_id', workoutExercise.id);
+          
+        if (error) throw error;
+        
+        if (sets) {
+          // Find incomplete sets
+          const incompleteSets = sets.filter(set => 
+            set.weight === null || set.reps === null
+          ).map(set => set.id);
+          
+          // Delete incomplete sets
+          if (incompleteSets.length > 0) {
+            await supabase
+              .from('workout_sets')
+              .delete()
+              .in('id', incompleteSets);
+          }
+        }
+      }
+    } catch (error) {
+      console.error('Error cleaning up incomplete sets:', error);
+    }
+  };
+  
   // Mutation for finishing workout
   const finishWorkoutMutation = useMutation({
     mutationFn: async () => {
       if (!workout.id) throw new Error('No workout ID');
+      
+      // First clean up any incomplete sets
+      await cleanUpIncompleteSets();
       
       const { error } = await supabase
         .from('workouts')
@@ -287,6 +388,7 @@ const ActiveWorkoutPage: React.FC = () => {
   
   // Handle finish workout
   const handleFinishWorkout = () => {
+    setIsFinishDialogOpen(false);
     finishWorkoutMutation.mutate();
   };
   
@@ -335,7 +437,7 @@ const ActiveWorkoutPage: React.FC = () => {
           
           <Button 
             className="bg-green-500 hover:bg-green-600 h-12 px-8 rounded-full"
-            onClick={handleFinishWorkout}
+            onClick={handlePreFinishCheck}
             disabled={finishWorkoutMutation.isPending}
           >
             Finish
@@ -430,6 +532,25 @@ const ActiveWorkoutPage: React.FC = () => {
         onClose={() => setIsExerciseSelectorOpen(false)}
         onSelectExercise={handleAddExercise}
       />
+      
+      {/* Incomplete sets dialog */}
+      <Dialog open={isFinishDialogOpen} onOpenChange={setIsFinishDialogOpen}>
+        <DialogContent>
+          <DialogTitle>Incomplete Sets</DialogTitle>
+          <DialogDescription>
+            You have {incompleteSets} incomplete set{incompleteSets !== 1 ? 's' : ''} (sets with only weight or only reps filled). 
+            These incomplete sets will be removed when finishing the workout.
+          </DialogDescription>
+          <DialogFooter className="mt-4 flex space-x-2">
+            <Button variant="outline" onClick={() => setIsFinishDialogOpen(false)}>
+              Go Back & Complete
+            </Button>
+            <Button onClick={handleFinishWorkout}>
+              Finish Anyway
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
     </div>
   );
 };
