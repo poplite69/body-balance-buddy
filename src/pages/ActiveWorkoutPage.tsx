@@ -436,16 +436,9 @@ const ActiveWorkoutPage: React.FC = () => {
       />
       
       <WorkoutActionButtons 
-        onAddExercises={() => setIsExerciseSelectorOpen(true)}
+        onAddExercise={handleAddExercise}
         onCancelWorkout={handleCancelWorkout}
         cancelIsPending={cancelWorkoutMutation.isPending}
-      />
-      
-      {/* Exercise selector dialog */}
-      <ExerciseSelector
-        isOpen={isExerciseSelectorOpen}
-        onClose={() => setIsExerciseSelectorOpen(false)}
-        onSelectExercise={handleAddExercise}
       />
       
       {/* Incomplete sets dialog */}

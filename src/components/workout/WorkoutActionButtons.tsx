@@ -2,19 +2,23 @@
 import React from 'react';
 import { Button } from '@/components/ui/button';
 import { useTrayConfirmation } from '@/components/tray/useTrayConfirmation';
+import { useTray } from '@/components/tray/TrayProvider';
+import ExerciseSelector from './ExerciseSelector';
+import { Exercise } from './types';
 
 interface WorkoutActionButtonsProps {
-  onAddExercises: () => void;
+  onAddExercise: (exercise: Exercise) => void;
   onCancelWorkout: () => void;
   cancelIsPending: boolean;
 }
 
 const WorkoutActionButtons: React.FC<WorkoutActionButtonsProps> = ({
-  onAddExercises,
+  onAddExercise,
   onCancelWorkout,
   cancelIsPending
 }) => {
   const { confirm } = useTrayConfirmation();
+  const { showTray } = useTray();
   
   const handleCancelWorkout = () => {
     confirm({
@@ -28,13 +32,19 @@ const WorkoutActionButtons: React.FC<WorkoutActionButtonsProps> = ({
     });
   };
   
+  const handleAddExercises = () => {
+    showTray(ExerciseSelector, {
+      onSelectExercise: onAddExercise
+    });
+  };
+  
   return (
     <>
       {/* Add exercises button */}
       <Button 
         variant="outline"
         className="w-full py-6 my-4"
-        onClick={onAddExercises}
+        onClick={handleAddExercises}
       >
         Add Exercises
       </Button>
