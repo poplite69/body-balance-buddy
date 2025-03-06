@@ -1,11 +1,8 @@
 
 import { useState, useEffect } from "react";
-import { format } from "date-fns";
-import { CalendarIcon } from "lucide-react";
-import { Button } from "@/components/ui/button";
-import { Calendar } from "@/components/ui/calendar";
-import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
-import { cn } from "@/lib/utils";
+import { Card } from "@/components/ui/card";
+import { Progress } from "@/components/ui/progress";
+import { Separator } from "@/components/ui/separator";
 import { MealSection } from "./MealSection";
 import { DailyNutritionSummary } from "./DailyNutritionSummary";
 import { getFoodLogsForDay } from "@/services/food";
@@ -13,9 +10,13 @@ import { FoodLog, MealType } from "@/types/food";
 import { useAuth } from "@/context/AuthContext";
 import { toast } from "sonner";
 
-export function DailyFoodLog() {
+interface DailyFoodLogProps {
+  date: Date;
+  onDateChange?: (date: Date) => void;
+}
+
+export function DailyFoodLog({ date, onDateChange }: DailyFoodLogProps) {
   const { user } = useAuth();
-  const [date, setDate] = useState<Date>(new Date());
   const [foodLogs, setFoodLogs] = useState<FoodLog[]>([]);
   const [isLoading, setIsLoading] = useState(false);
 
@@ -46,60 +47,59 @@ export function DailyFoodLog() {
     snack: foodLogs.filter(log => log.meal_type === "snack")
   };
 
+  // Calculate total calories for the day
+  const totalCalories = foodLogs.reduce((sum, log) => sum + (log.calories || 0), 0);
+  
+  // Assuming a default calorie goal of 2400
+  const calorieGoal = 2400;
+  const calorieProgress = Math.min(Math.round((totalCalories / calorieGoal) * 100), 100);
+
   return (
-    <div className="space-y-4">
-      <div className="flex justify-between items-center">
-        <h2 className="text-2xl font-bold">Food Log</h2>
-        <Popover>
-          <PopoverTrigger asChild>
-            <Button
-              variant="outline"
-              className={cn(
-                "justify-start text-left font-normal w-[200px]",
-                !date && "text-muted-foreground"
-              )}
-            >
-              <CalendarIcon className="mr-2 h-4 w-4" />
-              {date ? format(date, "PPP") : <span>Pick a date</span>}
-            </Button>
-          </PopoverTrigger>
-          <PopoverContent className="w-auto p-0">
-            <Calendar
-              mode="single"
-              selected={date}
-              onSelect={(date) => date && setDate(date)}
-              initialFocus
-            />
-          </PopoverContent>
-        </Popover>
+    <div className="space-y-6">
+      {/* Daily Summary Card */}
+      <DailyNutritionSummary foodLogs={foodLogs} calorieGoal={calorieGoal} />
+      
+      {/* Progress bar for calories */}
+      <div className="mb-6">
+        <div className="flex justify-between text-sm mb-1">
+          <span className="font-medium">Daily Progress</span>
+          <span>{totalCalories} / {calorieGoal} cal</span>
+        </div>
+        <Progress value={calorieProgress} className="h-2" />
       </div>
-
-      <DailyNutritionSummary foodLogs={foodLogs} />
-
+      
+      {/* Meal Sections */}
       <div className="space-y-4">
         <MealSection 
           title="Breakfast" 
           mealType="breakfast" 
           foodLogs={mealLogs.breakfast} 
           onUpdate={fetchFoodLogs} 
+          suggestedCalories={Math.round(calorieGoal * 0.25)}
         />
+        
         <MealSection 
           title="Lunch" 
           mealType="lunch" 
           foodLogs={mealLogs.lunch} 
           onUpdate={fetchFoodLogs} 
+          suggestedCalories={Math.round(calorieGoal * 0.35)}
         />
+        
         <MealSection 
           title="Dinner" 
           mealType="dinner" 
           foodLogs={mealLogs.dinner} 
           onUpdate={fetchFoodLogs} 
+          suggestedCalories={Math.round(calorieGoal * 0.3)}
         />
+        
         <MealSection 
           title="Snacks" 
           mealType="snack" 
           foodLogs={mealLogs.snack} 
           onUpdate={fetchFoodLogs} 
+          suggestedCalories={Math.round(calorieGoal * 0.1)}
         />
       </div>
     </div>
