@@ -1,6 +1,7 @@
 
 import React from 'react';
 import { Button } from '@/components/ui/button';
+import { useTrayConfirmation } from '@/components/tray/useTrayConfirmation';
 
 interface WorkoutActionButtonsProps {
   onAddExercises: () => void;
@@ -13,6 +14,20 @@ const WorkoutActionButtons: React.FC<WorkoutActionButtonsProps> = ({
   onCancelWorkout,
   cancelIsPending
 }) => {
+  const { confirm } = useTrayConfirmation();
+  
+  const handleCancelWorkout = () => {
+    confirm({
+      id: 'cancel-workout',
+      title: 'Cancel Workout',
+      message: 'Are you sure you want to cancel this workout? All progress will be lost.',
+      confirmText: 'Yes, Cancel',
+      cancelText: 'No, Keep Working Out',
+      danger: true,
+      onConfirm: onCancelWorkout
+    });
+  };
+  
   return (
     <>
       {/* Add exercises button */}
@@ -28,7 +43,7 @@ const WorkoutActionButtons: React.FC<WorkoutActionButtonsProps> = ({
       <Button 
         variant="destructive" 
         className="w-full py-6 mb-8"
-        onClick={onCancelWorkout}
+        onClick={handleCancelWorkout}
         disabled={cancelIsPending}
       >
         Cancel Workout
