@@ -1,7 +1,7 @@
 
 import React from 'react';
 import { NavLink, useLocation } from 'react-router-dom';
-import { Home, Dumbbell, User } from 'lucide-react';
+import { Home, Dumbbell, User, Apple } from 'lucide-react';
 import { cn } from '@/lib/utils';
 
 export function BottomNav() {
@@ -12,6 +12,11 @@ export function BottomNav() {
       icon: Home, 
       path: '/', 
       label: 'Home'
+    },
+    { 
+      icon: Apple, 
+      path: '/food', 
+      label: 'Food'
     },
     { 
       icon: Dumbbell, 

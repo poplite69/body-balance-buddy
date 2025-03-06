@@ -1,8 +1,10 @@
+
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 import WorkoutPage from "./pages/WorkoutPage";
 import ActiveWorkoutPage from "./pages/ActiveWorkoutPage";
 import HomePage from "./pages/HomePage";
 import AuthPage from "./pages/AuthPage";
+import FoodPage from "./pages/FoodPage";
 import { AppLayout } from "./components/layout/AppLayout";
 import ProtectedRoute from "./components/auth/ProtectedRoute";
 import { Toaster } from "sonner";
@@ -45,6 +47,16 @@ function App() {
             element={
               <AppLayout>
                 <HomePage />
+              </AppLayout>
+            } 
+          />
+          <Route 
+            path="/food" 
+            element={
+              <AppLayout>
+                <ProtectedRoute>
+                  <FoodPage />
+                </ProtectedRoute>
               </AppLayout>
             } 
           />
