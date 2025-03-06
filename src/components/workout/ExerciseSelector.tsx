@@ -55,11 +55,14 @@ const ExerciseSelector: React.FC<ExerciseSelectorProps> = ({
 
   const handleInfoClick = (exercise: Exercise, e: React.MouseEvent) => {
     e.stopPropagation(); // Prevent triggering the parent onClick
-    // The TypeScript error comes from here - we need to provide all the required props
-    showTray(ExerciseInfoTray, { 
-      exercise: exercise,
-      position: 'bottom'
-    });
+    
+    // Fix: Create a properly typed props object for ExerciseInfoTray
+    const trayProps = {
+      exercise,
+      position: 'bottom' as const // Type assertion to ensure position is correctly typed
+    };
+    
+    showTray(ExerciseInfoTray, trayProps);
   };
   
   return (

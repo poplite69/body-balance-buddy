@@ -1,3 +1,4 @@
+
 import React from 'react';
 
 export type TrayPosition = 'bottom' | 'top' | 'left' | 'right';
@@ -37,7 +38,10 @@ export interface TrayItem {
 
 export interface TrayContextValue {
   trays: TrayItem[];
-  showTray: <T extends { id?: string }>(TrayComponent: TrayComponent, props: T) => string;
+  showTray: <P extends Record<string, any>>(
+    TrayComponent: React.ComponentType<P>,
+    props: Omit<P, 'id' | 'onClose' | 'showBackButton' | 'onBack' | 'parentId'>
+  ) => string;
   closeTray: (id: string) => void;
   closeAllTrays: () => void;
   goBack: () => void;

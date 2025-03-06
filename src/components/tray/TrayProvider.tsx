@@ -8,8 +8,11 @@ const TrayContext = createContext<TrayContextValue | undefined>(undefined);
 export const TrayProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   const [trays, setTrays] = useState<TrayItem[]>([]);
   
-  // Show a new tray
-  const showTray = <T extends { id?: string }>(TrayComponent: TrayComponent, props: T): string => {
+  // Show a new tray with generic props typing
+  const showTray = <P extends Record<string, any>>(
+    TrayComponent: React.ComponentType<P>, 
+    props: Omit<P, 'id' | 'onClose' | 'showBackButton' | 'onBack' | 'parentId'>
+  ): string => {
     const id = props.id || uuidv4();
     
     const newTray: TrayItem = {
