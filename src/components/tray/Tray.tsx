@@ -1,5 +1,5 @@
 
-import React, { useRef, useEffect } from 'react';
+import React, { useRef, useEffect, useState } from 'react';
 import { X, ChevronLeft } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { cn } from '@/lib/utils';
@@ -15,6 +15,16 @@ const Tray: React.FC<BaseTrayProps> = ({
   children,
 }) => {
   const trayRef = useRef<HTMLDivElement>(null);
+  const [isVisible, setIsVisible] = useState(false);
+  
+  // Set visible state after component mounts to trigger animation
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      setIsVisible(true);
+    }, 50);
+    
+    return () => clearTimeout(timer);
+  }, []);
   
   // Handle outside click
   useEffect(() => {
@@ -30,26 +40,44 @@ const Tray: React.FC<BaseTrayProps> = ({
     };
   }, [onClose]);
   
-  // Apply appropriate classes based on position
-  const positionClasses = {
-    bottom: 'bottom-8 left-0 right-0 mx-auto rounded-xl',
-    top: 'top-8 left-0 right-0 mx-auto rounded-xl',
-    left: 'top-8 bottom-8 left-8 rounded-xl',
-    right: 'top-8 bottom-8 right-8 rounded-xl',
+  const handleClose = () => {
+    setIsVisible(false);
+    setTimeout(() => {
+      onClose();
+    }, 200); // Delay to allow animation to complete
+  };
+  
+  // Calculate positioning classes based on position prop
+  const getPositionClasses = () => {
+    switch (position) {
+      case 'bottom':
+        return 'bottom-[60px]';
+      case 'top':
+        return 'top-[60px]';
+      case 'left':
+        return 'left-[60px]';
+      case 'right':
+        return 'right-[60px]';
+      default:
+        return 'bottom-[60px]';
+    }
   };
   
   return (
-    <div className="fixed inset-0 z-50 flex items-end justify-center bg-black/60 animate-fade-in">
+    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 transition-opacity duration-200"
+         style={{ opacity: isVisible ? 1 : 0 }}>
       <div 
         ref={trayRef}
         className={cn(
-          'bg-background border shadow-xl animate-slide-in-up transition-all',
-          positionClasses[position],
-          'w-full max-w-md'
+          'absolute mx-4 tray-floating transition-all duration-300 ease-out bg-background',
+          getPositionClasses(),
+          isVisible ? 'opacity-100 transform-none' : 'opacity-0 translate-y-5',
+          'w-auto max-w-md'
         )}
         style={{ 
           height: typeof height === 'number' ? `${height}px` : height,
-          maxHeight: '85vh',
+          maxHeight: 'calc(85vh - 120px)',
+          boxShadow: '0px 4px 20px rgba(0, 0, 0, 0.18)',
         }}
       >
         {/* Tray header */}
@@ -70,7 +98,7 @@ const Tray: React.FC<BaseTrayProps> = ({
           <Button 
             variant="ghost" 
             size="icon"
-            onClick={onClose}
+            onClick={handleClose}
             aria-label="Close"
           >
             <X className="h-5 w-5" />
@@ -78,7 +106,7 @@ const Tray: React.FC<BaseTrayProps> = ({
         </div>
         
         {/* Tray content */}
-        <div className="p-4 overflow-y-auto" style={{ maxHeight: 'calc(85vh - 60px)' }}>
+        <div className="p-4 overflow-y-auto" style={{ maxHeight: 'calc(85vh - 180px)' }}>
           {children}
         </div>
       </div>
