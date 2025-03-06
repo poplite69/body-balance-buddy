@@ -129,51 +129,6 @@
   .grip-nav-item.active {
     @apply bg-grip-neutral-100 text-grip-neutral-800 font-medium;
   }
-  
-  /* Tray styling - based on reference designs */
-  .tray-floating {
-    /* Core positioning with proper margins */
-    position: fixed;
-    left: 16px;
-    right: 16px;
-    bottom: 30px;
-    margin: 0 auto;
-    width: calc(100% - 32px);
-    max-width: 28rem;
-    
-    /* Visual styling */
-    border-radius: 16px;
-    background-color: hsl(var(--background));
-    border: 1px solid rgba(255, 255, 255, 0.1);
-    overflow: hidden;
-    
-    /* Shadow creates floating effect */
-    box-shadow: 
-      0px 4px 12px rgba(0, 0, 0, 0.2),
-      0px 16px 32px rgba(0, 0, 0, 0.15);
-    
-    /* Animation origin for scaling/translating */
-    transform-origin: center bottom;
-  }
-  
-  /* Data elevation styling with enhanced shadows */
-  .tray-floating[data-elevation="1"] {
-    box-shadow: 
-      0px 2px 6px rgba(0, 0, 0, 0.18),
-      0px 6px 12px rgba(0, 0, 0, 0.12);
-  }
-  
-  .tray-floating[data-elevation="2"] {
-    box-shadow: 
-      0px 4px 12px rgba(0, 0, 0, 0.16),
-      0px 12px 24px rgba(10, 15, 30, 0.12);
-  }
-  
-  .tray-floating[data-elevation="3"] {
-    box-shadow: 
-      0px 8px 16px rgba(0, 0, 0, 0.16),
-      0px 16px 32px rgba(10, 15, 30, 0.18);
-  }
 }
 
 /* Mobile specific adjustments */
@@ -219,66 +174,4 @@ button, a, input, select, textarea {
 
 .animate-fade-in {
   animation: fade-in 0.25s ease-out;
-}
-
-/* Tray animation classes with improved transitions */
-.tray-enter {
-  opacity: 0;
-  transform: translateY(20px);
-}
-
-.tray-enter-active {
-  opacity: 1;
-  transform: translateY(0);
-  transition: opacity 0.3s cubic-bezier(0.16, 1, 0.3, 1), 
-              transform 0.3s cubic-bezier(0.16, 1, 0.3, 1);
-}
-
-.tray-exit {
-  opacity: 1;
-  transform: translateY(0);
-}
-
-.tray-exit-active {
-  opacity: 0;
-  transform: translateY(20px);
-  transition: opacity 0.3s cubic-bezier(0.16, 1, 0.3, 1), 
-              transform 0.3s cubic-bezier(0.16, 1, 0.3, 1);
-}
-
-/* Additional tray transition class for stacked trays */
-.tray-stack-enter {
-  opacity: 0;
-  transform: translateY(20px) scale(0.95);
-}
-
-.tray-stack-enter-active {
-  opacity: 1;
-  transform: translateY(0) scale(1);
-  transition: opacity 0.3s cubic-bezier(0.16, 1, 0.3, 1), 
-              transform 0.3s cubic-bezier(0.16, 1, 0.3, 1);
-}
-
-.tray-stack-exit {
-  opacity: 1;
-  transform: translateY(0) scale(1);
-}
-
-.tray-stack-exit-active {
-  opacity: 0;
-  transform: translateY(20px) scale(0.95);
-  transition: opacity 0.3s cubic-bezier(0.16, 1, 0.3, 1), 
-              transform 0.3s cubic-bezier(0.16, 1, 0.3, 1);
-}
-
-/* Tray container for handling multiple trays */
-.tray-container {
-  position: fixed;
-  inset: 0;
-  z-index: 50;
-  pointer-events: none;
-}
-
-.tray-container > * {
-  pointer-events: auto;
 }

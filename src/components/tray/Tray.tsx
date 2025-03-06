@@ -1,9 +1,9 @@
-
 import React, { useRef, useEffect, useState } from 'react';
 import { X, ChevronLeft } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { cn } from '@/lib/utils';
 import { BaseTrayProps } from './types';
+import './tray.css';
 
 const Tray: React.FC<BaseTrayProps> = ({
   title,
