@@ -32,10 +32,10 @@ const Tray: React.FC<BaseTrayProps> = ({
   
   // Apply appropriate classes based on position
   const positionClasses = {
-    bottom: 'bottom-0 left-0 right-0 rounded-t-xl',
-    top: 'top-0 left-0 right-0 rounded-b-xl',
-    left: 'top-0 bottom-0 left-0 rounded-r-xl',
-    right: 'top-0 bottom-0 right-0 rounded-l-xl',
+    bottom: 'bottom-8 left-0 right-0 mx-auto rounded-xl',
+    top: 'top-8 left-0 right-0 mx-auto rounded-xl',
+    left: 'top-8 bottom-8 left-8 rounded-xl',
+    right: 'top-8 bottom-8 right-8 rounded-xl',
   };
   
   return (
@@ -43,13 +43,13 @@ const Tray: React.FC<BaseTrayProps> = ({
       <div 
         ref={trayRef}
         className={cn(
-          'bg-background border shadow-lg animate-slide-in-up transition-all',
+          'bg-background border shadow-xl animate-slide-in-up transition-all',
           positionClasses[position],
           'w-full max-w-md'
         )}
         style={{ 
           height: typeof height === 'number' ? `${height}px` : height,
-          maxHeight: '90vh',
+          maxHeight: '85vh',
         }}
       >
         {/* Tray header */}
@@ -71,13 +71,14 @@ const Tray: React.FC<BaseTrayProps> = ({
             variant="ghost" 
             size="icon"
             onClick={onClose}
+            aria-label="Close"
           >
             <X className="h-5 w-5" />
           </Button>
         </div>
         
         {/* Tray content */}
-        <div className="p-4 overflow-y-auto" style={{ maxHeight: 'calc(90vh - 60px)' }}>
+        <div className="p-4 overflow-y-auto" style={{ maxHeight: 'calc(85vh - 60px)' }}>
           {children}
         </div>
       </div>
