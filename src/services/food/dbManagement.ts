@@ -1,6 +1,6 @@
 
 import { supabase } from "@/integrations/supabase/client";
-import { FoodItem, DataLayer } from "@/types/food";
+import { FoodItem, DataLayer, FoodSource } from "@/types/food";
 
 /**
  * Database seeding functions
@@ -34,10 +34,10 @@ export async function seedCoreNutritionData() {
         sugar_g: 19,
         sodium_mg: 2,
         cholesterol_mg: 0,
-        source: "system",
+        source: "system" as FoodSource,
         external_id: null,
         is_verified: true,
-        data_layer: "core",
+        data_layer: "core" as DataLayer,
         search_count: 0,
         package_size: null,
         package_unit: null,
@@ -57,10 +57,10 @@ export async function seedCoreNutritionData() {
         sugar_g: 14.4,
         sodium_mg: 1,
         cholesterol_mg: 0,
-        source: "system",
+        source: "system" as FoodSource,
         external_id: null,
         is_verified: true,
-        data_layer: "core",
+        data_layer: "core" as DataLayer,
         search_count: 0,
         package_size: null,
         package_unit: null,
@@ -150,6 +150,7 @@ export async function findDuplicateFoodItems(foodItem: FoodItem): Promise<FoodIt
     }
     
     // Calculate similarity score (basic implementation)
+    // Using type assertion to handle the potential source type mismatch
     const potentialDuplicates = data
       .map(item => {
         const nameMatch = item.name.toLowerCase().includes(foodItem.name.toLowerCase());
@@ -164,12 +165,19 @@ export async function findDuplicateFoodItems(foodItem: FoodItem): Promise<FoodIt
         if (brandMatch) score += 2;
         if (similarCalories) score += 1;
         
-        return { ...item, similarityScore: score };
+        // Cast item to FoodItem type to ensure source is handled correctly
+        const typedItem = {
+          ...item,
+          source: item.source as FoodSource
+        } as FoodItem;
+        
+        return { ...typedItem, similarityScore: score };
       })
       .filter(item => item.similarityScore >= 3) // Threshold for considering as duplicate
       .sort((a, b) => b.similarityScore - a.similarityScore);
     
-    return potentialDuplicates;
+    // Remove the similarityScore property before returning
+    return potentialDuplicates.map(({ similarityScore, ...item }) => item);
   } catch (error) {
     console.error("Exception finding duplicates:", error);
     return [];
@@ -256,6 +264,15 @@ export async function mergeFoodItems(primaryId: string, duplicateId: string): Pr
   }
 }
 
+// Define an interface for the stats returned by the database function
+interface FoodDatabaseStats {
+  total_count: number;
+  core_count: number;
+  api_count: number;
+  user_count: number;
+  unused_count: number;
+}
+
 /**
  * Run maintenance tasks on the food database
  */
@@ -264,7 +281,12 @@ export async function runFoodDatabaseMaintenance(): Promise<{ success: boolean, 
     const report: string[] = ["Food database maintenance report:"];
     
     // 1. Clean up orphaned records
-    const { error: cleanupError } = await supabase.rpc('cleanup_orphaned_food_records');
+    // Use a direct SELECT to execute the function instead of rpc
+    const { error: cleanupError } = await supabase
+      .from('_temp_output')
+      .select('*')
+      .eq('dummy', 1)
+      .then(() => supabase.query('SELECT cleanup_orphaned_food_records()'));
     
     if (cleanupError) {
       report.push(`Error cleaning up orphaned records: ${cleanupError.message}`);
@@ -273,7 +295,12 @@ export async function runFoodDatabaseMaintenance(): Promise<{ success: boolean, 
     }
     
     // 2. Update usage statistics
-    const { error: statsError } = await supabase.rpc('update_food_usage_statistics');
+    // Use a direct SELECT to execute the function instead of rpc
+    const { error: statsError } = await supabase
+      .from('_temp_output')
+      .select('*')
+      .eq('dummy', 1)
+      .then(() => supabase.query('SELECT update_food_usage_statistics()'));
     
     if (statsError) {
       report.push(`Error updating food usage statistics: ${statsError.message}`);
@@ -282,16 +309,22 @@ export async function runFoodDatabaseMaintenance(): Promise<{ success: boolean, 
     }
     
     // 3. Generate report on database health
-    const { data: stats, error: reportError } = await supabase.rpc('get_food_database_stats');
+    // Use a direct SELECT to execute the function instead of rpc
+    const { data: stats, error: reportError } = await supabase
+      .from('_temp_output')
+      .select('*')
+      .eq('dummy', 1)
+      .then(() => supabase.query<FoodDatabaseStats>('SELECT get_food_database_stats()'));
     
-    if (reportError) {
-      report.push(`Error generating database stats: ${reportError.message}`);
+    if (reportError || !stats || !stats[0]) {
+      report.push(`Error generating database stats: ${reportError?.message || "No data returned"}`);
     } else {
-      report.push(`Total food items: ${stats.total_count}`);
-      report.push(`Core items: ${stats.core_count}`);
-      report.push(`API cached items: ${stats.api_count}`);
-      report.push(`User created items: ${stats.user_count}`);
-      report.push(`Items with no usage in 90+ days: ${stats.unused_count}`);
+      const dbStats = stats[0];
+      report.push(`Total food items: ${dbStats.total_count}`);
+      report.push(`Core items: ${dbStats.core_count}`);
+      report.push(`API cached items: ${dbStats.api_count}`);
+      report.push(`User created items: ${dbStats.user_count}`);
+      report.push(`Items with no usage in 90+ days: ${dbStats.unused_count}`);
     }
     
     return { 
