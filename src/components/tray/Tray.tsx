@@ -53,7 +53,7 @@ const Tray: React.FC<BaseTrayProps> = ({
   
   return (
     <div 
-      className="fixed inset-0 flex items-end justify-center bg-black/60 transition-opacity duration-300 z-50"
+      className="fixed inset-0 flex items-end justify-center bg-black/60 transition-opacity duration-300"
       style={{ 
         opacity: isVisible ? 1 : 0,
         zIndex: zIndex || 50
@@ -64,10 +64,9 @@ const Tray: React.FC<BaseTrayProps> = ({
         data-elevation={elevation}
         id={id}
         className={cn(
-          'tray-floating transition-all duration-300 ease-out bg-background',
+          'tray-floating transition-all duration-300 ease-out',
           getPositionClasses(),
           isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-10',
-          'max-w-md'
         )}
         style={{ 
           maxHeight: 'calc(85vh - 60px)',

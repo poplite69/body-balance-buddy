@@ -130,29 +130,20 @@
     @apply bg-grip-neutral-100 text-grip-neutral-800 font-medium;
   }
   
-  /* Tray styling */
+  /* Tray styling - unified and cleaned up */
   .tray-floating {
-    @apply mx-auto rounded-xl shadow-2xl border border-white/10 overflow-hidden fixed;
+    @apply fixed mx-auto rounded-xl overflow-hidden border border-white/10 bg-background;
     width: calc(100% - 32px);
     max-width: 28rem; /* 448px */
     left: 16px;
     right: 16px;
+    transform-origin: center bottom;
+    box-shadow: 
+      0px 2px 8px rgba(0, 0, 0, 0.08),
+      0px 8px 20px rgba(0, 0, 0, 0.16);
   }
   
-  /* Base tray shadow styles - using data-elevation attribute */
-  .tray-floating[data-elevation="1"] {
-    box-shadow: 0px 2px 4px rgba(0, 0, 0, 0.1);
-  }
-  
-  .tray-floating[data-elevation="2"] {
-    box-shadow: 0px 4px 12px rgba(0, 0, 0, 0.12);
-  }
-  
-  .tray-floating[data-elevation="3"] {
-    box-shadow: 0px 6px 16px rgba(0, 0, 0, 0.14);
-  }
-  
-  /* Enhanced dark mode shadow styles */
+  /* Data elevation styling - simplified to avoid duplication */
   .tray-floating[data-elevation="1"] {
     box-shadow: 0px 3px 6px rgba(0, 0, 0, 0.25);
   }
@@ -187,36 +178,7 @@ button, a, input, select, textarea {
   touch-action: manipulation;
 }
 
-/* Adding animation for tray */
-@keyframes slide-in-up {
-  from {
-    transform: translateY(50px);
-    opacity: 0;
-  }
-  to {
-    transform: translateY(0);
-    opacity: 1;
-  }
-}
-
-.animate-slide-in-up {
-  animation: slide-in-up 0.3s ease-out;
-}
-
-@keyframes fade-in {
-  from {
-    opacity: 0;
-  }
-  to {
-    opacity: 1;
-  }
-}
-
-.animate-fade-in {
-  animation: fade-in 0.2s ease-out;
-}
-
-/* Enhanced animations for tray with smoother transitions */
+/* Animation keyframes */
 @keyframes slide-in-up {
   from {
     transform: translateY(30px);
