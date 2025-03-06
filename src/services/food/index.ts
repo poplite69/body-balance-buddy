@@ -4,4 +4,8 @@ export * from './search';
 export * from './log';
 export * from './utility';
 export * from './localSearch';
-export * from './dbManagement';
+export * from './seed';
+export * from './dataLayer';
+export * from './duplicates';
+export * from './maintenance';
+
