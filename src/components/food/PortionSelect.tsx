@@ -1,18 +1,12 @@
 
 import { useState, useEffect } from "react";
-import { supabase } from "@/integrations/supabase/client";
 import { FoodItem } from "@/types/food";
-import { Label } from "@/components/ui/label";
 import { Input } from "@/components/ui/input";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { supabase } from "@/integrations/supabase/client";
 
-interface PortionOption {
-  id: string;
-  description: string;
-  amount: number;
-  unit: string;
-  is_default: boolean;
-}
+// Cache for portion options
+const portionOptionsCache = new Map<string, any[]>();
 
 interface PortionSelectProps {
   food: FoodItem;
@@ -21,20 +15,23 @@ interface PortionSelectProps {
   onPortionChange: (amount: number, unit: string) => void;
 }
 
-export function PortionSelect({ 
-  food, 
-  defaultPortion, 
-  defaultUnit, 
-  onPortionChange 
-}: PortionSelectProps) {
-  const [portionOptions, setPortionOptions] = useState<PortionOption[]>([]);
-  const [customAmount, setCustomAmount] = useState<number>(defaultPortion);
-  const [selectedOption, setSelectedOption] = useState<string>("custom");
-  const [isLoading, setIsLoading] = useState(true);
+export function PortionSelect({ food, defaultPortion, defaultUnit, onPortionChange }: PortionSelectProps) {
+  const [amount, setAmount] = useState<number>(defaultPortion);
+  const [unit, setUnit] = useState<string>(defaultUnit);
+  const [portionOptions, setPortionOptions] = useState<any[]>([]);
+  const [isLoading, setIsLoading] = useState(false);
 
-  // Load portion options from the database
+  // Load portion options when food changes
   useEffect(() => {
-    async function loadPortionOptions() {
+    if (!food) return;
+
+    const loadPortionOptions = async () => {
+      // Check cache first
+      if (portionOptionsCache.has(food.id)) {
+        setPortionOptions(portionOptionsCache.get(food.id) || []);
+        return;
+      }
+
       setIsLoading(true);
       try {
         const { data, error } = await supabase
@@ -42,122 +39,126 @@ export function PortionSelect({
           .select('*')
           .eq('food_item_id', food.id)
           .order('is_default', { ascending: false });
-          
+
         if (error) {
-          console.error("Error loading portion options:", error);
+          console.error('Error loading portion options:', error);
           return;
         }
+
+        // Add default serving option if not already in the data
+        const hasDefaultServing = data.some(option => 
+          option.amount === food.serving_size && option.unit === food.serving_unit
+        );
+
+        const options = hasDefaultServing ? data : [
+          { 
+            id: 'default', 
+            description: '1 serving', 
+            amount: food.serving_size, 
+            unit: food.serving_unit, 
+            is_default: data.length === 0 
+          },
+          ...data
+        ];
+
+        setPortionOptions(options);
         
-        if (data && data.length > 0) {
-          setPortionOptions(data as PortionOption[]);
-          
-          // Check if any option matches the default portion and unit
-          const matchingOption = data.find(
-            opt => opt.amount === defaultPortion && opt.unit === defaultUnit
-          );
-          
-          if (matchingOption) {
-            setSelectedOption(matchingOption.id);
-          } else {
-            // Create a custom option based on the default values
-            setCustomAmount(defaultPortion);
-            setSelectedOption("custom");
-          }
-        } else {
-          // If no options, create default option based on food serving size
-          const defaultOption: PortionOption = {
-            id: "default",
-            description: "1 serving",
-            amount: food.serving_size,
-            unit: food.serving_unit,
-            is_default: true
-          };
-          setPortionOptions([defaultOption]);
-          
-          if (defaultPortion === food.serving_size && defaultUnit === food.serving_unit) {
-            setSelectedOption("default");
-          } else {
-            setCustomAmount(defaultPortion);
-            setSelectedOption("custom");
-          }
+        // Cache the options
+        portionOptionsCache.set(food.id, options);
+
+        // Set default if available
+        const defaultOption = options.find(o => o.is_default) || options[0];
+        if (defaultOption && (amount !== defaultOption.amount || unit !== defaultOption.unit)) {
+          setAmount(defaultOption.amount);
+          setUnit(defaultOption.unit);
+          onPortionChange(defaultOption.amount, defaultOption.unit);
         }
+      } catch (err) {
+        console.error('Error loading portion options:', err);
       } finally {
         setIsLoading(false);
       }
-    }
-    
-    if (food) {
-      loadPortionOptions();
-    }
-  }, [food, defaultPortion, defaultUnit]);
+    };
 
-  const handleOptionChange = (value: string) => {
-    setSelectedOption(value);
-    
-    if (value === "custom") {
-      onPortionChange(customAmount, defaultUnit);
-    } else {
-      const option = portionOptions.find(opt => opt.id === value);
-      if (option) {
-        onPortionChange(option.amount, option.unit);
-        setCustomAmount(option.amount);
-      }
+    loadPortionOptions();
+  }, [food?.id]);
+
+  const handlePortionSelect = (optionId: string) => {
+    const option = portionOptions.find(o => o.id === optionId);
+    if (option) {
+      setAmount(option.amount);
+      setUnit(option.unit);
+      onPortionChange(option.amount, option.unit);
     }
   };
 
-  const handleCustomAmountChange = (value: number) => {
-    setCustomAmount(value);
-    setSelectedOption("custom");
-    onPortionChange(value, defaultUnit);
+  const handleAmountChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const newAmount = parseFloat(e.target.value);
+    if (!isNaN(newAmount) && newAmount > 0) {
+      setAmount(newAmount);
+      onPortionChange(newAmount, unit);
+    }
   };
 
-  if (isLoading) {
-    return <div className="h-[76px] animate-pulse bg-muted rounded" />;
-  }
+  const handleUnitChange = (newUnit: string) => {
+    setUnit(newUnit);
+    onPortionChange(amount, newUnit);
+  };
+
+  if (!food) return null;
 
   return (
-    <div className="space-y-4">
-      <div className="space-y-2">
-        <Label>Portion</Label>
-        <Select value={selectedOption} onValueChange={handleOptionChange}>
-          <SelectTrigger>
-            <SelectValue placeholder="Select portion" />
-          </SelectTrigger>
-          <SelectContent>
-            {portionOptions.map(option => (
-              <SelectItem key={option.id} value={option.id}>
-                {option.description} ({option.amount} {option.unit})
-              </SelectItem>
-            ))}
-            <SelectItem value="custom">Custom amount</SelectItem>
-          </SelectContent>
-        </Select>
+    <div className="space-y-3">
+      <div>
+        <label className="text-sm font-medium mb-1 block">Portion</label>
+        {portionOptions.length > 0 && (
+          <Select onValueChange={handlePortionSelect}>
+            <SelectTrigger className="w-full">
+              <SelectValue placeholder="Select a portion" />
+            </SelectTrigger>
+            <SelectContent>
+              {portionOptions.map((option) => (
+                <SelectItem key={option.id} value={option.id}>
+                  {option.description} ({option.amount} {option.unit})
+                </SelectItem>
+              ))}
+              <SelectItem value="custom">Custom portion</SelectItem>
+            </SelectContent>
+          </Select>
+        )}
       </div>
 
-      {selectedOption === "custom" && (
-        <div className="grid grid-cols-2 gap-2">
-          <div>
-            <Label htmlFor="amount">Amount</Label>
-            <Input
-              id="amount"
-              type="number"
-              min="0"
-              step="0.1"
-              value={customAmount}
-              onChange={(e) => handleCustomAmountChange(parseFloat(e.target.value) || 0)}
-            />
-          </div>
-          <div>
-            <Label htmlFor="unit">Unit</Label>
-            <Input
-              id="unit"
-              type="text"
-              value={defaultUnit}
-              readOnly
-            />
-          </div>
+      <div className="grid grid-cols-2 gap-2">
+        <div>
+          <label className="text-sm font-medium mb-1 block">Amount</label>
+          <Input
+            type="number"
+            min="0"
+            step="0.1"
+            value={amount}
+            onChange={handleAmountChange}
+          />
         </div>
-      )}
+        <div>
+          <label className="text-sm font-medium mb-1 block">Unit</label>
+          <Select value={unit} onValueChange={handleUnitChange}>
+            <SelectTrigger>
+              <SelectValue placeholder="Unit" />
+            </SelectTrigger>
+            <SelectContent>
+              <SelectItem value={food.serving_unit}>{food.serving_unit}</SelectItem>
+              {/* Common units - could be expanded */}
+              <SelectItem value="g">g</SelectItem>
+              <SelectItem value="ml">ml</SelectItem>
+              <SelectItem value="oz">oz</SelectItem>
+              <SelectItem value="cup">cup</SelectItem>
+              <SelectItem value="tbsp">tbsp</SelectItem>
+              <SelectItem value="tsp">tsp</SelectItem>
+              <SelectItem value="piece">piece</SelectItem>
+            </SelectContent>
+          </Select>
+        </div>
+      </div>
     </div>
   );
 }

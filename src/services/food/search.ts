@@ -2,13 +2,38 @@
 import { supabase } from "@/integrations/supabase/client";
 import { FoodItem, FoodSource, DataLayer } from "@/types/food";
 import { updateFoodItemUsage } from "./utility";
+import { 
+  performLocalSearch, 
+  getLocalSearchResults, 
+  cacheSearchResults 
+} from "./localSearch";
 
 /**
- * Search for food items in the database
+ * Search for food items using a hybrid approach (local cache + database)
  */
 export async function searchFoodItems(query: string, limit = 20): Promise<FoodItem[]> {
   if (!query || query.length < 2) return [];
 
+  // First check local cache
+  const localResults = getLocalSearchResults(query) || performLocalSearch(query, limit);
+  
+  if (localResults && localResults.length > 0) {
+    // If we have enough local results, use them without a database query
+    if (localResults.length >= 5) {
+      console.log(`Using cached results for "${query}"`);
+      
+      // Update search counts in the background without waiting for it
+      if (localResults.length > 0) {
+        updateSearchCounts(localResults.map(item => item.id))
+          .catch(err => console.error("Error updating search counts:", err));
+      }
+      
+      return localResults;
+    }
+  }
+
+  // If local search doesn't have enough results, query the database
+  console.log(`Searching database for "${query}"`);
   const { data, error } = await supabase
     .from('food_items')
     .select('*')
@@ -23,15 +48,23 @@ export async function searchFoodItems(query: string, limit = 20): Promise<FoodIt
   
   // Update search counts in the background
   if (data && data.length > 0) {
-    updateSearchCounts(data.map(item => item.id));
+    updateSearchCounts(data.map(item => item.id))
+      .catch(err => console.error("Error updating search counts:", err));
   }
   
   // Cast the response to match our FoodItem type
-  return data?.map(item => ({
+  const results = data?.map(item => ({
     ...item,
     source: item.source as FoodSource,
     data_layer: item.data_layer as DataLayer
   })) || [];
+  
+  // Cache results for future use
+  if (results.length > 0) {
+    cacheSearchResults(query, results);
+  }
+  
+  return results;
 }
 
 /**
