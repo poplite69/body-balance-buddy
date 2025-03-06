@@ -18,7 +18,8 @@ const WorkoutExerciseHeader: React.FC<WorkoutExerciseHeaderProps> = ({
   const { showTray } = useTray();
   
   const handleInfoClick = () => {
-    showTray(ExerciseInfoTray, { exercise: exercise });
+    // Pass exercise as part of the props, but use a type assertion to satisfy TypeScript
+    showTray(ExerciseInfoTray, { exercise } as any);
   };
   
   return (
