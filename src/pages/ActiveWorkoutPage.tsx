@@ -1,23 +1,15 @@
-
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { Timer, MoreHorizontal, ChevronDown, ChevronUp } from 'lucide-react';
-import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
 import { useToast } from '@/components/ui/use-toast';
 import { supabase } from '@/integrations/supabase/client';
 import { useAuth } from '@/context/AuthContext';
-import WorkoutTimer from '@/components/workout/WorkoutTimer';
-import ExerciseSelector from '@/components/workout/ExerciseSelector';
-import WorkoutExerciseCard from '@/components/workout/WorkoutExerciseCard';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
-import {
-  Dialog,
-  DialogContent,
-  DialogTitle,
-  DialogDescription,
-  DialogFooter,
-} from '@/components/ui/dialog';
+
+import WorkoutHeader from '@/components/workout/WorkoutHeader';
+import WorkoutExerciseList from '@/components/workout/WorkoutExerciseList';
+import WorkoutActionButtons from '@/components/workout/WorkoutActionButtons';
+import FinishWorkoutDialog from '@/components/workout/FinishWorkoutDialog';
+import ExerciseSelector from '@/components/workout/ExerciseSelector';
 
 interface Exercise {
   id: string;
@@ -32,7 +24,7 @@ interface WorkoutExercise {
   exercise: Exercise;
 }
 
-interface WorkoutSet {
+export interface WorkoutSet {
   id: string;
   weight: number | null;
   reps: number | null;
@@ -40,7 +32,7 @@ interface WorkoutSet {
   workout_exercise_id: string;
 }
 
-interface ActiveWorkout {
+export interface ActiveWorkout {
   id: string;
   name: string;
   start_time: string;
@@ -424,110 +416,30 @@ const ActiveWorkoutPage: React.FC = () => {
   
   return (
     <div className="flex flex-col h-full min-h-[90vh] max-w-md mx-auto px-4 pb-20">
-      {/* Top bar with timer and buttons */}
-      <div className={`sticky top-0 z-10 bg-background transition-all duration-300 ${isCollapsed ? 'py-2' : 'py-4'}`}>
-        <div className="flex justify-between items-center">
-          <Button 
-            variant="secondary" 
-            size="icon" 
-            className="h-12 w-12"
-            onClick={() => setIsTimerActive(prev => !prev)}
-          >
-            <Timer className="h-6 w-6" />
-          </Button>
-          
-          <Button 
-            variant="default"
-            className="h-12 px-8"
-            onClick={handlePreFinishCheck}
-            disabled={finishWorkoutMutation.isPending}
-          >
-            Finish
-          </Button>
-        </div>
-        
-        {/* Collapsible handle */}
-        <div 
-          className="w-full flex justify-center py-1 cursor-pointer"
-          onClick={() => setIsCollapsed(prev => !prev)}
-        >
-          {isCollapsed ? <ChevronDown className="h-5 w-5" /> : <ChevronUp className="h-5 w-5" />}
-        </div>
-      </div>
+      <WorkoutHeader 
+        workout={workout}
+        isCollapsed={isCollapsed}
+        isTimerActive={isTimerActive}
+        onCollapseToggle={() => setIsCollapsed(prev => !prev)}
+        onTimerToggle={() => setIsTimerActive(prev => !prev)}
+        onNameChange={handleNameChange}
+        onNotesChange={handleNotesChange}
+        onTimeUpdate={handleTimeUpdate}
+        onFinish={handlePreFinishCheck}
+        finishIsPending={finishWorkoutMutation.isPending}
+      />
       
-      {/* Workout content - collapsible */}
-      <div className={`transition-all duration-300 overflow-hidden ${isCollapsed ? 'max-h-0' : 'max-h-screen'}`}>
-        <div className="space-y-4 py-4">
-          {/* Workout title & timer */}
-          <div className="flex items-start gap-2">
-            <div className="flex-1">
-              <Input 
-                className="px-0 text-3xl font-bold border-none focus-visible:ring-0 h-auto bg-transparent"
-                value={workout.name}
-                onChange={handleNameChange}
-              />
-              <div className="text-xl">
-                <WorkoutTimer 
-                  isActive={isTimerActive} 
-                  onTimeUpdate={handleTimeUpdate}
-                />
-              </div>
-            </div>
-            <Button variant="ghost" size="icon">
-              <MoreHorizontal className="h-6 w-6" />
-            </Button>
-          </div>
-          
-          {/* Notes */}
-          <div>
-            <Input
-              className="border-none focus-visible:ring-0 text-lg text-muted-foreground pl-0 bg-transparent"
-              placeholder="Notes"
-              value={workout.notes || ''}
-              onChange={handleNotesChange}
-            />
-          </div>
-        </div>
-      </div>
+      <WorkoutExerciseList 
+        workoutId={workout.id}
+        exercises={workout.workoutExercises}
+        onRemoveExercise={handleRemoveExercise}
+      />
       
-      {/* Exercise list */}
-      <div className="flex-1">
-        {workout.workoutExercises.length > 0 ? (
-          <div className="space-y-3 my-4">
-            {workout.workoutExercises.map((workoutExercise) => (
-              <WorkoutExerciseCard
-                key={workoutExercise.id}
-                workoutId={workout.id}
-                exercise={workoutExercise.exercise}
-                workoutExerciseId={workoutExercise.id}
-              />
-            ))}
-          </div>
-        ) : (
-          <div className="flex flex-col items-center justify-center h-32 text-muted-foreground">
-            <p>No exercises added yet</p>
-          </div>
-        )}
-      </div>
-      
-      {/* Add exercises button */}
-      <Button 
-        variant="outline"
-        className="w-full py-6 my-4"
-        onClick={() => setIsExerciseSelectorOpen(true)}
-      >
-        Add Exercises
-      </Button>
-      
-      {/* Cancel workout button */}
-      <Button 
-        variant="destructive" 
-        className="w-full py-6 mb-8"
-        onClick={handleCancelWorkout}
-        disabled={cancelWorkoutMutation.isPending}
-      >
-        Cancel Workout
-      </Button>
+      <WorkoutActionButtons 
+        onAddExercises={() => setIsExerciseSelectorOpen(true)}
+        onCancelWorkout={handleCancelWorkout}
+        cancelIsPending={cancelWorkoutMutation.isPending}
+      />
       
       {/* Exercise selector dialog */}
       <ExerciseSelector
@@ -537,23 +449,12 @@ const ActiveWorkoutPage: React.FC = () => {
       />
       
       {/* Incomplete sets dialog */}
-      <Dialog open={isFinishDialogOpen} onOpenChange={setIsFinishDialogOpen}>
-        <DialogContent>
-          <DialogTitle>Incomplete Sets</DialogTitle>
-          <DialogDescription>
-            You have {incompleteSets} incomplete set{incompleteSets !== 1 ? 's' : ''} (sets with only weight or only reps filled). 
-            These incomplete sets will be removed when finishing the workout.
-          </DialogDescription>
-          <DialogFooter className="mt-4 flex space-x-2">
-            <Button variant="outline" onClick={() => setIsFinishDialogOpen(false)}>
-              Go Back & Complete
-            </Button>
-            <Button onClick={handleFinishWorkout}>
-              Finish Anyway
-            </Button>
-          </DialogFooter>
-        </DialogContent>
-      </Dialog>
+      <FinishWorkoutDialog 
+        isOpen={isFinishDialogOpen}
+        incompleteSets={incompleteSets}
+        onClose={() => setIsFinishDialogOpen(false)}
+        onFinish={handleFinishWorkout}
+      />
     </div>
   );
 };

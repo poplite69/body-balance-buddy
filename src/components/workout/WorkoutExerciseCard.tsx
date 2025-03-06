@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from 'react';
 import { Check, Plus, Link, MoreHorizontal } from 'lucide-react';
 import { Card, CardContent } from '@/components/ui/card';
@@ -25,12 +24,14 @@ interface WorkoutExerciseCardProps {
     [key: string]: any;
   };
   workoutExerciseId?: string;
+  onRemove?: () => void;  // New prop for handling removal
 }
 
 const WorkoutExerciseCard: React.FC<WorkoutExerciseCardProps> = ({
   workoutId,
   exercise,
   workoutExerciseId,
+  onRemove,
 }) => {
   const [sets, setSets] = useState<WorkoutSet[]>([
     { set_number: 1, completed: false },
@@ -327,7 +328,7 @@ const WorkoutExerciseCard: React.FC<WorkoutExerciseCardProps> = ({
             <Button variant="ghost" size="icon" className="h-8 w-8">
               <Link className="h-4 w-4" />
             </Button>
-            <Button variant="ghost" size="icon" className="h-8 w-8">
+            <Button variant="ghost" size="icon" className="h-8 w-8" onClick={onRemove}>
               <MoreHorizontal className="h-4 w-4" />
             </Button>
           </div>
