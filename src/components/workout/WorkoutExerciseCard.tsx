@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from 'react';
 import { Check, Plus, Link, MoreHorizontal } from 'lucide-react';
 import { Card, CardContent } from '@/components/ui/card';
@@ -235,19 +234,19 @@ const WorkoutExerciseCard: React.FC<WorkoutExerciseCardProps> = ({
     <Card className="mb-4">
       <CardContent className="p-4">
         <div className="flex items-center justify-between mb-4">
-          <h3 className="text-lg font-medium">{exercise.name}</h3>
-          <div className="flex gap-1">
-            <Button variant="ghost" size="icon" className="h-8 w-8">
-              <Link className="h-4 w-4" />
+          <h3 className="text-xl font-medium text-blue-500">{exercise.name}</h3>
+          <div className="flex gap-2">
+            <Button variant="ghost" size="icon">
+              <Link className="h-5 w-5 text-blue-500" />
             </Button>
-            <Button variant="ghost" size="icon" className="h-8 w-8">
-              <MoreHorizontal className="h-4 w-4" />
+            <Button variant="ghost" size="icon">
+              <MoreHorizontal className="h-5 w-5" />
             </Button>
           </div>
         </div>
         
         {/* Table header */}
-        <div className="grid grid-cols-5 gap-1 text-xs font-medium mb-2 text-muted-foreground">
+        <div className="grid grid-cols-5 gap-2 text-sm font-medium mb-2 px-2">
           <div>Set</div>
           <div>Previous</div>
           <div>kg</div>
@@ -257,17 +256,17 @@ const WorkoutExerciseCard: React.FC<WorkoutExerciseCardProps> = ({
         
         {/* Sets */}
         {loading ? (
-          <div className="py-4 text-center text-muted-foreground text-sm">Loading sets...</div>
+          <div className="py-4 text-center text-muted-foreground">Loading sets...</div>
         ) : (
           <>
             {sets.map((set, index) => (
-              <div key={index} className="grid grid-cols-5 gap-1 mb-2 items-center">
-                <div className="bg-muted text-muted-foreground rounded-md flex items-center justify-center text-xs font-medium h-8">
+              <div key={index} className="grid grid-cols-5 gap-2 mb-2">
+                <div className="bg-gray-100 rounded-md flex items-center justify-center text-gray-700 font-medium">
                   {set.set_number}
                 </div>
-                <div className="text-muted-foreground text-xs flex items-center">
+                <div className="text-gray-500 flex items-center">
                   {set.previous_weight !== null && set.previous_reps !== null ? (
-                    `${set.previous_weight}×${set.previous_reps}`
+                    `${set.previous_weight} kg × ${set.previous_reps}`
                   ) : (
                     '-'
                   )}
@@ -277,7 +276,7 @@ const WorkoutExerciseCard: React.FC<WorkoutExerciseCardProps> = ({
                     type="number"
                     value={set.weight || ''}
                     onChange={(e) => updateSet(index, 'weight', e.target.value ? Number(e.target.value) : null)}
-                    className={`text-center h-8 text-xs ${set.previous_weight !== null ? 'bg-secondary' : ''}`}
+                    className={`text-center ${set.previous_weight !== null ? 'bg-gray-50 text-gray-700' : ''}`}
                     placeholder={set.previous_weight !== null ? `${set.previous_weight}` : ''}
                   />
                 </div>
@@ -286,7 +285,7 @@ const WorkoutExerciseCard: React.FC<WorkoutExerciseCardProps> = ({
                     type="number"
                     value={set.reps || ''}
                     onChange={(e) => updateSet(index, 'reps', e.target.value ? Number(e.target.value) : null)}
-                    className={`text-center h-8 text-xs ${set.previous_reps !== null ? 'bg-secondary' : ''}`}
+                    className={`text-center ${set.previous_reps !== null ? 'bg-gray-50 text-gray-700' : ''}`}
                     placeholder={set.previous_reps !== null ? `${set.previous_reps}` : ''}
                   />
                 </div>
@@ -294,11 +293,11 @@ const WorkoutExerciseCard: React.FC<WorkoutExerciseCardProps> = ({
                   <Button
                     variant={set.completed ? "default" : "outline"}
                     size="icon"
-                    className={`rounded-md h-8 w-8 ${set.completed ? '' : 'border-input'}`}
+                    className={`rounded-md ${set.completed ? 'bg-green-500 hover:bg-green-600' : 'border-gray-200'}`}
                     onClick={() => updateSet(index, 'completed', !set.completed)}
                     disabled={savingSet === set.id}
                   >
-                    <Check className={`h-3 w-3 ${set.completed ? '' : 'text-muted-foreground'}`} />
+                    <Check className={`h-4 w-4 ${set.completed ? 'text-white' : 'text-gray-400'}`} />
                   </Button>
                 </div>
               </div>
@@ -306,11 +305,11 @@ const WorkoutExerciseCard: React.FC<WorkoutExerciseCardProps> = ({
             
             {/* Add set button */}
             <Button
-              variant="secondary"
-              className="w-full mt-2 text-xs h-8"
+              variant="ghost"
+              className="w-full mt-2 bg-gray-100 text-gray-700 hover:bg-gray-200"
               onClick={addSet}
             >
-              <Plus className="h-3 w-3 mr-1" /> Add Set
+              <Plus className="h-4 w-4 mr-1" /> Add Set
             </Button>
           </>
         )}
