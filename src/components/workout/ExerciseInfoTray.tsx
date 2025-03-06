@@ -1,10 +1,10 @@
-
 import React from 'react';
 import Tray from '@/components/tray/Tray';
 import { Button } from '@/components/ui/button';
 import { BrowserService } from '@/services/BrowserService';
 import { Exercise } from './types';
 import { TrayPosition } from '@/components/tray/types';
+import { Youtube, Binary } from 'lucide-react';
 import { ExternalLink, Video } from 'lucide-react';
 
 interface ExerciseInfoTrayProps {
@@ -81,13 +81,13 @@ const ExerciseInfoTray: React.FC<ExerciseInfoTrayProps> = ({
               onClick={handleYouTubeClick}
               className="h-auto py-3"
             >
-              <Video className="h-4 w-4 mr-2" /> YouTube
+              <Youtube className="h-4 w-4 mr-2 text-red-600" /> YouTube
             </Button>
             <Button 
               onClick={handleTikTokClick}
               className="h-auto py-3"
             >
-              <ExternalLink className="h-4 w-4 mr-2" /> TikTok
+              <Binary className="h-4 w-4 mr-2" /> TikTok
             </Button>
           </div>
         </div>
