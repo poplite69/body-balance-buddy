@@ -81,7 +81,7 @@ const ExerciseInfoTray: React.FC<ExerciseInfoTrayProps> = ({
               onClick={handleYouTubeClick}
               className="h-auto py-3"
             >
-              <Youtube className="h-4 w-4 mr-2 text-red-600" /> YouTube
+              <Youtube className="h-4 w-4 mr-2" /> YouTube
             </Button>
             <Button 
               onClick={handleTikTokClick}
