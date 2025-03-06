@@ -161,6 +161,47 @@ export type Database = {
         }
         Relationships: []
       }
+      food_portion_options: {
+        Row: {
+          amount: number
+          created_at: string | null
+          description: string
+          food_item_id: string
+          id: string
+          is_default: boolean | null
+          unit: string
+          updated_at: string | null
+        }
+        Insert: {
+          amount: number
+          created_at?: string | null
+          description: string
+          food_item_id: string
+          id?: string
+          is_default?: boolean | null
+          unit: string
+          updated_at?: string | null
+        }
+        Update: {
+          amount?: number
+          created_at?: string | null
+          description?: string
+          food_item_id?: string
+          id?: string
+          is_default?: boolean | null
+          unit?: string
+          updated_at?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "food_portion_options_food_item_id_fkey"
+            columns: ["food_item_id"]
+            isOneToOne: false
+            referencedRelation: "food_items"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       profiles: {
         Row: {
           age: number | null

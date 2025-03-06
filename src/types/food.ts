@@ -32,6 +32,17 @@ export interface FoodItem {
   updated_at: string;
 }
 
+export interface PortionOption {
+  id: string;
+  food_item_id: string;
+  description: string;
+  amount: number;
+  unit: string;
+  is_default: boolean;
+  created_at: string;
+  updated_at: string;
+}
+
 export interface FoodLog {
   id: string;
   user_id: string;

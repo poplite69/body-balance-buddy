@@ -1,14 +1,13 @@
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
-import { Label } from "@/components/ui/label";
-import { Input } from "@/components/ui/input";
 import { FoodItem, MealType } from "@/types/food";
 import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
 import { toast } from "sonner";
 import { logFood } from "@/services/foodService";
 import { useAuth } from "@/context/AuthContext";
+import { PortionSelect } from "./PortionSelect";
 
 interface AddFoodDialogProps {
   food: FoodItem | null;
@@ -26,18 +25,23 @@ export function AddFoodDialog({ food, isOpen, onClose, onSuccess, mealType = "br
   const [isSubmitting, setIsSubmitting] = useState(false);
 
   // Reset state when food changes
-  useState(() => {
+  useEffect(() => {
     if (food) {
       setPortion(food.serving_size);
       setUnit(food.serving_unit);
     }
-  });
+  }, [food]);
 
   // Calculate nutrition based on portion
   const calculateNutrition = (field: number | null): number => {
     if (!food || field === null) return 0;
     const multiplier = portion / food.serving_size;
     return parseFloat((field * multiplier).toFixed(2));
+  };
+
+  const handlePortionChange = (amount: number, portionUnit: string) => {
+    setPortion(amount);
+    setUnit(portionUnit);
   };
 
   const handleSubmit = async () => {
@@ -74,7 +78,6 @@ export function AddFoodDialog({ food, isOpen, onClose, onSuccess, mealType = "br
 
         <div className="space-y-4 my-2">
           <div className="space-y-2">
-            <Label>Add to meal</Label>
             <Tabs value={selectedMealType} onValueChange={(value) => setSelectedMealType(value as MealType)} className="w-full">
               <TabsList className="grid grid-cols-4 w-full">
                 <TabsTrigger value="breakfast">Breakfast</TabsTrigger>
@@ -85,28 +88,12 @@ export function AddFoodDialog({ food, isOpen, onClose, onSuccess, mealType = "br
             </Tabs>
           </div>
 
-          <div className="grid grid-cols-2 gap-4">
-            <div className="space-y-2">
-              <Label htmlFor="portion">Amount</Label>
-              <Input
-                id="portion"
-                type="number"
-                min="0"
-                step="0.1"
-                value={portion}
-                onChange={(e) => setPortion(parseFloat(e.target.value) || 0)}
-              />
-            </div>
-            <div className="space-y-2">
-              <Label htmlFor="unit">Unit</Label>
-              <Input
-                id="unit"
-                type="text"
-                value={unit || food.serving_unit}
-                onChange={(e) => setUnit(e.target.value)}
-              />
-            </div>
-          </div>
+          <PortionSelect 
+            food={food} 
+            defaultPortion={portion} 
+            defaultUnit={unit || food.serving_unit} 
+            onPortionChange={handlePortionChange} 
+          />
 
           <div className="rounded-lg border p-3">
             <h3 className="font-medium">Nutrition</h3>
