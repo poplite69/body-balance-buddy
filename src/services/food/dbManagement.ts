@@ -306,8 +306,9 @@ export async function runFoodDatabaseMaintenance(): Promise<{ success: boolean, 
     if (statsQueryResult.error || !statsQueryResult.data) {
       report.push(`Error retrieving database statistics: ${statsQueryResult.error?.message || "No data returned"}`);
     } else {
-      // Cast the returned data to our interface
-      const stats = statsQueryResult.data as FoodDatabaseStats;
+      // First cast to unknown, then to our interface to avoid type issues
+      const statsData = statsQueryResult.data as unknown;
+      const stats = statsData as FoodDatabaseStats;
       
       report.push(`Total food items: ${stats.total_count}`);
       report.push(`Core items: ${stats.core_count}`);
