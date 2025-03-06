@@ -34,7 +34,7 @@ export const TrayProvider: React.FC<{ children: React.ReactNode }> = ({ children
     return id;
   };
   
-  // Close a specific tray
+  // Close a specific tray and any child trays
   const closeTray = (id: string) => {
     // Find the tray and any child trays
     const index = trays.findIndex(tray => tray.id === id);
@@ -69,14 +69,14 @@ export const TrayProvider: React.FC<{ children: React.ReactNode }> = ({ children
     <TrayContext.Provider value={value}>
       {children}
       
-      {/* Render active trays */}
+      {/* Render the last tray only for better stacking */}
       {trays.length > 0 && (
-        <div className="tray-container">
+        <>
           {trays.map((tray, index) => {
             const TrayComp = tray.component;
             return <TrayComp key={tray.id} {...tray.props} />;
           })}
-        </div>
+        </>
       )}
     </TrayContext.Provider>
   );

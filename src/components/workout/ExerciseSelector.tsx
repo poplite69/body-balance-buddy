@@ -1,7 +1,6 @@
 
 import React, { useState } from 'react';
 import { X, Search, Plus, Info } from 'lucide-react';
-import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
 import { Skeleton } from '@/components/ui/skeleton';
@@ -10,17 +9,18 @@ import { supabase } from '@/integrations/supabase/client';
 import { useTray } from '@/components/tray/TrayProvider';
 import ExerciseInfoTray from './ExerciseInfoTray';
 import { Exercise } from './types';
+import Tray from '@/components/tray/Tray';
 
 interface ExerciseSelectorProps {
-  isOpen: boolean;
-  onClose: () => void;
-  onSelectExercise: (exercise: any) => void;
+  id?: string;
+  onSelectExercise: (exercise: Exercise) => void;
+  onClose?: () => void;
 }
 
 const ExerciseSelector: React.FC<ExerciseSelectorProps> = ({ 
-  isOpen, 
-  onClose, 
-  onSelectExercise 
+  id,
+  onSelectExercise,
+  onClose = () => {}
 }) => {
   const [searchQuery, setSearchQuery] = useState('');
   const { showTray } = useTray();
@@ -44,7 +44,7 @@ const ExerciseSelector: React.FC<ExerciseSelectorProps> = ({
     }
   });
   
-  const handleSelectExercise = (exercise: any) => {
+  const handleSelectExercise = (exercise: Exercise) => {
     onSelectExercise(exercise);
     onClose();
   };
@@ -56,80 +56,75 @@ const ExerciseSelector: React.FC<ExerciseSelectorProps> = ({
   const handleInfoClick = (exercise: Exercise, e: React.MouseEvent) => {
     e.stopPropagation(); // Prevent triggering the parent onClick
     
-    // Fix: Create a properly typed props object for ExerciseInfoTray
+    // Create a properly typed props object for ExerciseInfoTray
     const trayProps = {
       exercise,
-      position: 'bottom' as const // Type assertion to ensure position is correctly typed
+      position: 'bottom' as const 
     };
     
     showTray(ExerciseInfoTray, trayProps);
   };
   
   return (
-    <Dialog open={isOpen} onOpenChange={(open) => !open && onClose()}>
-      <DialogContent className="sm:max-w-md max-h-[80vh] overflow-auto">
-        <DialogHeader>
-          <DialogTitle>Select Exercise</DialogTitle>
-          <div className="absolute right-4 top-4">
-            <Button variant="ghost" size="icon" onClick={onClose}>
-              <X className="h-4 w-4" />
-            </Button>
-          </div>
-        </DialogHeader>
-        
-        <div className="space-y-4">
-          <div className="relative">
-            <Search className="absolute left-2 top-2.5 h-4 w-4 text-muted-foreground" />
-            <Input
-              placeholder="Search exercises..."
-              className="pl-8"
-              value={searchQuery}
-              onChange={handleSearch}
-            />
-          </div>
-          
-          <div className="space-y-2">
-            {isLoading ? (
-              Array(5).fill(0).map((_, i) => (
-                <div key={i} className="flex items-center p-3 rounded-md">
-                  <Skeleton className="h-14 w-full rounded-md" />
-                </div>
-              ))
-            ) : exercises && exercises.length > 0 ? (
-              exercises.map((exercise) => (
-                <div 
-                  key={exercise.id} 
-                  className="flex items-center justify-between p-3 rounded-md hover:bg-accent cursor-pointer"
-                  onClick={() => handleSelectExercise(exercise)}
-                >
-                  <div className="flex items-center">
-                    <p className="font-medium">{exercise.name}</p>
-                    <Button 
-                      variant="ghost" 
-                      size="icon" 
-                      className="h-6 w-6 ml-1"
-                      onClick={(e) => handleInfoClick(exercise, e)}
-                    >
-                      <Info className="h-3.5 w-3.5" />
-                    </Button>
-                  </div>
-                  <div className="flex items-center">
-                    <p className="text-sm text-muted-foreground mr-2">{exercise.primary_muscle}</p>
-                    <Button variant="ghost" size="icon">
-                      <Plus className="h-4 w-4" />
-                    </Button>
-                  </div>
-                </div>
-              ))
-            ) : (
-              <p className="text-center py-4 text-muted-foreground">
-                No exercises found. Try a different search term.
-              </p>
-            )}
-          </div>
+    <Tray
+      id={id || ''}
+      title="Select Exercise"
+      position="bottom"
+      onClose={onClose}
+      height={500}
+    >
+      <div className="space-y-4">
+        <div className="relative">
+          <Search className="absolute left-2 top-2.5 h-4 w-4 text-muted-foreground" />
+          <Input
+            placeholder="Search exercises..."
+            className="pl-8"
+            value={searchQuery}
+            onChange={handleSearch}
+          />
         </div>
-      </DialogContent>
-    </Dialog>
+        
+        <div className="space-y-2 max-h-[350px] overflow-y-auto">
+          {isLoading ? (
+            Array(5).fill(0).map((_, i) => (
+              <div key={i} className="flex items-center p-3 rounded-md">
+                <Skeleton className="h-14 w-full rounded-md" />
+              </div>
+            ))
+          ) : exercises && exercises.length > 0 ? (
+            exercises.map((exercise) => (
+              <div 
+                key={exercise.id} 
+                className="flex items-center justify-between p-3 rounded-md hover:bg-accent cursor-pointer"
+                onClick={() => handleSelectExercise(exercise)}
+              >
+                <div className="flex items-center">
+                  <p className="font-medium">{exercise.name}</p>
+                  <Button 
+                    variant="ghost" 
+                    size="icon" 
+                    className="h-6 w-6 ml-1"
+                    onClick={(e) => handleInfoClick(exercise, e)}
+                  >
+                    <Info className="h-3.5 w-3.5" />
+                  </Button>
+                </div>
+                <div className="flex items-center">
+                  <p className="text-sm text-muted-foreground mr-2">{exercise.primary_muscle}</p>
+                  <Button variant="ghost" size="icon">
+                    <Plus className="h-4 w-4" />
+                  </Button>
+                </div>
+              </div>
+            ))
+          ) : (
+            <p className="text-center py-4 text-muted-foreground">
+              No exercises found. Try a different search term.
+            </p>
+          )}
+        </div>
+      </div>
+    </Tray>
   );
 };
 
