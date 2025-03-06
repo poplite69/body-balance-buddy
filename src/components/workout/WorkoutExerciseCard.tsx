@@ -266,10 +266,11 @@ const WorkoutExerciseCard: React.FC<WorkoutExerciseCardProps> = ({
                   {set.set_number}
                 </div>
                 <div className="text-xs flex items-center text-muted-foreground">
-                  {set.previous_weight !== null && set.previous_reps !== null ? (
+                  {set.previous_weight !== null && set.previous_weight !== undefined && 
+                   set.previous_reps !== null && set.previous_reps !== undefined ? (
                     `${set.previous_weight}×${set.previous_reps}`
                   ) : (
-                    '-'
+                    ''
                   )}
                 </div>
                 <div>
@@ -277,8 +278,8 @@ const WorkoutExerciseCard: React.FC<WorkoutExerciseCardProps> = ({
                     type="number"
                     value={set.weight || ''}
                     onChange={(e) => updateSet(index, 'weight', e.target.value ? Number(e.target.value) : null)}
-                    className={`text-center h-8 text-xs px-1 ${set.previous_weight !== null ? 'bg-background/90 border-muted' : ''}`}
-                    placeholder={set.previous_weight !== null ? `${set.previous_weight}` : ''}
+                    className={`text-center h-8 text-xs px-1 ${set.previous_weight !== null && set.previous_weight !== undefined ? 'bg-background/90 border-muted' : ''}`}
+                    placeholder={set.previous_weight !== null && set.previous_weight !== undefined ? `${set.previous_weight}` : ''}
                   />
                 </div>
                 <div>
@@ -286,8 +287,8 @@ const WorkoutExerciseCard: React.FC<WorkoutExerciseCardProps> = ({
                     type="number"
                     value={set.reps || ''}
                     onChange={(e) => updateSet(index, 'reps', e.target.value ? Number(e.target.value) : null)}
-                    className={`text-center h-8 text-xs px-1 ${set.previous_reps !== null ? 'bg-background/90 border-muted' : ''}`}
-                    placeholder={set.previous_reps !== null ? `${set.previous_reps}` : ''}
+                    className={`text-center h-8 text-xs px-1 ${set.previous_reps !== null && set.previous_reps !== undefined ? 'bg-background/90 border-muted' : ''}`}
+                    placeholder={set.previous_reps !== null && set.previous_reps !== undefined ? `${set.previous_reps}` : ''}
                   />
                 </div>
                 <div className="flex justify-center items-center">
