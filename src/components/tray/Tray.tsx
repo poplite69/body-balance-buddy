@@ -64,7 +64,7 @@ const Tray: React.FC<BaseTrayProps> = ({
         data-elevation={elevation}
         id={id}
         className={cn(
-          'fixed w-[calc(100%-32px)] mx-auto tray-floating transition-all duration-300 ease-out bg-background',
+          'tray-floating transition-all duration-300 ease-out bg-background',
           getPositionClasses(),
           isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-10',
           'max-w-md'
@@ -72,8 +72,6 @@ const Tray: React.FC<BaseTrayProps> = ({
         style={{ 
           maxHeight: 'calc(85vh - 60px)',
           zIndex: (zIndex || 50) + 1,
-          left: '16px',
-          right: '16px'
         }}
       >
         {/* Tray header */}

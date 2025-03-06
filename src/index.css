@@ -132,14 +132,11 @@
   
   /* Tray styling */
   .tray-floating {
-    @apply mx-auto rounded-xl shadow-2xl border border-white/10 overflow-hidden;
-    max-width: calc(100% - 32px);
-  }
-  
-  /* Enhanced floating tray styles with dynamic height */
-  .tray-floating {
-    @apply rounded-[16px] border border-white/10 overflow-hidden;
+    @apply mx-auto rounded-xl shadow-2xl border border-white/10 overflow-hidden fixed;
     width: calc(100% - 32px);
+    max-width: 28rem; /* 448px */
+    left: 16px;
+    right: 16px;
   }
   
   /* Base tray shadow styles - using data-elevation attribute */
