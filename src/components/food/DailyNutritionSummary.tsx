@@ -36,8 +36,8 @@ export function DailyNutritionSummary({ foodLogs, calorieGoal = 2400 }: Nutritio
     <Card className="bg-card border shadow-sm">
       <CardContent className="p-4">
         <div className="space-y-3">
-          {/* Calories Summary */}
-          <div className="flex justify-between items-center">
+          {/* Daily Budget */}
+          <div className="flex justify-between">            
             <div className="flex flex-col">
               <span className="text-xs text-muted-foreground">BUDGET</span>
               <span className="text-xl font-bold text-primary">{calorieGoal}</span>
@@ -65,11 +65,11 @@ export function DailyNutritionSummary({ foodLogs, calorieGoal = 2400 }: Nutritio
             <Progress value={calorieProgress} className="h-2" />
           </div>
           
-          {/* Macros Summary (single line, left-aligned) */}
+          {/* Macros Summary (compact format) */}
           <div className="flex justify-start gap-4 pt-1">
-            <span className="text-sm">P: {roundedProtein}g</span>
-            <span className="text-sm">C: {roundedCarbs}g</span>
-            <span className="text-sm">F: {roundedFat}g</span>
+            <span className="text-sm">{roundedProtein}P</span>
+            <span className="text-sm">{roundedCarbs}C</span>
+            <span className="text-sm">{roundedFat}F</span>
           </div>
         </div>
       </CardContent>
