@@ -17,9 +17,9 @@ export interface ConfirmationTrayProps {
 
 export interface ExerciseSelectorTrayProps {
   id?: string;
-  onClose: () => void;
   onSelectExercise: (exercise: any) => void;
   position?: TrayPosition;
+  // Remove onClose from this interface as it's automatically handled by TrayProvider
 }
 
 export interface BaseTrayProps {

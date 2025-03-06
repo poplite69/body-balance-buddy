@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import { Search, Plus, Info, X } from 'lucide-react';
 import { Input } from '@/components/ui/input';
@@ -13,14 +12,14 @@ import { Exercise } from './types';
 
 interface ExerciseSelectorTrayProps {
   id?: string;
-  onClose: () => void;
+  onClose?: () => void; // Make onClose optional as it's provided by TrayProvider
   onSelectExercise: (exercise: any) => void;
   position?: 'bottom' | 'top' | 'left' | 'right';
 }
 
 const ExerciseSelectorTray: React.FC<ExerciseSelectorTrayProps> = ({ 
   id,
-  onClose, 
+  onClose = () => {}, // Provide default empty function if not provided
   onSelectExercise,
   position = 'bottom'
 }) => {
@@ -48,7 +47,7 @@ const ExerciseSelectorTray: React.FC<ExerciseSelectorTrayProps> = ({
   
   const handleSelectExercise = (exercise: any) => {
     onSelectExercise(exercise);
-    onClose();
+    if (onClose) onClose();
   };
   
   const handleSearch = (e: React.ChangeEvent<HTMLInputElement>) => {
