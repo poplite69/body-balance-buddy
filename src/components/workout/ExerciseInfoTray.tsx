@@ -4,7 +4,7 @@ import { Button } from '@/components/ui/button';
 import { BrowserService } from '@/services/BrowserService';
 import { Exercise } from './types';
 import { TrayPosition } from '@/components/tray/types';
-import { Youtube, Binary } from 'lucide-react';
+import { Youtube, Video } from 'lucide-react';
 import { ExternalLink, Video } from 'lucide-react';
 
 interface ExerciseInfoTrayProps {
@@ -87,7 +87,7 @@ const ExerciseInfoTray: React.FC<ExerciseInfoTrayProps> = ({
               onClick={handleTikTokClick}
               className="h-auto py-3"
             >
-              <Binary className="h-4 w-4 mr-2" /> TikTok
+              <Video className="h-4 w-4 mr-2" /> TikTok
             </Button>
           </div>
         </div>
