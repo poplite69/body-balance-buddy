@@ -16,7 +16,7 @@ export function BottomNav() {
     { 
       icon: Apple, 
       path: '/food', 
-      label: 'Food'
+      label: 'Diet'
     },
     { 
       icon: Dumbbell, 
