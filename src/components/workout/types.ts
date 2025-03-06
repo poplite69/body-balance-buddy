@@ -13,10 +13,6 @@ export interface Exercise {
   id: string;
   name: string;
   primary_muscle: string;
-  secondary_muscles?: string[];
-  equipment?: string[];
-  description?: string;
-  instructions?: string;
   [key: string]: any;
 }
 

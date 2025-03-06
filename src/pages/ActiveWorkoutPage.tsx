@@ -10,7 +10,6 @@ import WorkoutExerciseList from '@/components/workout/WorkoutExerciseList';
 import WorkoutActionButtons from '@/components/workout/WorkoutActionButtons';
 import FinishWorkoutDialog from '@/components/workout/FinishWorkoutDialog';
 import ExerciseSelector from '@/components/workout/ExerciseSelector';
-import { useTray } from '@/components/tray/TrayProvider';
 
 interface Exercise {
   id: string;
@@ -47,7 +46,6 @@ const ActiveWorkoutPage: React.FC = () => {
   const navigate = useNavigate();
   const { toast } = useToast();
   const queryClient = useQueryClient();
-  const { showTray } = useTray();
   
   const [isCollapsed, setIsCollapsed] = useState(false);
   const [workout, setWorkout] = useState<ActiveWorkout>({
@@ -57,7 +55,7 @@ const ActiveWorkoutPage: React.FC = () => {
     workoutExercises: [],
     duration: 0
   });
-  
+  const [isExerciseSelectorOpen, setIsExerciseSelectorOpen] = useState(false);
   const [isTimerActive, setIsTimerActive] = useState(true);
   const [isFinishDialogOpen, setIsFinishDialogOpen] = useState(false);
   const [incompleteSets, setIncompleteSets] = useState<number>(0);
@@ -438,12 +436,17 @@ const ActiveWorkoutPage: React.FC = () => {
       />
       
       <WorkoutActionButtons 
-        onAddExercise={handleAddExercise}
+        onAddExercises={() => setIsExerciseSelectorOpen(true)}
         onCancelWorkout={handleCancelWorkout}
         cancelIsPending={cancelWorkoutMutation.isPending}
       />
       
-      {/* Removed the Dialog-based ExerciseSelector */}
+      {/* Exercise selector dialog */}
+      <ExerciseSelector
+        isOpen={isExerciseSelectorOpen}
+        onClose={() => setIsExerciseSelectorOpen(false)}
+        onSelectExercise={handleAddExercise}
+      />
       
       {/* Incomplete sets dialog */}
       <FinishWorkoutDialog 

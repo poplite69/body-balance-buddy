@@ -6,7 +6,6 @@ import { cn } from '@/lib/utils';
 import { BaseTrayProps } from './types';
 
 const Tray: React.FC<BaseTrayProps> = ({
-  id,
   title,
   onClose,
   onBack,
@@ -53,33 +52,33 @@ const Tray: React.FC<BaseTrayProps> = ({
   const getPositionClasses = () => {
     switch (position) {
       case 'bottom':
-        return 'bottom-0';
+        return 'bottom-[60px]';
       case 'top':
-        return 'top-0';
+        return 'top-[60px]';
       case 'left':
-        return 'left-0';
+        return 'left-[60px]';
       case 'right':
-        return 'right-0';
+        return 'right-[60px]';
       default:
-        return 'bottom-0';
+        return 'bottom-[60px]';
     }
   };
   
   return (
-    <div className="fixed inset-0 z-50 flex items-end justify-center bg-black/60 transition-opacity duration-200"
+    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 transition-opacity duration-200"
          style={{ opacity: isVisible ? 1 : 0 }}>
       <div 
         ref={trayRef}
         data-elevation={elevation}
         className={cn(
-          'w-full transition-all duration-300 ease-out bg-background rounded-t-xl',
+          'absolute mx-4 tray-floating transition-all duration-300 ease-out bg-background',
           getPositionClasses(),
           isVisible ? 'opacity-100 transform-none' : 'opacity-0 translate-y-5',
-          position === 'bottom' && 'safe-bottom'
+          'w-auto max-w-md'
         )}
         style={{ 
           height: typeof height === 'number' ? `${height}px` : height,
-          maxHeight: 'calc(85vh)',
+          maxHeight: 'calc(85vh - 120px)',
         }}
       >
         {/* Tray header */}
@@ -108,7 +107,7 @@ const Tray: React.FC<BaseTrayProps> = ({
         </div>
         
         {/* Tray content */}
-        <div className="p-4 overflow-y-auto" style={{ maxHeight: 'calc(75vh)' }}>
+        <div className="p-4 overflow-y-auto" style={{ maxHeight: 'calc(85vh - 180px)' }}>
           {children}
         </div>
       </div>

@@ -1,49 +1,54 @@
 
 import React from 'react';
-import { Plus, X } from 'lucide-react';
 import { Button } from '@/components/ui/button';
-import { useTray } from '@/components/tray/TrayProvider';
-import ExerciseSelector from './ExerciseSelector';
-import { Exercise } from './types';
+import { useTrayConfirmation } from '@/components/tray/useTrayConfirmation';
 
 interface WorkoutActionButtonsProps {
+  onAddExercises: () => void;
   onCancelWorkout: () => void;
   cancelIsPending: boolean;
-  onAddExercise: (exercise: Exercise) => void;
 }
 
 const WorkoutActionButtons: React.FC<WorkoutActionButtonsProps> = ({
+  onAddExercises,
   onCancelWorkout,
-  cancelIsPending,
-  onAddExercise
+  cancelIsPending
 }) => {
-  const { showTray } = useTray();
+  const { confirm } = useTrayConfirmation();
   
-  const handleAddExercises = () => {
-    showTray(ExerciseSelector, {
-      onSelectExercise: onAddExercise
+  const handleCancelWorkout = () => {
+    confirm({
+      id: 'cancel-workout',
+      title: 'Cancel Workout',
+      message: 'Are you sure you want to cancel this workout? All progress will be lost.',
+      confirmText: 'Yes, Cancel',
+      cancelText: 'No, Keep Working Out',
+      danger: true,
+      onConfirm: onCancelWorkout
     });
   };
   
   return (
-    <div className="fixed bottom-0 left-0 right-0 p-4 bg-background border-t safe-bottom z-10">
-      <div className="flex items-center justify-between gap-3 max-w-md mx-auto">
-        <Button 
-          onClick={handleAddExercises}
-          className="w-full"
-        >
-          <Plus className="mr-2 h-5 w-5" /> Add Exercises
-        </Button>
-        <Button 
-          variant="outline" 
-          onClick={onCancelWorkout}
-          disabled={cancelIsPending}
-          className="px-3"
-        >
-          <X className="h-5 w-5" />
-        </Button>
-      </div>
-    </div>
+    <>
+      {/* Add exercises button */}
+      <Button 
+        variant="outline"
+        className="w-full py-6 my-4"
+        onClick={onAddExercises}
+      >
+        Add Exercises
+      </Button>
+      
+      {/* Cancel workout button */}
+      <Button 
+        variant="destructive" 
+        className="w-full py-6 mb-8"
+        onClick={handleCancelWorkout}
+        disabled={cancelIsPending}
+      >
+        Cancel Workout
+      </Button>
+    </>
   );
 };
 
