@@ -59,15 +59,15 @@ export function DailyNutritionSummary({ foodLogs, calorieGoal = 2400 }: Nutritio
           
           {/* Macros Summary */}
           <div className="flex justify-between pt-1">
-            {/* Total macros (left aligned) */}
-            <div className="text-sm text-blue-500">{roundedProtein}P {roundedCarbs}C {roundedFat}F</div>
-            
-            {/* Individual macros with colors (right aligned) */}
+            {/* Individual macros with colors (left aligned) */}
             <div className="flex gap-3">
               <span className="text-sm text-emerald-500">{roundedProtein}P</span>
               <span className="text-sm text-blue-500">{roundedCarbs}C</span>
               <span className="text-sm text-amber-500">{roundedFat}F</span>
             </div>
+            
+            {/* Total macros (right aligned) */}
+            <div className="text-sm text-blue-500">{roundedProtein}P {roundedCarbs}C {roundedFat}F</div>
           </div>
         </div>
       </CardContent>
