@@ -53,30 +53,30 @@ const FoodPage = () => {
         <div className="flex items-center gap-2 mb-4">
           <div className="relative flex-1">
             <div 
-              className="flex items-center bg-secondary rounded-full px-4 py-2 w-full cursor-pointer"
+              className="flex items-center bg-white/5 border border-white/10 rounded-full px-3 py-1.5 w-full cursor-pointer"
               onClick={handleSearchIconClick}
             >
-              <SearchIcon className="h-5 w-5 text-muted-foreground mr-2" />
-              <span className="text-muted-foreground">Search for a food</span>
+              <SearchIcon className="h-4 w-4 text-muted-foreground mr-2" />
+              <span className="text-muted-foreground text-sm">Search for a food</span>
             </div>
           </div>
           
           <Button 
-            variant="secondary" 
-            size="icon" 
-            className="rounded-full h-10 w-10 flex items-center justify-center"
+            variant="outline" 
+            size="icon"
+            className="rounded-full h-8 w-8 flex items-center justify-center bg-white/5 border border-white/10"
             onClick={handleScancodeClick}
           >
-            <ScanBarcode className="h-5 w-5" />
+            <ScanBarcode className="h-4 w-4" />
           </Button>
           
           <Button 
-            variant="secondary" 
+            variant="outline" 
             size="icon" 
-            className="rounded-full h-10 w-10 flex items-center justify-center"
+            className="rounded-full h-8 w-8 flex items-center justify-center bg-white/5 border border-white/10"
             onClick={handleMicClick}
           >
-            <Mic className="h-5 w-5" />
+            <Mic className="h-4 w-4" />
           </Button>
         </div>
       </header>
