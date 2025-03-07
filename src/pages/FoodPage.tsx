@@ -1,6 +1,7 @@
+
 import { useState } from "react";
 import { format, addDays, subDays } from "date-fns";
-import { ChevronLeft, ChevronRight, CalendarIcon, ScanBarcode, Mic, Search as SearchIcon, Camera } from "lucide-react";
+import { ChevronLeft, ChevronRight, CalendarIcon, ScanBarcode, Mic, Search as SearchIcon } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 import { Calendar } from "@/components/ui/calendar";
@@ -40,11 +41,6 @@ const FoodPage = () => {
 
   const handleMicClick = () => {
     // This is for Phase 3, just show a toast or open AI describe tab
-    setIsSearchModalOpen(true);
-  };
-
-  const handleCameraClick = () => {
-    // Handle camera functionality here
     setIsSearchModalOpen(true);
   };
   
@@ -114,26 +110,19 @@ const FoodPage = () => {
       />
       
       {/* Bottom Search Bar - Fixed at bottom above nav */}
-      <div className="fixed bottom-16 left-0 right-0 px-4 py-2 bg-[#1a1a1a] border-t border-border/20">
+      <div className="fixed bottom-16 left-0 right-0 px-4 py-2 bg-background/80 backdrop-blur-sm border-t border-border">
         <div className="flex items-center gap-2 max-w-md mx-auto">
           <div 
-            className="flex items-center justify-between bg-[#2c2c2c] rounded-full px-4 py-2 w-full"
+            className="flex items-center bg-gray-800/70 rounded-full px-4 py-2 w-full cursor-pointer"
+            onClick={handleSearchIconClick}
           >
-            <div className="flex items-center flex-1" onClick={handleSearchIconClick}>
-              <SearchIcon className="h-5 w-5 text-gray-400 mr-3" />
-              <span className="text-gray-400">Search for a food</span>
-            </div>
-            <div className="flex items-center gap-4">
-              <div onClick={handleScancodeClick} className="cursor-pointer">
-                <ScanBarcode className="h-5 w-5 text-gray-400" />
-              </div>
-            </div>
+            <SearchIcon className="h-5 w-5 text-gray-400 mr-3" />
+            <span className="text-gray-400">Search for a food</span>
           </div>
-          <div 
-            className="bg-[#2c2c2c] rounded-full h-12 w-12 flex items-center justify-center cursor-pointer"
-            onClick={handleCameraClick}
-          >
-            <Camera className="h-5 w-5 text-gray-400" />
+          
+          <div className="flex-shrink-0 bg-gray-800/70 rounded-full h-10 w-10 flex items-center justify-center"
+            onClick={handleScancodeClick}>
+            <ScanBarcode className="h-5 w-5 text-gray-400" />
           </div>
         </div>
       </div>
