@@ -5,9 +5,10 @@ import { Plus, Pencil } from "lucide-react";
 import { FoodLog, FoodItem, MealType } from "@/types/food";
 import { deleteFoodLog } from "@/services/food";
 import { toast } from "sonner";
-import { FoodSearch } from "./FoodSearch";
+import { FoodLogEntryContainer } from "./FoodLogEntryContainer";
 import { AddFoodDialog } from "./AddFoodDialog";
-import { Separator } from "@/components/ui/separator";
+import { logFood } from "@/services/food";
+import { useAuth } from "@/context/AuthContext";
 
 interface MealSectionProps {
   title: string;
@@ -24,10 +25,12 @@ export function MealSection({
   onUpdate,
   suggestedCalories
 }: MealSectionProps) {
-  const [isAddingFood, setIsAddingFood] = useState(false);
+  const { user } = useAuth();
+  const [isEntryVisible, setIsEntryVisible] = useState(false);
   const [selectedFood, setSelectedFood] = useState<FoodItem | null>(null);
   
   const handleFoodSelect = (food: FoodItem) => {
+    setIsEntryVisible(false);
     setSelectedFood(food);
   };
   
@@ -40,6 +43,34 @@ export function MealSection({
     } catch (error) {
       console.error("Error deleting food log:", error);
       toast.error("Failed to remove food. Please try again.");
+    }
+  };
+  
+  const handleQuickAdd = async (foodData: Partial<FoodItem>) => {
+    if (!user) return;
+    
+    try {
+      // Create a simplified food log directly
+      await logFood(
+        user.id,
+        foodData.id as string,
+        mealType,
+        1,
+        "serving",
+        {
+          calories: foodData.calories || 0,
+          protein_g: foodData.protein_g || 0,
+          carbs_g: foodData.carbs_g || 0,
+          fat_g: foodData.fat_g || 0
+        }
+      );
+      
+      toast.success(`Added ${foodData.name || "food"} to ${mealType}`);
+      setIsEntryVisible(false);
+      onUpdate();
+    } catch (error) {
+      console.error("Error adding quick food:", error);
+      toast.error("Failed to add food. Please try again.");
     }
   };
   
@@ -68,17 +99,11 @@ export function MealSection({
             </div>
           )}
         </div>
-        <Button size="sm" variant="ghost" onClick={() => setIsAddingFood(!isAddingFood)}>
+        <Button size="sm" variant="ghost" onClick={() => setIsEntryVisible(true)}>
           <Plus className="h-4 w-4 mr-1" />
           Add
         </Button>
       </div>
-      
-      {isAddingFood && (
-        <div className="mb-3 border rounded-lg p-4 bg-muted/20">
-          <FoodSearch onFoodSelect={handleFoodSelect} />
-        </div>
-      )}
       
       {foodLogs.length > 0 ? (
         <div className="space-y-2 mb-4">
@@ -120,13 +145,23 @@ export function MealSection({
             className="mt-2" 
             variant="outline" 
             size="sm" 
-            onClick={() => setIsAddingFood(true)}
+            onClick={() => setIsEntryVisible(true)}
           >
             <Plus className="h-4 w-4 mr-1" /> Add {title}
           </Button>
         </div>
       )}
       
+      {/* Food Selection Modal */}
+      <FoodLogEntryContainer
+        isOpen={isEntryVisible}
+        onClose={() => setIsEntryVisible(false)}
+        mealType={mealType}
+        onFoodSelected={handleFoodSelect}
+        onQuickAdd={handleQuickAdd}
+      />
+      
+      {/* Food Detail Dialog */}
       <AddFoodDialog 
         food={selectedFood}
         isOpen={!!selectedFood}
