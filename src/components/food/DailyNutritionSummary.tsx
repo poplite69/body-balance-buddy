@@ -67,7 +67,7 @@ export function DailyNutritionSummary({ foodLogs, calorieGoal = 2400 }: Nutritio
             </div>
             
             {/* Calories (right aligned) - replacing total macros */}
-            <div className="text-sm text-blue-500">{totalCalories} / {calorieGoal} cal</div>
+            <div className="text-sm text-blue-500">{totalCalories} / {calorieGoal}</div>
           </div>
         </div>
       </CardContent>
