@@ -113,16 +113,29 @@ const FoodPage = () => {
       <div className="fixed bottom-16 left-0 right-0 px-4 py-2 bg-background/80 backdrop-blur-sm border-t border-border">
         <div className="flex items-center gap-2 max-w-md mx-auto">
           <div 
-            className="flex items-center bg-gray-800/70 rounded-full px-4 py-2 w-full cursor-pointer"
+            className="flex items-center justify-between bg-gray-800/70 rounded-full px-4 py-2 w-full cursor-pointer"
             onClick={handleSearchIconClick}
           >
-            <SearchIcon className="h-5 w-5 text-gray-400 mr-3" />
-            <span className="text-gray-400">Search for a food</span>
-          </div>
-          
-          <div className="flex-shrink-0 bg-gray-800/70 rounded-full h-10 w-10 flex items-center justify-center"
-            onClick={handleScancodeClick}>
-            <ScanBarcode className="h-5 w-5 text-gray-400" />
+            <div className="flex items-center">
+              <SearchIcon className="h-5 w-5 text-gray-400 mr-3" />
+              <span className="text-gray-400">Search for a food</span>
+            </div>
+            <div className="flex gap-3">
+              <ScanBarcode 
+                className="h-5 w-5 text-gray-400" 
+                onClick={(e) => {
+                  e.stopPropagation();
+                  handleScancodeClick();
+                }}
+              />
+              <Mic 
+                className="h-5 w-5 text-gray-400" 
+                onClick={(e) => {
+                  e.stopPropagation();
+                  handleMicClick();
+                }}
+              />
+            </div>
           </div>
         </div>
       </div>
