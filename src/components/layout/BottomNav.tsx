@@ -1,7 +1,7 @@
 
 import React, { useState } from 'react';
 import { NavLink, useLocation, useNavigate } from 'react-router-dom';
-import { Home, Dumbbell, User, Apple, Plus, Search, Mic } from 'lucide-react';
+import { Home, Dumbbell, User, Apple, Plus, LayoutGrid, MoreHorizontal } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { FoodLogEntryContainer } from '../food/FoodLogEntryContainer';
 import { FoodItem } from '@/types/food';
@@ -17,14 +17,14 @@ export function BottomNav() {
   
   const navItems = [
     { 
-      icon: Home, 
+      icon: LayoutGrid, 
       path: '/', 
-      label: 'Home'
+      label: 'Dashboard'
     },
     { 
       icon: Apple, 
       path: '/food', 
-      label: 'Diet'
+      label: 'Food Log'
     },
     {
       icon: Plus,
@@ -38,17 +38,17 @@ export function BottomNav() {
           setTimeout(() => setIsQuickAddOpen(true), 300);
         }
       },
-      className: 'bg-primary text-primary-foreground rounded-full -mt-2 h-9 w-9 flex items-center justify-center shadow-md'
+      className: 'bg-white text-black rounded-full -mt-7 h-14 w-14 flex items-center justify-center shadow-md'
     },
     { 
       icon: Dumbbell, 
       path: '/workout', 
-      label: 'Workout'
+      label: 'Strategy'
     },
     { 
-      icon: User, 
+      icon: MoreHorizontal, 
       path: '/auth', 
-      label: 'Profile'
+      label: 'More'
     }
   ];
 
@@ -120,7 +120,7 @@ export function BottomNav() {
 
   return (
     <>
-      <div className="fixed bottom-0 left-0 right-0 z-50 bg-background border-t border-border h-16 mobile-nav-height md:hidden">
+      <div className="fixed bottom-0 left-0 right-0 z-50 bg-[#1a1a1a] border-t border-border/20 h-16 mobile-nav-height md:hidden">
         <nav className="flex justify-around items-center h-full">
           {navItems.map((item) => {
             const isActive = location.pathname === item.path;
@@ -136,7 +136,7 @@ export function BottomNav() {
                     isActive ? "text-primary" : "text-muted-foreground hover:text-primary"
                   )}
                 >
-                  <item.icon className="h-4 w-4" />
+                  <item.icon className="h-6 w-6" />
                   <span className="text-xs mt-1">{item.label}</span>
                 </button>
               );
