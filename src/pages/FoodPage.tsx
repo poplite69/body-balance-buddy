@@ -45,40 +45,9 @@ const FoodPage = () => {
   };
   
   return (
-    <div className="container p-4 pt-6 pb-20 space-y-6 max-w-md mx-auto">
+    <div className="container p-4 pt-6 pb-28 space-y-6 max-w-md mx-auto">
       <header>
         <h1 className="text-2xl font-bold mb-4">Food Tracking</h1>
-        
-        {/* Search Bar */}
-        <div className="flex items-center gap-2 mb-4">
-          <div className="relative flex-1">
-            <div 
-              className="flex items-center bg-white/5 border border-white/10 rounded-full px-3 py-1.5 w-full cursor-pointer"
-              onClick={handleSearchIconClick}
-            >
-              <SearchIcon className="h-4 w-4 text-muted-foreground mr-2" />
-              <span className="text-muted-foreground text-sm">Search for a food</span>
-            </div>
-          </div>
-          
-          <Button 
-            variant="outline" 
-            size="icon"
-            className="rounded-full h-8 w-8 flex items-center justify-center bg-white/5 border border-white/10"
-            onClick={handleScancodeClick}
-          >
-            <ScanBarcode className="h-4 w-4" />
-          </Button>
-          
-          <Button 
-            variant="outline" 
-            size="icon" 
-            className="rounded-full h-8 w-8 flex items-center justify-center bg-white/5 border border-white/10"
-            onClick={handleMicClick}
-          >
-            <Mic className="h-4 w-4" />
-          </Button>
-        </div>
       </header>
       
       {/* Date Navigation */}
@@ -139,6 +108,24 @@ const FoodPage = () => {
         onFoodSelected={() => setIsSearchModalOpen(false)}
         onQuickAdd={() => setIsSearchModalOpen(false)}
       />
+      
+      {/* Bottom Search Bar - Fixed at bottom above nav */}
+      <div className="fixed bottom-16 left-0 right-0 px-4 py-2 bg-background/80 backdrop-blur-sm border-t border-border">
+        <div className="flex items-center gap-2 max-w-md mx-auto">
+          <div 
+            className="flex items-center bg-gray-800/70 rounded-full px-4 py-2 w-full cursor-pointer"
+            onClick={handleSearchIconClick}
+          >
+            <SearchIcon className="h-5 w-5 text-gray-400 mr-3" />
+            <span className="text-gray-400">Search for a food</span>
+          </div>
+          
+          <div className="flex-shrink-0 bg-gray-800/70 rounded-full h-10 w-10 flex items-center justify-center"
+            onClick={handleScancodeClick}>
+            <ScanBarcode className="h-5 w-5 text-gray-400" />
+          </div>
+        </div>
+      </div>
     </div>
   );
 };
