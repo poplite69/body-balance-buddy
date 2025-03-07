@@ -7,12 +7,10 @@ import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover
 import { Calendar } from "@/components/ui/calendar";
 import { cn } from "@/lib/utils";
 import { DailyFoodLog } from "@/components/food/DailyFoodLog";
-import { searchFoodItems } from "@/services/food";
 import { FoodItem, MealType } from "@/types/food";
 import { Input } from "@/components/ui/input";
 import { Separator } from "@/components/ui/separator";
 import { useAuth } from "@/context/AuthContext";
-import { logFood } from "@/services/food";
 import { toast } from "sonner";
 import { AddFoodDialog } from "@/components/food/AddFoodDialog";
 import { FoodLogEntryContainer } from "@/components/food/FoodLogEntryContainer";
@@ -20,13 +18,10 @@ import { FoodLogEntryContainer } from "@/components/food/FoodLogEntryContainer";
 const FoodPage = () => {
   const { user } = useAuth();
   const [date, setDate] = useState<Date>(new Date());
-  const [searchText, setSearchText] = useState("");
-  const [searchResults, setSearchResults] = useState<FoodItem[]>([]);
-  const [isSearching, setIsSearching] = useState(false);
   const [selectedFood, setSelectedFood] = useState<FoodItem | null>(null);
   const [selectedMealType, setSelectedMealType] = useState<MealType>("breakfast");
   const [showFoodEntryContainer, setShowFoodEntryContainer] = useState(false);
-  const searchInputRef = useRef<HTMLInputElement>(null);
+  const [initialEntryTab, setInitialEntryTab] = useState("search");
   
   const goToPreviousDay = () => {
     setDate(prev => subDays(prev, 1));
@@ -43,74 +38,26 @@ const FoodPage = () => {
       date.getFullYear() === today.getFullYear();
   };
 
-  // Perform search when text changes
-  useEffect(() => {
-    const handleSearch = async () => {
-      if (searchText.trim().length >= 2) {
-        setIsSearching(true);
-        try {
-          const results = await searchFoodItems(searchText);
-          setSearchResults(results);
-        } catch (error) {
-          console.error("Food search error:", error);
-        } finally {
-          setIsSearching(false);
-        }
-      } else {
-        setSearchResults([]);
-      }
-    };
-
-    const debounceTimeout = setTimeout(() => {
-      handleSearch();
-    }, 300);
-
-    return () => clearTimeout(debounceTimeout);
-  }, [searchText]);
-
-  // Function to handle food selection and add to log
-  const handleFoodSelect = async (food: FoodItem, mealType: MealType) => {
+  // Function to handle food selection
+  const handleFoodSelect = (food: FoodItem) => {
     if (!user) return;
     
     setSelectedFood(food);
-    setSelectedMealType(mealType);
-  };
-
-  // Clear search
-  const clearSearch = () => {
-    setSearchText("");
-    setSearchResults([]);
-    if (searchInputRef.current) {
-      searchInputRef.current.focus();
-    }
-  };
-
-  // Format macros in a compact format
-  const formatMacros = (protein: number | null, fat: number | null, carbs: number | null) => {
-    const p = protein ? Math.round(protein) : 0;
-    const f = fat ? Math.round(fat) : 0;
-    const c = carbs ? Math.round(carbs) : 0;
-    return `${p}P ${f}F ${c}C`;
-  };
-
-  // Group search results by category
-  const categorizedResults = {
-    common: searchResults.filter(item => !item.brand),
-    branded: searchResults.filter(item => !!item.brand)
-  };
-
-  // Handle food selected from the entry container
-  const handleFoodSelectedFromContainer = (food: FoodItem) => {
-    setSelectedFood(food);
     setShowFoodEntryContainer(false);
   };
 
-  // Handle quick add from the entry container
+  // Function to handle quick add
   const handleQuickAdd = (foodData: Partial<FoodItem>) => {
-    // Handle the quick add functionality
     console.log("Quick add:", foodData);
     setShowFoodEntryContainer(false);
     // Further processing can be done here
+    toast.success("Food added successfully");
+  };
+
+  // Function to open entry container with a specific tab
+  const openEntryContainer = (tab: string = "search") => {
+    setInitialEntryTab(tab);
+    setShowFoodEntryContainer(true);
   };
   
   return (
@@ -182,8 +129,8 @@ const FoodPage = () => {
         isOpen={showFoodEntryContainer}
         onClose={() => setShowFoodEntryContainer(false)}
         mealType={selectedMealType}
-        initialTab="search"
-        onFoodSelected={handleFoodSelectedFromContainer}
+        initialTab={initialEntryTab}
+        onFoodSelected={handleFoodSelect}
         onQuickAdd={handleQuickAdd}
       />
       
@@ -193,27 +140,25 @@ const FoodPage = () => {
           <div className="relative">
             <div 
               className="flex items-center bg-gray-800/70 rounded-full px-4 text-gray-100 cursor-pointer"
-              onClick={() => setShowFoodEntryContainer(true)}
+              onClick={() => openEntryContainer("search")}
             >
               <SearchIcon className="h-5 w-5 text-gray-400 mr-2" />
               <Input
                 readOnly
                 placeholder="Search for a food"
                 className="bg-transparent border-none focus-visible:ring-0 focus-visible:ring-offset-0 cursor-pointer text-white py-5"
-                onClick={() => setShowFoodEntryContainer(true)}
+                onClick={() => openEntryContainer("search")}
               />
               <div className="flex space-x-2">
                 <Button variant="ghost" size="icon" className="h-8 w-8" onClick={(e) => {
                   e.stopPropagation();
-                  setShowFoodEntryContainer(true);
-                  // Future implementation will set initial tab to "barcode"
+                  openEntryContainer("barcode");
                 }}>
                   <Barcode className="h-5 w-5 text-gray-400" />
                 </Button>
                 <Button variant="ghost" size="icon" className="h-8 w-8" onClick={(e) => {
                   e.stopPropagation();
-                  setShowFoodEntryContainer(true);
-                  // Future implementation will set initial tab to "ai-describe"
+                  openEntryContainer("ai-describe");
                 }}>
                   <Mic className="h-5 w-5 text-gray-400" />
                 </Button>

@@ -1,5 +1,5 @@
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import { searchFoodItems } from "@/services/food";
 import { FoodItem } from "@/types/food";
 import { Input } from "@/components/ui/input";
@@ -28,6 +28,14 @@ export function EnhancedFoodSearch({ onFoodSelect }: EnhancedFoodSearchProps) {
     branded: true,
   });
   const [activeTab, setActiveTab] = useState("search");
+  const inputRef = useRef<HTMLInputElement>(null);
+
+  // Auto-focus input when component mounts
+  useEffect(() => {
+    if (inputRef.current) {
+      inputRef.current.focus();
+    }
+  }, []);
 
   // Load recent searches from localStorage on component mount
   useEffect(() => {
@@ -45,6 +53,17 @@ export function EnhancedFoodSearch({ onFoodSelect }: EnhancedFoodSearchProps) {
     const mockFavorites: FoodItem[] = []; // We'll implement this later
     setFavoriteFoods(mockFavorites);
   }, []);
+
+  // Auto-search as user types (debounced)
+  useEffect(() => {
+    if (query.trim().length >= 2) {
+      const timer = setTimeout(() => {
+        handleSearch();
+      }, 300);
+      
+      return () => clearTimeout(timer);
+    }
+  }, [query]);
 
   // Save a search term to recent searches
   const saveRecentSearch = (term: string) => {
@@ -86,6 +105,9 @@ export function EnhancedFoodSearch({ onFoodSelect }: EnhancedFoodSearchProps) {
   const clearSearch = () => {
     setQuery("");
     setSearchResults([]);
+    if (inputRef.current) {
+      inputRef.current.focus();
+    }
   };
 
   const toggleCategory = (category: keyof CategoryState) => {
@@ -122,11 +144,19 @@ export function EnhancedFoodSearch({ onFoodSelect }: EnhancedFoodSearchProps) {
           <div className="flex items-center gap-2 mb-4">
             <div className="relative flex-1">
               <Input
+                ref={inputRef}
                 placeholder="Search for a food..."
                 value={query}
                 onChange={(e) => setQuery(e.target.value)}
                 onKeyDown={(e) => e.key === "Enter" && handleSearch()}
-                className="pr-8"
+                className="pr-8 min-h-10"
+                style={{ 
+                  height: 'auto',
+                  minHeight: '2.5rem',
+                  maxHeight: '5rem',
+                  resize: 'none',
+                  overflow: 'hidden'
+                }}
               />
               {query && (
                 <X
@@ -144,7 +174,7 @@ export function EnhancedFoodSearch({ onFoodSelect }: EnhancedFoodSearchProps) {
             </Button>
           </div>
 
-          {recentSearches.length > 0 && searchResults.length === 0 && !isSearching && (
+          {recentSearches.length > 0 && searchResults.length === 0 && !isSearching && query.length < 2 && (
             <div className="my-3">
               <div className="text-sm font-medium flex items-center gap-1 mb-2">
                 <Clock className="h-3 w-3" /> Recent Searches

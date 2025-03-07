@@ -1,5 +1,5 @@
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { FoodEntryMethodsNav } from "./FoodEntryMethodsNav";
 import { EnhancedFoodSearch } from "./EnhancedFoodSearch";
 import { QuickAddFood } from "./QuickAddFood";
@@ -25,6 +25,16 @@ export function FoodLogEntryContainer({
   onQuickAdd,
 }: FoodLogEntryContainerProps) {
   const [activeTab, setActiveTab] = useState(initialTab);
+  
+  // Update active tab when initialTab prop changes
+  useEffect(() => {
+    setActiveTab(initialTab);
+  }, [initialTab]);
+  
+  // Handle tab switching
+  const handleTabChange = (tab: string) => {
+    setActiveTab(tab);
+  };
 
   if (!isOpen) return null;
 
@@ -65,7 +75,7 @@ export function FoodLogEntryContainer({
   };
 
   return (
-    <div className="fixed inset-0 z-50 bg-background flex flex-col">
+    <div className="fixed inset-0 z-50 bg-background flex flex-col animate-in fade-in slide-in-from-bottom-5 duration-300">
       <div className="flex items-center justify-between p-4 border-b">
         <h2 className="text-lg font-semibold">Add Food to {mealType}</h2>
         <Button variant="ghost" size="icon" onClick={onClose}>
@@ -73,7 +83,7 @@ export function FoodLogEntryContainer({
         </Button>
       </div>
       
-      <FoodEntryMethodsNav activeTab={activeTab} onTabChange={setActiveTab} />
+      <FoodEntryMethodsNav activeTab={activeTab} onTabChange={handleTabChange} />
       
       <div className="flex-1 overflow-y-auto">{renderTabContent()}</div>
     </div>
