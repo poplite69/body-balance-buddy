@@ -1,31 +1,30 @@
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import { format, addDays, subDays } from "date-fns";
-import { ChevronLeft, ChevronRight, CalendarIcon } from "lucide-react";
+import { ChevronLeft, ChevronRight, CalendarIcon, Search as SearchIcon, X } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 import { Calendar } from "@/components/ui/calendar";
 import { cn } from "@/lib/utils";
 import { DailyFoodLog } from "@/components/food/DailyFoodLog";
-import { ExpandableSearchInput } from "@/components/food/ExpandableSearchInput";
-import { FoodSearchResults } from "@/components/food/FoodSearchResults";
-import { searchFoodItems } from "@/services/food/search";
-import { FoodItem } from "@/types/food";
-import { useDebounce } from "@/hooks/useDebounce";
+import { searchFoodItems } from "@/services/food";
+import { FoodItem, MealType } from "@/types/food";
+import { Input } from "@/components/ui/input";
+import { Separator } from "@/components/ui/separator";
+import { useAuth } from "@/context/AuthContext";
+import { logFood } from "@/services/food";
+import { toast } from "sonner";
+import { AddFoodDialog } from "@/components/food/AddFoodDialog";
 
 const FoodPage = () => {
+  const { user } = useAuth();
   const [date, setDate] = useState<Date>(new Date());
   const [searchText, setSearchText] = useState("");
-  const [debouncedSearchText, setDebouncedSearchText] = useState("");
   const [searchResults, setSearchResults] = useState<FoodItem[]>([]);
-  const [isLoading, setIsLoading] = useState(false);
-  const [searchError, setSearchError] = useState<string | null>(null);
-  const [activeLogRefresh, setActiveLogRefresh] = useState(0);
-  
-  // Use debounce to avoid too many search requests
-  const debouncedSearch = useDebounce((text: string) => {
-    setDebouncedSearchText(text);
-  }, 200);
+  const [isSearching, setIsSearching] = useState(false);
+  const [selectedFood, setSelectedFood] = useState<FoodItem | null>(null);
+  const [selectedMealType, setSelectedMealType] = useState<MealType>("breakfast");
+  const searchInputRef = useRef<HTMLInputElement>(null);
   
   const goToPreviousDay = () => {
     setDate(prev => subDays(prev, 1));
@@ -42,54 +41,61 @@ const FoodPage = () => {
       date.getFullYear() === today.getFullYear();
   };
 
-  const handleSearchChange = (value: string) => {
-    setSearchText(value);
-    debouncedSearch(value);
-  };
-
-  const handleClearSearch = () => {
-    setSearchText("");
-    setDebouncedSearchText("");
-    setSearchResults([]);
-  };
-
-  const handleBarcodeClick = () => {
-    // For future barcode scanner implementation
-    console.log("Barcode scanner clicked");
-  };
-
-  const handleFoodSelected = (food: FoodItem) => {
-    // Refresh the food log to show the newly added food
-    setActiveLogRefresh(prev => prev + 1);
-    
-    // Clear search after selection
-    handleClearSearch();
-  };
-
-  // Fetch search results whenever debouncedSearchText changes
+  // Perform search when text changes
   useEffect(() => {
-    const fetchSearchResults = async () => {
-      if (!debouncedSearchText) {
+    const handleSearch = async () => {
+      if (searchText.trim().length >= 2) {
+        setIsSearching(true);
+        try {
+          const results = await searchFoodItems(searchText);
+          setSearchResults(results);
+        } catch (error) {
+          console.error("Food search error:", error);
+        } finally {
+          setIsSearching(false);
+        }
+      } else {
         setSearchResults([]);
-        return;
-      }
-
-      setIsLoading(true);
-      setSearchError(null);
-
-      try {
-        const results = await searchFoodItems(debouncedSearchText);
-        setSearchResults(results);
-      } catch (error) {
-        console.error("Error searching for foods:", error);
-        setSearchError("network");
-      } finally {
-        setIsLoading(false);
       }
     };
 
-    fetchSearchResults();
-  }, [debouncedSearchText]);
+    const debounceTimeout = setTimeout(() => {
+      handleSearch();
+    }, 300);
+
+    return () => clearTimeout(debounceTimeout);
+  }, [searchText]);
+
+  // Function to handle food selection and add to log
+  const handleFoodSelect = async (food: FoodItem, mealType: MealType) => {
+    if (!user) return;
+    
+    setSelectedFood(food);
+    setSelectedMealType(mealType);
+  };
+
+  // Clear search
+  const clearSearch = () => {
+    setSearchText("");
+    setSearchResults([]);
+    if (searchInputRef.current) {
+      searchInputRef.current.focus();
+    }
+  };
+
+  // Format macros in a compact format
+  const formatMacros = (protein: number | null, fat: number | null, carbs: number | null) => {
+    const p = protein ? Math.round(protein) : 0;
+    const f = fat ? Math.round(fat) : 0;
+    const c = carbs ? Math.round(carbs) : 0;
+    return `${p}P ${f}F ${c}C`;
+  };
+
+  // Group search results by category
+  const categorizedResults = {
+    common: searchResults.filter(item => !item.brand),
+    branded: searchResults.filter(item => !!item.brand)
+  };
   
   return (
     <div className="container p-4 pt-6 pb-28 space-y-6 max-w-md mx-auto">
@@ -144,34 +150,114 @@ const FoodPage = () => {
       </div>
       
       {/* Food Log with Daily Summary */}
-      <DailyFoodLog 
-        date={date} 
-        onDateChange={setDate} 
-        key={`log-${date.toISOString()}-${activeLogRefresh}`}
-      />
+      <DailyFoodLog date={date} onDateChange={setDate} />
       
-      {/* Search Results (only shown when search text is entered) */}
-      {debouncedSearchText && (
-        <div className="mt-3 mb-1 bg-background/80 backdrop-blur-sm rounded-lg overflow-hidden border border-border">
-          <FoodSearchResults 
-            searchResults={searchResults}
-            onFoodSelected={handleFoodSelected}
-            mealType="breakfast" // Default meal type, can be changed when selecting from meal section
-            loading={isLoading}
-            error={searchError}
-          />
-        </div>
-      )}
+      {/* Food Detail Dialog */}
+      <AddFoodDialog 
+        food={selectedFood}
+        isOpen={!!selectedFood}
+        onClose={() => setSelectedFood(null)}
+        onSuccess={() => setSelectedFood(null)}
+        mealType={selectedMealType}
+      />
       
       {/* Bottom Search Bar - Fixed at bottom above nav */}
       <div className="fixed bottom-16 left-0 right-0 px-4 py-2 bg-background/80 backdrop-blur-sm border-t border-border">
-        <div className="flex items-center gap-2 max-w-md mx-auto">
-          <ExpandableSearchInput
-            value={searchText}
-            onChange={handleSearchChange}
-            onScanBarcode={handleBarcodeClick}
-            onClear={handleClearSearch}
-          />
+        <div className="flex flex-col max-w-md mx-auto">
+          <div className="relative">
+            <Input
+              ref={searchInputRef}
+              placeholder="Search for a food"
+              value={searchText}
+              onChange={(e) => setSearchText(e.target.value)}
+              className={cn(
+                "pr-10 py-5 bg-gray-800/70 rounded-full px-4 text-gray-100",
+                searchResults.length > 0 && "rounded-b-none"
+              )}
+            />
+            {searchText && (
+              <button 
+                className="absolute right-3 top-1/2 transform -translate-y-1/2" 
+                onClick={clearSearch}
+              >
+                <X className="h-5 w-5 text-gray-400" />
+              </button>
+            )}
+          </div>
+
+          {/* Search Results Dropdown */}
+          {searchResults.length > 0 && (
+            <div className="bg-background border border-t-0 border-border rounded-b-lg max-h-[60vh] overflow-y-auto shadow-lg">
+              {/* Common Foods Section */}
+              {categorizedResults.common.length > 0 && (
+                <div>
+                  <div className="p-2 bg-muted/50">
+                    <h3 className="font-medium text-sm">Common</h3>
+                  </div>
+                  <div>
+                    {categorizedResults.common.map((food) => (
+                      <div 
+                        key={food.id}
+                        className="p-3 hover:bg-muted cursor-pointer border-b"
+                        onClick={() => handleFoodSelect(food, selectedMealType)}
+                      >
+                        <div className="flex justify-between items-center">
+                          <div>
+                            <p className="font-medium">{food.name}</p>
+                            <div className="flex items-center gap-2 mt-1">
+                              <span className="text-sm text-muted-foreground">
+                                {food.calories || 0} cal • {food.serving_size} {food.serving_unit}
+                              </span>
+                            </div>
+                          </div>
+                          <div className="flex flex-col items-end">
+                            <span className="text-sm text-muted-foreground">
+                              {formatMacros(food.protein_g, food.fat_g, food.carbs_g)}
+                            </span>
+                          </div>
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              )}
+
+              {/* Branded Foods Section */}
+              {categorizedResults.branded.length > 0 && (
+                <div>
+                  <div className="p-2 bg-muted/50">
+                    <h3 className="font-medium text-sm">Branded</h3>
+                  </div>
+                  <div>
+                    {categorizedResults.branded.map((food) => (
+                      <div 
+                        key={food.id}
+                        className="p-3 hover:bg-muted cursor-pointer border-b"
+                        onClick={() => handleFoodSelect(food, selectedMealType)}
+                      >
+                        <div className="flex justify-between items-center">
+                          <div>
+                            <p className="font-medium">{food.name}</p>
+                            <p className="text-xs text-muted-foreground">{food.brand}</p>
+                            <div className="flex items-center gap-2 mt-1">
+                              <span className="text-sm text-muted-foreground">
+                                {food.calories || 0} cal • {food.serving_size} {food.serving_unit}
+                              </span>
+                            </div>
+                          </div>
+                          <div className="flex flex-col items-end">
+                            <span className="text-sm text-muted-foreground">
+                              {formatMacros(food.protein_g, food.fat_g, food.carbs_g)}
+                            </span>
+                          </div>
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              )}
+            </div>
+          )}
         </div>
       </div>
     </div>
