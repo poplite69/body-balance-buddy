@@ -52,7 +52,6 @@ export function DailyNutritionSummary({ foodLogs, calorieGoal = 2400 }: Nutritio
           <div>
             <div className="flex justify-between text-sm mb-1">
               <span className="font-medium">Daily Progress</span>
-              <span className="text-blue-500">{totalCalories} / {calorieGoal} cal</span>
             </div>
             <Progress value={calorieProgress} segments={progressSegments} className="h-2" />
           </div>
@@ -66,8 +65,8 @@ export function DailyNutritionSummary({ foodLogs, calorieGoal = 2400 }: Nutritio
               <span className="text-sm text-amber-500">{roundedFat}F</span>
             </div>
             
-            {/* Calories (right aligned) - replacing total macros */}
-            <div className="text-sm text-blue-500">{totalCalories} / {calorieGoal}</div>
+            {/* Calories (right aligned) */}
+            <div className="text-sm text-blue-500">{totalCalories} / {calorieGoal} C</div>
           </div>
         </div>
       </CardContent>
