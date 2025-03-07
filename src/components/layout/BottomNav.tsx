@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import { NavLink, useLocation, useNavigate } from 'react-router-dom';
 import { Home, Dumbbell, User, Apple, Plus, LayoutGrid, MoreHorizontal } from 'lucide-react';
@@ -38,7 +37,7 @@ export function BottomNav() {
           setTimeout(() => setIsQuickAddOpen(true), 300);
         }
       },
-      className: 'bg-white text-black rounded-full -mt-6 h-12 w-12 flex items-center justify-center shadow-sm'
+      className: 'bg-white text-black rounded-full -mt-6 h-14 w-14 flex items-center justify-center shadow-md'
     },
     { 
       icon: Dumbbell, 
@@ -136,7 +135,7 @@ export function BottomNav() {
                     isActive ? "text-primary" : "text-muted-foreground hover:text-primary"
                   )}
                 >
-                  <item.icon className="h-5 w-5" />
+                  <Plus className="h-7 w-7" strokeWidth={2.5} />
                   <span className="text-xs mt-0.5">{item.label}</span>
                 </button>
               );
