@@ -14,6 +14,7 @@ interface FoodLogEntryContainerProps {
   initialTab?: string;
   onFoodSelected: (food: FoodItem) => void;
   onQuickAdd: (foodData: Partial<FoodItem>) => void;
+  searchQuery?: string;
 }
 
 export function FoodLogEntryContainer({
@@ -23,6 +24,7 @@ export function FoodLogEntryContainer({
   initialTab = "search",
   onFoodSelected,
   onQuickAdd,
+  searchQuery = "",
 }: FoodLogEntryContainerProps) {
   const [activeTab, setActiveTab] = useState(initialTab);
   
@@ -47,7 +49,7 @@ export function FoodLogEntryContainer({
           </div>
         );
       case "search":
-        return <EnhancedFoodSearch onFoodSelect={onFoodSelected} />;
+        return <EnhancedFoodSearch onFoodSelect={onFoodSelected} initialQuery={searchQuery} />;
       case "quick-add":
         return <QuickAddFood mealType={mealType} onAdd={onQuickAdd} />;
       case "ai-describe":
@@ -70,12 +72,12 @@ export function FoodLogEntryContainer({
           </div>
         );
       default:
-        return <EnhancedFoodSearch onFoodSelect={onFoodSelected} />;
+        return <EnhancedFoodSearch onFoodSelect={onFoodSelected} initialQuery={searchQuery} />;
     }
   };
 
   return (
-    <div className="fixed inset-0 z-50 bg-background flex flex-col animate-in fade-in slide-in-from-bottom-5 duration-300">
+    <div className="fixed inset-0 z-40 bg-background flex flex-col">
       <div className="flex items-center justify-between p-4 border-b">
         <h2 className="text-lg font-semibold">Add Food to {mealType}</h2>
         <Button variant="ghost" size="icon" onClick={onClose}>
@@ -85,7 +87,9 @@ export function FoodLogEntryContainer({
       
       <FoodEntryMethodsNav activeTab={activeTab} onTabChange={handleTabChange} />
       
-      <div className="flex-1 overflow-y-auto">{renderTabContent()}</div>
+      <div className="flex-1 overflow-y-auto pb-16">
+        {renderTabContent()}
+      </div>
     </div>
   );
 }

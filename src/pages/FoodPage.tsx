@@ -14,6 +14,7 @@ import { useAuth } from "@/context/AuthContext";
 import { toast } from "sonner";
 import { AddFoodDialog } from "@/components/food/AddFoodDialog";
 import { FoodLogEntryContainer } from "@/components/food/FoodLogEntryContainer";
+import { searchFoodItems } from "@/services/food/search";
 
 const FoodPage = () => {
   const { user } = useAuth();
@@ -22,6 +23,8 @@ const FoodPage = () => {
   const [selectedMealType, setSelectedMealType] = useState<MealType>("breakfast");
   const [showFoodEntryContainer, setShowFoodEntryContainer] = useState(false);
   const [initialEntryTab, setInitialEntryTab] = useState("search");
+  const [searchQuery, setSearchQuery] = useState("");
+  const searchInputRef = useRef<HTMLInputElement>(null);
   
   const goToPreviousDay = () => {
     setDate(prev => subDays(prev, 1));
@@ -44,12 +47,14 @@ const FoodPage = () => {
     
     setSelectedFood(food);
     setShowFoodEntryContainer(false);
+    setSearchQuery("");
   };
 
   // Function to handle quick add
   const handleQuickAdd = (foodData: Partial<FoodItem>) => {
     console.log("Quick add:", foodData);
     setShowFoodEntryContainer(false);
+    setSearchQuery("");
     // Further processing can be done here
     toast.success("Food added successfully");
   };
@@ -58,6 +63,24 @@ const FoodPage = () => {
   const openEntryContainer = (tab: string = "search") => {
     setInitialEntryTab(tab);
     setShowFoodEntryContainer(true);
+    
+    // Focus the search input if opening the search tab
+    if (tab === "search" && searchInputRef.current) {
+      setTimeout(() => {
+        searchInputRef.current?.focus();
+      }, 100);
+    }
+  };
+
+  // Handle search input changes
+  const handleSearchChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const query = e.target.value;
+    setSearchQuery(query);
+    
+    // If the query is not empty and the entry container is not open, open it
+    if (query.length > 0 && !showFoodEntryContainer) {
+      openEntryContainer("search");
+    }
   };
   
   return (
@@ -127,27 +150,29 @@ const FoodPage = () => {
       {/* Food Entry Container */}
       <FoodLogEntryContainer
         isOpen={showFoodEntryContainer}
-        onClose={() => setShowFoodEntryContainer(false)}
+        onClose={() => {
+          setShowFoodEntryContainer(false);
+          setSearchQuery("");
+        }}
         mealType={selectedMealType}
         initialTab={initialEntryTab}
         onFoodSelected={handleFoodSelect}
         onQuickAdd={handleQuickAdd}
+        searchQuery={searchQuery}
       />
       
       {/* Bottom Search Bar - Fixed at bottom above nav */}
-      <div className="fixed bottom-16 left-0 right-0 px-4 py-2 bg-background/80 backdrop-blur-sm border-t border-border">
+      <div className="fixed bottom-16 left-0 right-0 px-4 py-2 bg-background/80 backdrop-blur-sm border-t border-border z-50">
         <div className="flex flex-col max-w-md mx-auto">
           <div className="relative">
-            <div 
-              className="flex items-center bg-gray-800/70 rounded-full px-4 text-gray-100 cursor-pointer"
-              onClick={() => openEntryContainer("search")}
-            >
+            <div className="flex items-center bg-gray-800/70 rounded-full px-4 text-gray-100">
               <SearchIcon className="h-5 w-5 text-gray-400 mr-2" />
               <Input
-                readOnly
+                ref={searchInputRef}
+                value={searchQuery}
+                onChange={handleSearchChange}
                 placeholder="Search for a food"
-                className="bg-transparent border-none focus-visible:ring-0 focus-visible:ring-offset-0 cursor-pointer text-white py-5"
-                onClick={() => openEntryContainer("search")}
+                className="bg-transparent border-none focus-visible:ring-0 focus-visible:ring-offset-0 text-white py-5"
               />
               <div className="flex space-x-2">
                 <Button variant="ghost" size="icon" className="h-8 w-8" onClick={(e) => {
