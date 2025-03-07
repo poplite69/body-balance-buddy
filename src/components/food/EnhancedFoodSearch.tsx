@@ -10,6 +10,7 @@ import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
 
 interface EnhancedFoodSearchProps {
   onFoodSelect: (food: FoodItem) => void;
+  initialQuery?: string; // Add initialQuery as an optional prop
 }
 
 interface CategoryState {
@@ -17,8 +18,8 @@ interface CategoryState {
   branded: boolean;
 }
 
-export function EnhancedFoodSearch({ onFoodSelect }: EnhancedFoodSearchProps) {
-  const [query, setQuery] = useState("");
+export function EnhancedFoodSearch({ onFoodSelect, initialQuery = "" }: EnhancedFoodSearchProps) {
+  const [query, setQuery] = useState(initialQuery);
   const [searchResults, setSearchResults] = useState<FoodItem[]>([]);
   const [isSearching, setIsSearching] = useState(false);
   const [recentSearches, setRecentSearches] = useState<string[]>([]);
@@ -53,6 +54,18 @@ export function EnhancedFoodSearch({ onFoodSelect }: EnhancedFoodSearchProps) {
     const mockFavorites: FoodItem[] = []; // We'll implement this later
     setFavoriteFoods(mockFavorites);
   }, []);
+
+  // Initialize search with initialQuery if provided
+  useEffect(() => {
+    if (initialQuery && initialQuery.trim().length >= 2) {
+      handleSearch();
+    }
+  }, [initialQuery]);
+
+  // Update query when initialQuery changes
+  useEffect(() => {
+    setQuery(initialQuery);
+  }, [initialQuery]);
 
   // Auto-search as user types (debounced)
   useEffect(() => {
