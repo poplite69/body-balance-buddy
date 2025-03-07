@@ -1,11 +1,9 @@
-
 import { useState } from "react";
 import { format, addDays, subDays } from "date-fns";
 import { ChevronLeft, ChevronRight, CalendarIcon, ScanBarcode, Mic, Search as SearchIcon } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 import { Calendar } from "@/components/ui/calendar";
-import { Input } from "@/components/ui/input";
 import { cn } from "@/lib/utils";
 import { DailyFoodLog } from "@/components/food/DailyFoodLog";
 import { FoodLogEntryContainer } from "@/components/food/FoodLogEntryContainer";
