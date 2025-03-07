@@ -11,6 +11,7 @@ interface FoodLogEntryContainerProps {
   isOpen: boolean;
   onClose: () => void;
   mealType?: MealType;
+  initialTab?: string;
   onFoodSelected: (food: FoodItem) => void;
   onQuickAdd: (foodData: Partial<FoodItem>) => void;
 }
@@ -19,10 +20,11 @@ export function FoodLogEntryContainer({
   isOpen,
   onClose,
   mealType = "breakfast",
+  initialTab = "search",
   onFoodSelected,
   onQuickAdd,
 }: FoodLogEntryContainerProps) {
-  const [activeTab, setActiveTab] = useState("search");
+  const [activeTab, setActiveTab] = useState(initialTab);
 
   if (!isOpen) return null;
 

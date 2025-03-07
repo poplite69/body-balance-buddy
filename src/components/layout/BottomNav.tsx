@@ -38,7 +38,7 @@ export function BottomNav() {
           setTimeout(() => setIsQuickAddOpen(true), 300);
         }
       },
-      className: 'bg-primary text-primary-foreground rounded-full -mt-6 shadow-lg'
+      className: 'bg-primary text-primary-foreground rounded-full -mt-5 h-12 w-12 flex items-center justify-center shadow-lg'
     },
     { 
       icon: Dumbbell, 
@@ -136,7 +136,7 @@ export function BottomNav() {
                     isActive ? "text-primary" : "text-muted-foreground hover:text-primary"
                   )}
                 >
-                  <item.icon className="h-6 w-6 mb-1" />
+                  <item.icon className="h-5 w-5" />
                   <span className="text-xs">{item.label}</span>
                 </button>
               );
