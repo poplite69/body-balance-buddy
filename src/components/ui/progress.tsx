@@ -16,12 +16,6 @@ const Progress = React.forwardRef<
   ProgressProps
 >(({ className, value, segments, ...props }, ref) => {
   if (segments) {
-    // Calculate total width of all segments (should not exceed 100%)
-    const totalWidth = Math.min(
-      segments.reduce((sum, segment) => sum + segment.value, 0),
-      100
-    )
-
     return (
       <ProgressPrimitive.Root
         ref={ref}
@@ -42,13 +36,6 @@ const Progress = React.forwardRef<
               }}
             />
           ))}
-          {/* If segments don't add up to 100%, fill the rest with transparent */}
-          {totalWidth < 100 && (
-            <div
-              className="h-full"
-              style={{ width: `${100 - totalWidth}%` }}
-            />
-          )}
         </div>
       </ProgressPrimitive.Root>
     )

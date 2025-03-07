@@ -21,10 +21,10 @@ export function DailyNutritionSummary({ foodLogs, calorieGoal = 2400 }: Nutritio
   const fatCalories = totalFat * 9;
   const totalMacroCalories = proteinCalories + carbsCalories + fatCalories;
   
-  // Calculate percentages for the progress bar (relative to total calories consumed)
-  const proteinPercentage = totalMacroCalories > 0 ? Math.round((proteinCalories / totalMacroCalories) * 100) : 0;
-  const carbsPercentage = totalMacroCalories > 0 ? Math.round((carbsCalories / totalMacroCalories) * 100) : 0;
-  const fatPercentage = totalMacroCalories > 0 ? Math.round((fatCalories / totalMacroCalories) * 100) : 0;
+  // Calculate percentages relative to total calories consumed (not goal)
+  const proteinPercentage = totalMacroCalories > 0 ? (proteinCalories / totalMacroCalories) * 100 : 0;
+  const carbsPercentage = totalMacroCalories > 0 ? (carbsCalories / totalMacroCalories) * 100 : 0;
+  const fatPercentage = totalMacroCalories > 0 ? (fatCalories / totalMacroCalories) * 100 : 0;
   
   // Calculate remaining calories
   const remainingCalories = calorieGoal - totalCalories;
@@ -37,11 +37,11 @@ export function DailyNutritionSummary({ foodLogs, calorieGoal = 2400 }: Nutritio
   // Calculate progress percentage (capped at 100%)
   const calorieProgress = Math.min(Math.round((totalCalories / calorieGoal) * 100), 100);
   
-  // Progress bar segments
+  // Progress bar segments - scale based on actual calories consumed, not total bar width
   const progressSegments = [
-    { value: proteinPercentage, color: '#10b981' }, // emerald-500 for protein
-    { value: carbsPercentage, color: '#3b82f6' },   // blue-500 for carbs
-    { value: fatPercentage, color: '#f59e0b' }      // amber-500 for fat
+    { value: proteinPercentage * (calorieProgress / 100), color: '#10b981' }, // emerald-500 for protein
+    { value: carbsPercentage * (calorieProgress / 100), color: '#3b82f6' },   // blue-500 for carbs
+    { value: fatPercentage * (calorieProgress / 100), color: '#f59e0b' }      // amber-500 for fat
   ];
   
   return (
@@ -54,15 +54,15 @@ export function DailyNutritionSummary({ foodLogs, calorieGoal = 2400 }: Nutritio
               <span className="font-medium">Daily Progress</span>
               <span className="text-blue-500">{totalCalories} / {calorieGoal} cal</span>
             </div>
-            <Progress segments={progressSegments} value={calorieProgress} className="h-2" />
+            <Progress value={calorieProgress} segments={progressSegments} className="h-2" />
           </div>
           
           {/* Macros Summary */}
           <div className="flex justify-between pt-1">
-            {/* Total macros (right aligned) */}
+            {/* Total macros (left aligned) */}
             <div className="text-sm text-blue-500">{roundedProtein}P {roundedCarbs}C {roundedFat}F</div>
             
-            {/* Individual macros with colors */}
+            {/* Individual macros with colors (right aligned) */}
             <div className="flex gap-3">
               <span className="text-sm text-emerald-500">{roundedProtein}P</span>
               <span className="text-sm text-blue-500">{roundedCarbs}C</span>
