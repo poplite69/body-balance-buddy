@@ -1,6 +1,6 @@
 
 import React from 'react';
-import { BrowserRouter as Router, Routes, Route, Outlet } from 'react-router-dom';
+import { Routes, Route, Outlet } from 'react-router-dom';
 import './App.css';
 import HomePage from './pages/HomePage';
 import AuthPage from './pages/AuthPage';
@@ -17,25 +17,23 @@ import ProtectedRoute from './components/auth/ProtectedRoute';
 
 function App() {
   return (
-    <Router>
-      <Routes>
-        <Route path="/" element={<HomePage />} />
-        <Route path="/auth" element={<AuthPage />} />
-        <Route path="/calculator" element={<CalculatorPage />} />
-        
-        <Route element={<ProtectedRoute><Outlet /></ProtectedRoute>}>
-          <Route path="/food" element={<FoodPage />} />
-          <Route path="/workout" element={<WorkoutPage />} />
-          <Route path="/active-workout" element={<ActiveWorkoutPage />} />
-          <Route path="/create-template" element={<CreateTemplatePage />} />
-          <Route path="/database-admin" element={<DatabaseAdminPage />} />
-          <Route path="/journal" element={<JournalPage />} />
-          <Route path="/ai-coach" element={<AICoachPage />} />
-        </Route>
-        
-        <Route path="*" element={<NotFound />} />
-      </Routes>
-    </Router>
+    <Routes>
+      <Route path="/" element={<HomePage />} />
+      <Route path="/auth" element={<AuthPage />} />
+      <Route path="/calculator" element={<CalculatorPage />} />
+      
+      <Route element={<ProtectedRoute><Outlet /></ProtectedRoute>}>
+        <Route path="/food" element={<FoodPage />} />
+        <Route path="/workout" element={<WorkoutPage />} />
+        <Route path="/active-workout" element={<ActiveWorkoutPage />} />
+        <Route path="/create-template" element={<CreateTemplatePage />} />
+        <Route path="/database-admin" element={<DatabaseAdminPage />} />
+        <Route path="/journal" element={<JournalPage />} />
+        <Route path="/ai-coach" element={<AICoachPage />} />
+      </Route>
+      
+      <Route path="*" element={<NotFound />} />
+    </Routes>
   );
 }
 
