@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from 'react';
 import { 
   Card, 
@@ -48,7 +47,7 @@ export default function BasicInfoTab() {
         
         // Calculate derived metrics
         const bmi = calculateBMI(weight, height);
-        const results: Partial<typeof calculationResults> = {
+        const results = {
           bmi,
           idealWeight: calculateIdealWeight(height)
         };
@@ -66,18 +65,16 @@ export default function BasicInfoTab() {
         // Add minimum calories
         results.minCalories = calculateMinCalories(bmr, tdee);
         
-        // Update calculation results
+        // Update calculation results directly
         dispatch({ 
-          type: 'UPDATE_CALCULATION_SETTINGS', 
-          payload: { 
-            calculationResults: { ...calculationResults, ...results } 
-          } 
+          type: 'UPDATE_CALCULATION_RESULTS', 
+          payload: results
         });
         
         setIsLoading(false);
       }, 300);
     }
-  }, [calculationResults.bmr, calculationResults.tdee, userMetrics]);
+  }, [calculationResults.bmr, calculationResults.tdee, userMetrics, dispatch]);
   
   // Handle imperial height changes
   useEffect(() => {

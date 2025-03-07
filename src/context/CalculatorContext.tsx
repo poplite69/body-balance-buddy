@@ -70,6 +70,7 @@ type CalculatorAction =
   | { type: 'SET_ACTIVE_TAB'; payload: number }
   | { type: 'UPDATE_USER_METRICS'; payload: Partial<UserMetrics> }
   | { type: 'UPDATE_CALCULATION_SETTINGS'; payload: Partial<CalculationSettings> }
+  | { type: 'UPDATE_CALCULATION_RESULTS'; payload: Partial<CalculationResults> }
   | { type: 'CALCULATE_RESULTS' };
 
 // Reducer
@@ -88,6 +89,12 @@ function calculatorReducer(state: CalculatorState, action: CalculatorAction): Ca
       return { 
         ...state, 
         calculationSettings: { ...state.calculationSettings, ...action.payload }
+      };
+    
+    case 'UPDATE_CALCULATION_RESULTS':
+      return {
+        ...state,
+        calculationResults: { ...state.calculationResults, ...action.payload }
       };
       
     case 'CALCULATE_RESULTS': {
