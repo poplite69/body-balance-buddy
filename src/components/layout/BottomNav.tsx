@@ -1,7 +1,7 @@
 
 import React, { useState } from 'react';
 import { NavLink, useLocation, useNavigate } from 'react-router-dom';
-import { Home, Dumbbell, User, Apple, Plus, Search, Mic } from 'lucide-react';
+import { Home, Dumbbell, User, Apple, Plus } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { FoodLogEntryContainer } from '../food/FoodLogEntryContainer';
 import { FoodItem } from '@/types/food';
@@ -136,7 +136,7 @@ export function BottomNav() {
                     isActive ? "text-primary" : "text-muted-foreground hover:text-primary"
                   )}
                 >
-                  <item.icon className="h-4 w-4" />
+                  <item.icon className="h-5 w-5" />
                   <span className="text-xs mt-1">{item.label}</span>
                 </button>
               );
