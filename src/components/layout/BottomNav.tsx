@@ -38,7 +38,7 @@ export function BottomNav() {
           setTimeout(() => setIsQuickAddOpen(true), 300);
         }
       },
-      className: 'bg-white text-black rounded-full -mt-6 h-12 w-12 flex items-center justify-center shadow-sm'
+      className: 'bg-[#404040] text-white/90 rounded-full -mt-4 h-10 w-10 flex items-center justify-center'
     },
     { 
       icon: Dumbbell, 
@@ -151,8 +151,8 @@ export function BottomNav() {
                   isActive ? "text-primary" : "text-muted-foreground hover:text-primary"
                 )}
               >
-                <item.icon className="h-5 w-5 mb-1" />
-                <span className="text-xs">{item.label}</span>
+                <item.icon className="h-4 w-4 mb-1" />
+                <span className="text-[10px]">{item.label}</span>
               </NavLink>
             );
           })}
