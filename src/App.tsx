@@ -1,122 +1,41 @@
 
-import { Routes, Route } from "react-router-dom";
-import WorkoutPage from "./pages/WorkoutPage";
-import ActiveWorkoutPage from "./pages/ActiveWorkoutPage";
-import HomePage from "./pages/HomePage";
-import AuthPage from "./pages/AuthPage";
-import FoodPage from "./pages/FoodPage";
-import DatabaseAdminPage from "./pages/DatabaseAdminPage";
-import CalculatorPage from "./pages/CalculatorPage";
-import { AppLayout } from "./components/layout/AppLayout";
-import ProtectedRoute from "./components/auth/ProtectedRoute";
-import { Toaster } from "sonner";
-import { TrayProvider } from "./components/tray/TrayProvider";
-import { useEffect } from "react";
-import { supabase } from "./integrations/supabase/client";
-import "./App.css";
+import React from 'react';
+import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
+import './App.css';
+import HomePage from './pages/HomePage';
+import AuthPage from './pages/AuthPage';
+import FoodPage from './pages/FoodPage';
+import WorkoutPage from './pages/WorkoutPage';
+import ActiveWorkoutPage from './pages/ActiveWorkoutPage';
+import CreateTemplatePage from './pages/CreateTemplatePage';
+import DatabaseAdminPage from './pages/DatabaseAdminPage';
+import JournalPage from './pages/JournalPage';
+import AICoachPage from './pages/AICoachPage';
+import CalculatorPage from './pages/CalculatorPage';
+import NotFound from './pages/NotFound';
+import ProtectedRoute from './components/auth/ProtectedRoute';
 
 function App() {
-  // Enable service worker for offline capabilities
-  useEffect(() => {
-    if ('serviceWorker' in navigator) {
-      window.addEventListener('load', () => {
-        // This would be where we register the service worker
-        // For now, we're just logging that it's available
-        console.log('Service worker is available for offline capabilities');
-      });
-    }
-    
-    // Listen for connection changes with Supabase
-    const channel = supabase.channel('system');
-    
-    channel.subscribe((status) => {
-      console.log('Supabase realtime status:', status);
-    });
-    
-    return () => {
-      // Clean up the subscription by removing the channel
-      supabase.removeChannel(channel);
-    };
-  }, []);
-  
   return (
-    <TrayProvider>
-      <Toaster position="top-center" />
+    <Router>
       <Routes>
-        <Route 
-          path="/" 
-          element={
-            <AppLayout>
-              <HomePage />
-            </AppLayout>
-          } 
-        />
-        <Route 
-          path="/food" 
-          element={
-            <AppLayout>
-              <ProtectedRoute>
-                <FoodPage />
-              </ProtectedRoute>
-            </AppLayout>
-          } 
-        />
-        <Route 
-          path="/workout" 
-          element={
-            <AppLayout>
-              <ProtectedRoute>
-                <WorkoutPage />
-              </ProtectedRoute>
-            </AppLayout>
-          } 
-        />
-        <Route 
-          path="/active-workout" 
-          element={
-            <AppLayout showBottomNav={false}>
-              <ProtectedRoute>
-                <ActiveWorkoutPage />
-              </ProtectedRoute>
-            </AppLayout>
-          } 
-        />
-        <Route 
-          path="/calculator" 
-          element={
-            <AppLayout>
-              <CalculatorPage />
-            </AppLayout>
-          } 
-        />
-        <Route 
-          path="/admin/database" 
-          element={
-            <AppLayout showBottomNav={false}>
-              <ProtectedRoute requireAdmin={true}>
-                <DatabaseAdminPage />
-              </ProtectedRoute>
-            </AppLayout>
-          } 
-        />
-        <Route 
-          path="/auth" 
-          element={
-            <AppLayout showBottomNav={false}>
-              <AuthPage />
-            </AppLayout>
-          } 
-        />
-        <Route 
-          path="*" 
-          element={
-            <AppLayout>
-              <div className="p-8">404 Not Found</div>
-            </AppLayout>
-          } 
-        />
+        <Route path="/" element={<HomePage />} />
+        <Route path="/auth" element={<AuthPage />} />
+        <Route path="/calculator" element={<CalculatorPage />} />
+        
+        <Route element={<ProtectedRoute />}>
+          <Route path="/food" element={<FoodPage />} />
+          <Route path="/workout" element={<WorkoutPage />} />
+          <Route path="/active-workout" element={<ActiveWorkoutPage />} />
+          <Route path="/create-template" element={<CreateTemplatePage />} />
+          <Route path="/database-admin" element={<DatabaseAdminPage />} />
+          <Route path="/journal" element={<JournalPage />} />
+          <Route path="/ai-coach" element={<AICoachPage />} />
+        </Route>
+        
+        <Route path="*" element={<NotFound />} />
       </Routes>
-    </TrayProvider>
+    </Router>
   );
 }
 

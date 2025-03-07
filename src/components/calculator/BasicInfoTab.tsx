@@ -56,14 +56,15 @@ export default function BasicInfoTab() {
         if (bodyFat !== undefined) {
           const lbm = calculateLBM(weight, bodyFat);
           const fatMass = calculateFatMass(weight, bodyFat);
+          const maxFatLoss = calculateMaxFatLoss(fatMass);
           
-          results.lbm = lbm;
-          results.fatMass = fatMass;
-          results.maxFatLoss = calculateMaxFatLoss(fatMass);
+          // Update results object with these values
+          Object.assign(results, { lbm, fatMass, maxFatLoss });
         }
         
         // Add minimum calories
-        results.minCalories = calculateMinCalories(bmr, tdee);
+        const minCalories = calculateMinCalories(bmr, tdee);
+        Object.assign(results, { minCalories });
         
         // Update calculation results directly
         dispatch({ 
@@ -88,6 +89,7 @@ export default function BasicInfoTab() {
       }
     }
   }, [feetPart, inchesPart, userMetrics.units, dispatch]);
+  
   
   const handleGenderChange = (value: string) => {
     dispatch({
