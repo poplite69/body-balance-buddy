@@ -114,7 +114,8 @@ export async function logFood(
   
   return {
     ...data,
-    food_item: foodItem
+    food_item: foodItem,
+    meal_type: data.meal_type as MealType // Fix the type issue by casting
   };
 }
 
@@ -131,4 +132,42 @@ export async function deleteFoodLog(logId: string): Promise<void> {
     console.error('Error deleting food log:', error);
     throw error;
   }
+}
+
+/**
+ * Get food logs for a specific day
+ */
+export async function getFoodLogsForDay(
+  userId: string, 
+  dateString: string
+): Promise<FoodLog[]> {
+  // Convert the date string to a Date object
+  const date = new Date(dateString);
+  
+  // Create start and end of the day in ISO format
+  const startOfDay = new Date(date.getFullYear(), date.getMonth(), date.getDate());
+  const endOfDay = new Date(date.getFullYear(), date.getMonth(), date.getDate(), 23, 59, 59, 999);
+  
+  const { data, error } = await supabase
+    .from('user_food_logs')
+    .select(`
+      *,
+      food_item:food_item_id(*)
+    `)
+    .eq('user_id', userId)
+    .gte('consumed_at', startOfDay.toISOString())
+    .lte('consumed_at', endOfDay.toISOString())
+    .order('consumed_at', { ascending: true });
+    
+  if (error) {
+    console.error('Error fetching food logs:', error);
+    throw error;
+  }
+  
+  // Transform the data to ensure type safety
+  return (data || []).map(log => ({
+    ...log,
+    meal_type: log.meal_type as MealType, // Cast to ensure type compatibility
+    food_item: log.food_item as FoodItem
+  }));
 }
