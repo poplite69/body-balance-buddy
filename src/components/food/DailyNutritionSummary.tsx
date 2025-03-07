@@ -66,8 +66,8 @@ export function DailyNutritionSummary({ foodLogs, calorieGoal = 2400 }: Nutritio
               <span className="text-sm text-amber-500">{roundedFat}F</span>
             </div>
             
-            {/* Total macros (right aligned) */}
-            <div className="text-sm text-blue-500">{roundedProtein}P {roundedCarbs}C {roundedFat}F</div>
+            {/* Calories (right aligned) - replacing total macros */}
+            <div className="text-sm text-blue-500">{totalCalories} / {calorieGoal} cal</div>
           </div>
         </div>
       </CardContent>
