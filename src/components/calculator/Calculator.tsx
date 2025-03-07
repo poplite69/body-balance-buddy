@@ -2,6 +2,7 @@
 import React, { useEffect } from 'react';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { useCalculator } from '@/context/CalculatorContext';
+import { GoalsProvider } from '@/context/GoalsContext';
 import DisclaimerTab from './DisclaimerTab';
 import BasicInfoTab from './BasicInfoTab';
 import MacroCalculatorTab from './MacroCalculatorTab';
@@ -50,7 +51,9 @@ export default function Calculator() {
         </TabsContent>
         
         <TabsContent value="goals">
-          <GoalsTab />
+          <GoalsProvider>
+            <GoalsTab />
+          </GoalsProvider>
         </TabsContent>
       </Tabs>
     </div>
