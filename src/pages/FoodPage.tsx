@@ -1,4 +1,3 @@
-
 import { useState } from "react";
 import { format, addDays, subDays } from "date-fns";
 import { ChevronLeft, ChevronRight, CalendarIcon, ScanBarcode, Mic, Search as SearchIcon, Camera } from "lucide-react";
@@ -127,9 +126,6 @@ const FoodPage = () => {
             <div className="flex items-center gap-4">
               <div onClick={handleScancodeClick} className="cursor-pointer">
                 <ScanBarcode className="h-5 w-5 text-gray-400" />
-              </div>
-              <div onClick={handleMicClick} className="cursor-pointer">
-                <Mic className="h-5 w-5 text-gray-400" />
               </div>
             </div>
           </div>

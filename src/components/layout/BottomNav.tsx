@@ -29,7 +29,7 @@ export function BottomNav() {
     {
       icon: Plus,
       path: '#quick-add',
-      label: '',
+      label: 'Add',
       action: () => {
         if (location.pathname === '/food') {
           setIsQuickAddOpen(true);
@@ -38,7 +38,7 @@ export function BottomNav() {
           setTimeout(() => setIsQuickAddOpen(true), 300);
         }
       },
-      className: 'bg-[#404040] text-white/90 rounded-full -mt-4 h-10 w-10 flex items-center justify-center'
+      className: 'bg-white text-black rounded-full -mt-7 h-14 w-14 flex items-center justify-center shadow-md'
     },
     { 
       icon: Dumbbell, 
@@ -136,8 +136,8 @@ export function BottomNav() {
                     isActive ? "text-primary" : "text-muted-foreground hover:text-primary"
                   )}
                 >
-                  <item.icon className="h-5 w-5" />
-                  <span className="text-xs mt-0.5">{item.label}</span>
+                  <item.icon className="h-6 w-6" />
+                  <span className="text-xs mt-1">{item.label}</span>
                 </button>
               );
             }
@@ -151,8 +151,8 @@ export function BottomNav() {
                   isActive ? "text-primary" : "text-muted-foreground hover:text-primary"
                 )}
               >
-                <item.icon className="h-4 w-4 mb-1" />
-                <span className="text-[10px]">{item.label}</span>
+                <item.icon className="h-5 w-5 mb-1" />
+                <span className="text-xs">{item.label}</span>
               </NavLink>
             );
           })}
