@@ -6,6 +6,7 @@ import HomePage from "./pages/HomePage";
 import AuthPage from "./pages/AuthPage";
 import FoodPage from "./pages/FoodPage";
 import DatabaseAdminPage from "./pages/DatabaseAdminPage";
+import CalculatorPage from "./pages/CalculatorPage";
 import { AppLayout } from "./components/layout/AppLayout";
 import ProtectedRoute from "./components/auth/ProtectedRoute";
 import { Toaster } from "sonner";
@@ -77,6 +78,14 @@ function App() {
               <ProtectedRoute>
                 <ActiveWorkoutPage />
               </ProtectedRoute>
+            </AppLayout>
+          } 
+        />
+        <Route 
+          path="/calculator" 
+          element={
+            <AppLayout>
+              <CalculatorPage />
             </AppLayout>
           } 
         />
