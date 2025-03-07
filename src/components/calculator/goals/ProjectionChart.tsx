@@ -28,7 +28,7 @@ export function ProjectionChart({ data, showBodyFat }: ProjectionChartProps) {
         <XAxis dataKey="week" label={{ value: 'Weeks', position: 'insideBottomRight', offset: -5 }} />
         <YAxis yAxisId="left" domain={['dataMin - 2', 'dataMax + 2']} label={{ value: 'Weight (kg)', angle: -90, position: 'insideLeft' }} />
         <YAxis yAxisId="right" orientation="right" domain={[0, 100]} label={{ value: 'Body Fat %', angle: 90, position: 'insideRight' }} />
-        <Tooltip formatter={(value) => [parseFloat(value as string).toFixed(1), '']} />
+        <Tooltip formatter={(value) => [parseFloat(String(value)).toFixed(1), '']} />
         <Legend />
         <Line 
           yAxisId="left" 
