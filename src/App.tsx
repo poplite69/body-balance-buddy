@@ -1,6 +1,6 @@
 
 import React from 'react';
-import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
+import { BrowserRouter as Router, Routes, Route, Outlet } from 'react-router-dom';
 import './App.css';
 import HomePage from './pages/HomePage';
 import AuthPage from './pages/AuthPage';
@@ -23,7 +23,7 @@ function App() {
         <Route path="/auth" element={<AuthPage />} />
         <Route path="/calculator" element={<CalculatorPage />} />
         
-        <Route element={<ProtectedRoute />}>
+        <Route element={<ProtectedRoute><Outlet /></ProtectedRoute>}>
           <Route path="/food" element={<FoodPage />} />
           <Route path="/workout" element={<WorkoutPage />} />
           <Route path="/active-workout" element={<ActiveWorkoutPage />} />
