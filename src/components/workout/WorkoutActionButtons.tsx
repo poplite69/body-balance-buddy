@@ -2,6 +2,7 @@
 import React from 'react';
 import { Button } from '@/components/ui/button';
 import { useTrayConfirmation } from '@/components/tray/useTrayConfirmation';
+import { Plus, X } from 'lucide-react';
 
 interface WorkoutActionButtonsProps {
   onAddExercises: () => void;
@@ -33,19 +34,21 @@ const WorkoutActionButtons: React.FC<WorkoutActionButtonsProps> = ({
       {/* Add exercises button */}
       <Button 
         variant="outline"
-        className="w-full py-6 my-4"
+        className="w-full py-6 my-4 flex items-center justify-center gap-2"
         onClick={onAddExercises}
       >
+        <Plus className="h-5 w-5" />
         Add Exercises
       </Button>
       
       {/* Cancel workout button */}
       <Button 
         variant="destructive" 
-        className="w-full py-6 mb-8"
+        className="w-full py-6 mb-8 flex items-center justify-center gap-2"
         onClick={handleCancelWorkout}
         disabled={cancelIsPending}
       >
+        <X className="h-5 w-5" />
         Cancel Workout
       </Button>
     </>

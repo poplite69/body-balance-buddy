@@ -11,7 +11,6 @@ import CalculatorPage from './pages/CalculatorPage';
 import NotFound from './pages/NotFound';
 import ProtectedRoute from './components/auth/ProtectedRoute';
 import JournalPage from './pages/JournalPage';
-import CreateTemplatePage from './pages/CreateTemplatePage';
 
 function App() {
   return (
@@ -24,7 +23,6 @@ function App() {
         <Route path="/food" element={<FoodPage />} />
         <Route path="/workout" element={<WorkoutPage />} />
         <Route path="/active-workout" element={<ActiveWorkoutPage />} />
-        <Route path="/create-template" element={<CreateTemplatePage />} />
         <Route path="/journal" element={<JournalPage />} />
       </Route>
       

@@ -1,7 +1,6 @@
-
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { useToast } from '@/components/ui/use-toast';
+import { useToast } from '@/hooks/use-toast';
 import { supabase } from '@/integrations/supabase/client';
 import { useAuth } from '@/context/AuthContext';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
@@ -12,6 +11,7 @@ import WorkoutExerciseList from '@/components/workout/WorkoutExerciseList';
 import WorkoutActionButtons from '@/components/workout/WorkoutActionButtons';
 import FinishWorkoutDialog from '@/components/workout/FinishWorkoutDialog';
 import ExerciseSelector from '@/components/workout/ExerciseSelector';
+import SaveTemplateDialog from '@/components/workout/SaveTemplateDialog';
 
 interface Exercise {
   id: string;
@@ -60,8 +60,9 @@ const ActiveWorkoutPage: React.FC = () => {
   const [isExerciseSelectorOpen, setIsExerciseSelectorOpen] = useState(false);
   const [isTimerActive, setIsTimerActive] = useState(true);
   const [isFinishDialogOpen, setIsFinishDialogOpen] = useState(false);
+  const [isSaveTemplateDialogOpen, setIsSaveTemplateDialogOpen] = useState(false);
   const [incompleteSets, setIncompleteSets] = useState<number>(0);
-  
+
   // Create workout on initial load
   useEffect(() => {
     const createWorkout = async () => {
@@ -416,6 +417,79 @@ const ActiveWorkoutPage: React.FC = () => {
     }
   };
   
+  // Save workout as template
+  const saveAsTemplateMutation = useMutation({
+    mutationFn: async ({ name, description }: { name: string, description: string }) => {
+      if (!user || !workout.id || workout.workoutExercises.length === 0) 
+        throw new Error('Missing data');
+      
+      // First, create the template
+      const { data: template, error: templateError } = await supabase
+        .from('workout_templates')
+        .insert({
+          user_id: user.id,
+          name: name,
+          description: description || null,
+          is_public: false
+        })
+        .select()
+        .single();
+      
+      if (templateError) throw templateError;
+      
+      // Then, add all exercises to the template
+      const templateExercises = workout.workoutExercises.map((we, index) => ({
+        template_id: template.id,
+        exercise_id: we.exercise_id,
+        position: index,
+        suggested_sets: 3, // Default values
+        suggested_reps: 10,
+        suggested_rest: 60
+      }));
+      
+      const { error: exercisesError } = await supabase
+        .from('template_exercises')
+        .insert(templateExercises);
+      
+      if (exercisesError) throw exercisesError;
+      
+      return template.id;
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['workout-templates'] });
+      toast({
+        title: 'Template saved',
+        description: 'Your workout has been saved as a template'
+      });
+      setIsSaveTemplateDialogOpen(false);
+    },
+    onError: (error) => {
+      console.error('Error saving template:', error);
+      toast({
+        variant: 'destructive',
+        title: 'Failed to save template',
+        description: 'There was an error saving your workout as a template'
+      });
+    }
+  });
+  
+  const handleSaveAsTemplate = () => {
+    if (workout.workoutExercises.length === 0) {
+      toast({
+        variant: 'destructive',
+        title: 'Cannot save empty template',
+        description: 'Add exercises to your workout before saving as a template'
+      });
+      return;
+    }
+    
+    setIsSaveTemplateDialogOpen(true);
+  };
+  
+  const handleSaveTemplate = (name: string, description: string) => {
+    saveAsTemplateMutation.mutate({ name, description });
+  };
+  
   return (
     <AppLayout showBottomNav={false}>
       <div className="flex flex-col h-full min-h-[90vh] max-w-md mx-auto px-4 pb-20">
@@ -429,6 +503,7 @@ const ActiveWorkoutPage: React.FC = () => {
           onNotesChange={handleNotesChange}
           onTimeUpdate={handleTimeUpdate}
           onFinish={handlePreFinishCheck}
+          onSaveAsTemplate={handleSaveAsTemplate}
           finishIsPending={finishWorkoutMutation.isPending}
         />
         
@@ -457,6 +532,15 @@ const ActiveWorkoutPage: React.FC = () => {
           incompleteSets={incompleteSets}
           onClose={() => setIsFinishDialogOpen(false)}
           onFinish={handleFinishWorkout}
+        />
+        
+        {/* Save template dialog */}
+        <SaveTemplateDialog
+          isOpen={isSaveTemplateDialogOpen}
+          onClose={() => setIsSaveTemplateDialogOpen(false)}
+          onSave={handleSaveTemplate}
+          defaultName={workout.name}
+          isSaving={saveAsTemplateMutation.isPending}
         />
       </div>
     </AppLayout>
