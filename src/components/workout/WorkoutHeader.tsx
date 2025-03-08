@@ -4,7 +4,7 @@ import { Timer, MoreHorizontal, ChevronDown, ChevronUp, Save } from 'lucide-reac
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import WorkoutTimer from '@/components/workout/WorkoutTimer';
-import { ActiveWorkout } from '@/pages/ActiveWorkoutPage';
+import { ActiveWorkout } from '@/components/workout/types';
 
 interface WorkoutHeaderProps {
   workout: ActiveWorkout;

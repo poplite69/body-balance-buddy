@@ -1,23 +1,10 @@
-
 import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { supabase } from '@/integrations/supabase/client';
 import { useToast } from '@/hooks/use-toast';
 import { useAuth } from '@/context/AuthContext';
-
-export interface Exercise {
-  id: string;
-  name: string;
-  primary_muscle: string;
-  [key: string]: any;
-}
-
-export interface WorkoutExercise {
-  id: string;
-  exercise_id: string;
-  exercise: Exercise;
-}
+import { Exercise, WorkoutExercise, ActiveWorkout } from '@/components/workout/types';
 
 export interface WorkoutSet {
   id: string;
@@ -25,15 +12,6 @@ export interface WorkoutSet {
   reps: number | null;
   completed: boolean;
   workout_exercise_id: string;
-}
-
-export interface ActiveWorkout {
-  id: string;
-  name: string;
-  start_time: string;
-  workoutExercises: WorkoutExercise[];
-  notes?: string;
-  duration: number;
 }
 
 export function useActiveWorkout() {
