@@ -7,11 +7,13 @@ import AuthPage from './pages/AuthPage';
 import FoodPage from './pages/FoodPage';
 import WorkoutPage from './pages/WorkoutPage';
 import ActiveWorkoutPage from './pages/ActiveWorkoutPage';
+import CreateTemplatePage from './pages/CreateTemplatePage';
+import DatabaseAdminPage from './pages/DatabaseAdminPage';
+import JournalPage from './pages/JournalPage';
+import AICoachPage from './pages/AICoachPage';
 import CalculatorPage from './pages/CalculatorPage';
 import NotFound from './pages/NotFound';
 import ProtectedRoute from './components/auth/ProtectedRoute';
-import JournalPage from './pages/JournalPage';
-import CreateTemplatePage from './pages/CreateTemplatePage';
 
 function App() {
   return (
@@ -25,7 +27,9 @@ function App() {
         <Route path="/workout" element={<WorkoutPage />} />
         <Route path="/active-workout" element={<ActiveWorkoutPage />} />
         <Route path="/create-template" element={<CreateTemplatePage />} />
+        <Route path="/database-admin" element={<DatabaseAdminPage />} />
         <Route path="/journal" element={<JournalPage />} />
+        <Route path="/ai-coach" element={<AICoachPage />} />
       </Route>
       
       <Route path="*" element={<NotFound />} />

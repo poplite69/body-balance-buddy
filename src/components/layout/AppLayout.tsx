@@ -50,7 +50,7 @@ export function AppLayout({ children, showBottomNav = true }: AppLayoutProps) {
       </main>
       
       {/* Show bottom nav for authenticated users on mobile */}
-      {showBottomNav && <BottomNav />}
+      {user && showBottomNav && <BottomNav />}
     </div>
   );
 }
