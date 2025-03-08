@@ -3,12 +3,13 @@ import { useState, useEffect } from "react";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
 import { FoodItem, MealType } from "@/types/food";
-import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
 import { toast } from "sonner";
 import { logFood } from "@/services/food";
 import { useAuth } from "@/context/AuthContext";
 import { PortionSelect } from "./PortionSelect";
-import { Heart } from "lucide-react";
+import { FoodNutritionCard } from "./dialog/FoodNutritionCard";
+import { MealTypeTabs } from "./dialog/MealTypeTabs";
+import { FoodFavoriteButton } from "./dialog/FoodFavoriteButton";
 
 interface AddFoodDialogProps {
   food: FoodItem | null;
@@ -109,14 +110,10 @@ export function AddFoodDialog({ food, isOpen, onClose, onSuccess, mealType = "br
       <DialogContent className="max-w-md">
         <DialogHeader className="flex flex-row items-center justify-between">
           <DialogTitle>{food.name}</DialogTitle>
-          <Button 
-            variant="ghost" 
-            size="icon" 
-            onClick={toggleFavorite}
-            className={isFavorite ? "text-red-500" : "text-muted-foreground"}
-          >
-            <Heart className={`h-5 w-5 ${isFavorite ? "fill-current" : ""}`} />
-          </Button>
+          <FoodFavoriteButton 
+            isFavorite={isFavorite} 
+            onToggleFavorite={toggleFavorite} 
+          />
         </DialogHeader>
 
         <div className="space-y-4 my-2">
@@ -126,105 +123,22 @@ export function AddFoodDialog({ food, isOpen, onClose, onSuccess, mealType = "br
           )}
           
           <div className="space-y-2">
-            <Tabs value={selectedMealType} onValueChange={(value) => setSelectedMealType(value as MealType)} className="w-full">
-              <TabsList className="grid grid-cols-4 w-full">
-                <TabsTrigger value="breakfast">Breakfast</TabsTrigger>
-                <TabsTrigger value="lunch">Lunch</TabsTrigger>
-                <TabsTrigger value="dinner">Dinner</TabsTrigger>
-                <TabsTrigger value="snack">Snack</TabsTrigger>
-              </TabsList>
-            </Tabs>
+            <MealTypeTabs 
+              selectedMealType={selectedMealType} 
+              onMealTypeChange={setSelectedMealType} 
+            />
           </div>
 
           {/* Enhanced nutrition display */}
-          <div className="rounded-lg border p-4">
-            <h3 className="font-medium mb-3">Nutrition Facts</h3>
-            
-            <div className="space-y-3">
-              {/* Calories - highlighted */}
-              <div className="border-b pb-2">
-                <div className="text-lg font-bold">{Math.round(calculatedCalories)} calories</div>
-              </div>
-              
-              {/* Macronutrients with progress bars */}
-              <div className="space-y-2">
-                {/* Protein */}
-                <div>
-                  <div className="flex justify-between text-sm">
-                    <span className="font-medium">Protein</span>
-                    <span>{calculatedProtein}g <span className="text-muted-foreground">({macroPercentages.protein}%)</span></span>
-                  </div>
-                  <div className="h-2 bg-muted rounded-full mt-1 overflow-hidden">
-                    <div 
-                      className="h-full bg-emerald-500 rounded-full" 
-                      style={{ width: `${macroPercentages.protein}%` }}
-                    ></div>
-                  </div>
-                </div>
-                
-                {/* Carbs */}
-                <div>
-                  <div className="flex justify-between text-sm">
-                    <span className="font-medium">Carbs</span>
-                    <span>{calculatedCarbs}g <span className="text-muted-foreground">({macroPercentages.carbs}%)</span></span>
-                  </div>
-                  <div className="h-2 bg-muted rounded-full mt-1 overflow-hidden">
-                    <div 
-                      className="h-full bg-blue-500 rounded-full" 
-                      style={{ width: `${macroPercentages.carbs}%` }}
-                    ></div>
-                  </div>
-                </div>
-                
-                {/* Fat */}
-                <div>
-                  <div className="flex justify-between text-sm">
-                    <span className="font-medium">Fat</span>
-                    <span>{calculatedFat}g <span className="text-muted-foreground">({macroPercentages.fat}%)</span></span>
-                  </div>
-                  <div className="h-2 bg-muted rounded-full mt-1 overflow-hidden">
-                    <div 
-                      className="h-full bg-amber-500 rounded-full" 
-                      style={{ width: `${macroPercentages.fat}%` }}
-                    ></div>
-                  </div>
-                </div>
-              </div>
-            </div>
-            
-            <div className="mt-4 pt-3 border-t">
-              <h4 className="text-sm font-medium mb-2">Additional Nutrients</h4>
-              <div className="grid grid-cols-2 gap-y-1 text-sm">
-                {food.fiber_g !== null && (
-                  <>
-                    <div>Fiber:</div>
-                    <div className="text-right">{calculateNutrition(food.fiber_g)} g</div>
-                  </>
-                )}
-                
-                {food.sugar_g !== null && (
-                  <>
-                    <div>Sugar:</div>
-                    <div className="text-right">{calculateNutrition(food.sugar_g)} g</div>
-                  </>
-                )}
-                
-                {food.sodium_mg !== null && (
-                  <>
-                    <div>Sodium:</div>
-                    <div className="text-right">{calculateNutrition(food.sodium_mg)} mg</div>
-                  </>
-                )}
-                
-                {food.cholesterol_mg !== null && (
-                  <>
-                    <div>Cholesterol:</div>
-                    <div className="text-right">{calculateNutrition(food.cholesterol_mg)} mg</div>
-                  </>
-                )}
-              </div>
-            </div>
-          </div>
+          <FoodNutritionCard
+            food={food}
+            calculatedCalories={calculatedCalories}
+            calculatedProtein={calculatedProtein}
+            calculatedCarbs={calculatedCarbs}
+            calculatedFat={calculatedFat}
+            macroPercentages={macroPercentages}
+            calculateNutrition={calculateNutrition}
+          />
 
           <PortionSelect 
             food={food} 
