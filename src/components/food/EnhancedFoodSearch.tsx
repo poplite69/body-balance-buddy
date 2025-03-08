@@ -1,11 +1,11 @@
 
 import { FoodItem } from "@/types/food";
-import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
 import { SearchResults } from "./search/SearchResults";
 import { RecentTab } from "./search/RecentTab";
 import { FavoritesTab } from "./search/FavoritesTab";
 import { useSearch } from "./search/useSearch";
 import { RecentSearches } from "./search/RecentSearches";
+import { FoodSearchTabs } from "./search/FoodSearchTabs";
 
 interface EnhancedFoodSearchProps {
   onFoodSelect: (food: FoodItem) => void;
@@ -27,45 +27,49 @@ export function EnhancedFoodSearch({ onFoodSelect, initialQuery = "" }: Enhanced
     formatMacros 
   } = useSearch(initialQuery, onFoodSelect);
 
-  return (
-    <div className="p-2">
-      <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
-        <TabsList className="grid grid-cols-3 mb-2 h-8">
-          <TabsTrigger value="search" className="text-xs">Search</TabsTrigger>
-          <TabsTrigger value="recent" className="text-xs">Recent</TabsTrigger>
-          <TabsTrigger value="favorites" className="text-xs">Favorites</TabsTrigger>
-        </TabsList>
-        
-        <TabsContent value="search" className="mt-0">
-          {recentSearches.length > 0 && searchResults.length === 0 && !isSearching && query.length < 2 && (
-            <RecentSearches 
-              recentSearches={recentSearches} 
-              onRecentSearchClick={handleRecentSearch} 
-            />
-          )}
+  const renderContent = () => {
+    switch (activeTab) {
+      case "search":
+        return (
+          <>
+            {recentSearches.length > 0 && searchResults.length === 0 && !isSearching && query.length < 2 && (
+              <RecentSearches 
+                recentSearches={recentSearches} 
+                onRecentSearchClick={handleRecentSearch} 
+              />
+            )}
 
-          <SearchResults 
-            searchResults={searchResults} 
-            isSearching={isSearching} 
-            expandedCategories={expandedCategories} 
-            toggleCategory={toggleCategory} 
-            onFoodSelect={onFoodSelect}
-            formatMacros={formatMacros}
-          />
-        </TabsContent>
-        
-        <TabsContent value="recent" className="mt-0">
-          <RecentTab />
-        </TabsContent>
-        
-        <TabsContent value="favorites" className="mt-0">
+            <SearchResults 
+              searchResults={searchResults} 
+              isSearching={isSearching} 
+              expandedCategories={expandedCategories} 
+              toggleCategory={toggleCategory} 
+              onFoodSelect={onFoodSelect}
+              formatMacros={formatMacros}
+            />
+          </>
+        );
+      case "recent":
+        return <RecentTab />;
+      case "favorites":
+        return (
           <FavoritesTab 
             favoriteFoods={favoriteFoods} 
             onFoodSelect={onFoodSelect} 
             formatMacros={formatMacros} 
           />
-        </TabsContent>
-      </Tabs>
+        );
+      default:
+        return null;
+    }
+  };
+
+  return (
+    <div className="p-2">
+      <FoodSearchTabs activeTab={activeTab} onTabChange={setActiveTab} />
+      <div className="mt-2">
+        {renderContent()}
+      </div>
     </div>
   );
 }
