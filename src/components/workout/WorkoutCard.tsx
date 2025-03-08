@@ -1,7 +1,7 @@
 
 import React from 'react';
 import { format } from 'date-fns';
-import { Clock, MoreHorizontal, Dumbbell } from 'lucide-react';
+import { Clock, MoreHorizontal } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardFooter } from '@/components/ui/card';
 
@@ -11,7 +11,6 @@ interface WorkoutCardProps {
     name: string;
     start_time: string;
     status: string;
-    exercises_count?: number;
   };
   onOptionsClick: (workoutId: string) => void;
 }
@@ -40,17 +39,11 @@ export const WorkoutCard = ({ workout, onOptionsClick }: WorkoutCardProps) => {
           {workout.status === 'completed' ? 'Completed' : 'In progress'}
         </p>
       </CardContent>
-      <CardFooter className="p-4 pt-2 flex justify-between">
+      <CardFooter className="p-4 pt-2">
         <div className="flex items-center gap-1 text-sm text-muted-foreground">
           <Clock className="h-4 w-4" />
           <span>{workoutDate}</span>
         </div>
-        {workout.exercises_count !== undefined && (
-          <div className="flex items-center gap-1 text-sm text-muted-foreground">
-            <Dumbbell className="h-4 w-4" />
-            <span>{workout.exercises_count} exercises</span>
-          </div>
-        )}
       </CardFooter>
     </Card>
   );

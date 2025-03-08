@@ -1,11 +1,10 @@
 
 import React from 'react';
-import { Timer, MoreHorizontal, ChevronDown, ChevronUp, Save } from 'lucide-react';
+import { Timer, MoreHorizontal, ChevronDown, ChevronUp } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import WorkoutTimer from '@/components/workout/WorkoutTimer';
-import { ActiveWorkout } from '@/components/workout/types';
-import { Skeleton } from '@/components/ui/skeleton';
+import { ActiveWorkout } from '@/pages/ActiveWorkoutPage';
 
 interface WorkoutHeaderProps {
   workout: ActiveWorkout;
@@ -17,9 +16,7 @@ interface WorkoutHeaderProps {
   onNotesChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
   onTimeUpdate: (seconds: number) => void;
   onFinish: () => void;
-  onSaveAsTemplate: () => void;
   finishIsPending: boolean;
-  isLoading?: boolean;
 }
 
 const WorkoutHeader: React.FC<WorkoutHeaderProps> = ({
@@ -32,26 +29,8 @@ const WorkoutHeader: React.FC<WorkoutHeaderProps> = ({
   onNotesChange,
   onTimeUpdate,
   onFinish,
-  onSaveAsTemplate,
-  finishIsPending,
-  isLoading = false
+  finishIsPending
 }) => {
-  if (isLoading) {
-    return (
-      <div className="space-y-4">
-        <div className="flex justify-between items-center py-4">
-          <Skeleton className="h-12 w-12 rounded" />
-          <div className="flex space-x-2">
-            <Skeleton className="h-12 w-24 rounded" />
-            <Skeleton className="h-12 w-24 rounded" />
-          </div>
-        </div>
-        <Skeleton className="h-10 w-full" />
-        <Skeleton className="h-6 w-1/2" />
-      </div>
-    );
-  }
-
   return (
     <>
       {/* Top bar with timer and buttons */}
@@ -66,25 +45,14 @@ const WorkoutHeader: React.FC<WorkoutHeaderProps> = ({
             <Timer className="h-6 w-6" />
           </Button>
           
-          <div className="flex space-x-2">
-            <Button 
-              variant="outline"
-              onClick={onSaveAsTemplate}
-              className="h-12 px-4 flex items-center gap-1"
-              disabled={workout.workoutExercises.length === 0}
-            >
-              <Save className="h-4 w-4" />
-              <span className="hidden sm:inline">Save Template</span>
-            </Button>
-            <Button 
-              variant="default"
-              className="h-12 px-6"
-              onClick={onFinish}
-              disabled={finishIsPending}
-            >
-              Finish
-            </Button>
-          </div>
+          <Button 
+            variant="default"
+            className="h-12 px-8"
+            onClick={onFinish}
+            disabled={finishIsPending}
+          >
+            Finish
+          </Button>
         </div>
         
         {/* Collapsible handle */}
