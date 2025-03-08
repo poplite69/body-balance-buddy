@@ -22,3 +22,18 @@ export interface WorkoutExerciseCardProps {
   workoutExerciseId?: string;
   onRemove?: () => void;
 }
+
+export interface WorkoutExercise {
+  id: string;
+  exercise_id: string;
+  exercise: Exercise;
+}
+
+export interface ActiveWorkout {
+  id: string;
+  name: string;
+  start_time: string;
+  workoutExercises: WorkoutExercise[];
+  notes?: string;
+  duration: number;
+}
