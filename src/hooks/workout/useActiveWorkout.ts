@@ -3,14 +3,6 @@ import { useWorkoutInitialization } from './useWorkoutInitialization';
 import { useWorkoutActions } from './useWorkoutActions';
 import { WorkoutSet } from '@/components/workout/types';
 
-export interface WorkoutSet {
-  id: string;
-  weight: number | null;
-  reps: number | null;
-  completed: boolean;
-  workout_exercise_id: string;
-}
-
 export function useActiveWorkout() {
   // Initialize workout and fetch data
   const { 
