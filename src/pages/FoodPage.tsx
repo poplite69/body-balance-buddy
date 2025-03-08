@@ -162,7 +162,7 @@ const FoodPage = () => {
           searchQuery={searchQuery}
         />
         
-        {/* Bottom Search Bar - Fixed above bottom nav */}
+        {/* Bottom Search Bar - Fixed at bottom above nav */}
         <div className="fixed bottom-16 left-0 right-0 px-4 py-2 bg-background/80 backdrop-blur-sm border-t border-border z-50">
           <div className="flex flex-col max-w-md mx-auto">
             <div className="relative">

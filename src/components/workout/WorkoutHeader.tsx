@@ -4,7 +4,8 @@ import { Timer, MoreHorizontal, ChevronDown, ChevronUp, Save } from 'lucide-reac
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import WorkoutTimer from '@/components/workout/WorkoutTimer';
-import { ActiveWorkout } from '@/pages/ActiveWorkoutPage';
+import { ActiveWorkout } from '@/components/workout/types';
+import { Skeleton } from '@/components/ui/skeleton';
 
 interface WorkoutHeaderProps {
   workout: ActiveWorkout;
@@ -18,6 +19,7 @@ interface WorkoutHeaderProps {
   onFinish: () => void;
   onSaveAsTemplate: () => void;
   finishIsPending: boolean;
+  isLoading?: boolean;
 }
 
 const WorkoutHeader: React.FC<WorkoutHeaderProps> = ({
@@ -31,8 +33,25 @@ const WorkoutHeader: React.FC<WorkoutHeaderProps> = ({
   onTimeUpdate,
   onFinish,
   onSaveAsTemplate,
-  finishIsPending
+  finishIsPending,
+  isLoading = false
 }) => {
+  if (isLoading) {
+    return (
+      <div className="space-y-4">
+        <div className="flex justify-between items-center py-4">
+          <Skeleton className="h-12 w-12 rounded" />
+          <div className="flex space-x-2">
+            <Skeleton className="h-12 w-24 rounded" />
+            <Skeleton className="h-12 w-24 rounded" />
+          </div>
+        </div>
+        <Skeleton className="h-10 w-full" />
+        <Skeleton className="h-6 w-1/2" />
+      </div>
+    );
+  }
+
   return (
     <>
       {/* Top bar with timer and buttons */}
