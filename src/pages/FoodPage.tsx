@@ -1,3 +1,4 @@
+
 import { useState, useEffect, useRef } from "react";
 import { format, addDays, subDays } from "date-fns";
 import { ChevronLeft, ChevronRight, CalendarIcon, Search as SearchIcon, X, Mic, Barcode } from "lucide-react";
@@ -162,8 +163,8 @@ const FoodPage = () => {
           searchQuery={searchQuery}
         />
         
-        {/* Bottom Search Bar - Fixed at bottom above nav */}
-        <div className="fixed bottom-16 left-0 right-0 px-4 py-2 bg-background/80 backdrop-blur-sm border-t border-border z-50">
+        {/* Bottom Search Bar - Fixed directly above nav */}
+        <div className="fixed bottom-0 left-0 right-0 px-4 py-2 bg-background/80 backdrop-blur-sm border-t border-border z-40">
           <div className="flex flex-col max-w-md mx-auto">
             <div className="relative">
               <div className="flex items-center bg-gray-800/70 rounded-full px-4 text-gray-100">
