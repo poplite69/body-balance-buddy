@@ -1,6 +1,6 @@
 
 import React from 'react';
-import { Timer, MoreHorizontal, ChevronDown, ChevronUp } from 'lucide-react';
+import { Timer, MoreHorizontal, ChevronDown, ChevronUp, Save } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import WorkoutTimer from '@/components/workout/WorkoutTimer';
@@ -16,6 +16,7 @@ interface WorkoutHeaderProps {
   onNotesChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
   onTimeUpdate: (seconds: number) => void;
   onFinish: () => void;
+  onSaveAsTemplate: () => void;
   finishIsPending: boolean;
 }
 
@@ -29,6 +30,7 @@ const WorkoutHeader: React.FC<WorkoutHeaderProps> = ({
   onNotesChange,
   onTimeUpdate,
   onFinish,
+  onSaveAsTemplate,
   finishIsPending
 }) => {
   return (
@@ -45,14 +47,25 @@ const WorkoutHeader: React.FC<WorkoutHeaderProps> = ({
             <Timer className="h-6 w-6" />
           </Button>
           
-          <Button 
-            variant="default"
-            className="h-12 px-8"
-            onClick={onFinish}
-            disabled={finishIsPending}
-          >
-            Finish
-          </Button>
+          <div className="flex space-x-2">
+            <Button 
+              variant="outline"
+              onClick={onSaveAsTemplate}
+              className="h-12 px-4 flex items-center gap-1"
+              disabled={workout.workoutExercises.length === 0}
+            >
+              <Save className="h-4 w-4" />
+              <span className="hidden sm:inline">Save Template</span>
+            </Button>
+            <Button 
+              variant="default"
+              className="h-12 px-6"
+              onClick={onFinish}
+              disabled={finishIsPending}
+            >
+              Finish
+            </Button>
+          </div>
         </div>
         
         {/* Collapsible handle */}
