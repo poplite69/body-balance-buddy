@@ -1,9 +1,11 @@
+
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useToast } from '@/components/ui/use-toast';
 import { supabase } from '@/integrations/supabase/client';
 import { useAuth } from '@/context/AuthContext';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
+import { AppLayout } from '@/components/layout/AppLayout';
 
 import WorkoutHeader from '@/components/workout/WorkoutHeader';
 import WorkoutExerciseList from '@/components/workout/WorkoutExerciseList';
@@ -415,47 +417,49 @@ const ActiveWorkoutPage: React.FC = () => {
   };
   
   return (
-    <div className="flex flex-col h-full min-h-[90vh] max-w-md mx-auto px-4 pb-20">
-      <WorkoutHeader 
-        workout={workout}
-        isCollapsed={isCollapsed}
-        isTimerActive={isTimerActive}
-        onCollapseToggle={() => setIsCollapsed(prev => !prev)}
-        onTimerToggle={() => setIsTimerActive(prev => !prev)}
-        onNameChange={handleNameChange}
-        onNotesChange={handleNotesChange}
-        onTimeUpdate={handleTimeUpdate}
-        onFinish={handlePreFinishCheck}
-        finishIsPending={finishWorkoutMutation.isPending}
-      />
-      
-      <WorkoutExerciseList 
-        workoutId={workout.id}
-        exercises={workout.workoutExercises}
-        onRemoveExercise={handleRemoveExercise}
-      />
-      
-      <WorkoutActionButtons 
-        onAddExercises={() => setIsExerciseSelectorOpen(true)}
-        onCancelWorkout={handleCancelWorkout}
-        cancelIsPending={cancelWorkoutMutation.isPending}
-      />
-      
-      {/* Exercise selector dialog */}
-      <ExerciseSelector
-        isOpen={isExerciseSelectorOpen}
-        onClose={() => setIsExerciseSelectorOpen(false)}
-        onSelectExercise={handleAddExercise}
-      />
-      
-      {/* Incomplete sets dialog */}
-      <FinishWorkoutDialog 
-        isOpen={isFinishDialogOpen}
-        incompleteSets={incompleteSets}
-        onClose={() => setIsFinishDialogOpen(false)}
-        onFinish={handleFinishWorkout}
-      />
-    </div>
+    <AppLayout showBottomNav={false}>
+      <div className="flex flex-col h-full min-h-[90vh] max-w-md mx-auto px-4 pb-20">
+        <WorkoutHeader 
+          workout={workout}
+          isCollapsed={isCollapsed}
+          isTimerActive={isTimerActive}
+          onCollapseToggle={() => setIsCollapsed(prev => !prev)}
+          onTimerToggle={() => setIsTimerActive(prev => !prev)}
+          onNameChange={handleNameChange}
+          onNotesChange={handleNotesChange}
+          onTimeUpdate={handleTimeUpdate}
+          onFinish={handlePreFinishCheck}
+          finishIsPending={finishWorkoutMutation.isPending}
+        />
+        
+        <WorkoutExerciseList 
+          workoutId={workout.id}
+          exercises={workout.workoutExercises}
+          onRemoveExercise={handleRemoveExercise}
+        />
+        
+        <WorkoutActionButtons 
+          onAddExercises={() => setIsExerciseSelectorOpen(true)}
+          onCancelWorkout={handleCancelWorkout}
+          cancelIsPending={cancelWorkoutMutation.isPending}
+        />
+        
+        {/* Exercise selector dialog */}
+        <ExerciseSelector
+          isOpen={isExerciseSelectorOpen}
+          onClose={() => setIsExerciseSelectorOpen(false)}
+          onSelectExercise={handleAddExercise}
+        />
+        
+        {/* Incomplete sets dialog */}
+        <FinishWorkoutDialog 
+          isOpen={isFinishDialogOpen}
+          incompleteSets={incompleteSets}
+          onClose={() => setIsFinishDialogOpen(false)}
+          onFinish={handleFinishWorkout}
+        />
+      </div>
+    </AppLayout>
   );
 };
 
