@@ -1,4 +1,5 @@
 
+import { useState, useEffect } from 'react';
 import { useWorkoutInitialization } from './useWorkoutInitialization';
 import { useWorkoutActions } from './useWorkoutActions';
 import { WorkoutSet } from '@/components/workout/types';
@@ -9,8 +10,22 @@ export function useActiveWorkout() {
     workout, 
     setWorkout,
     loading,
-    error
+    error,
+    createWorkout
   } = useWorkoutInitialization();
+  
+  const [initialized, setInitialized] = useState(false);
+  
+  // Initialize workout on component mount
+  useEffect(() => {
+    if (!initialized && !workout.id) {
+      createWorkout().then(workoutId => {
+        if (workoutId) {
+          setInitialized(true);
+        }
+      });
+    }
+  }, [initialized, workout.id, createWorkout]);
   
   // Set up workout actions
   const {
@@ -48,7 +63,7 @@ export function useActiveWorkout() {
     isFinishDialogOpen,
     isSaveTemplateDialogOpen,
     incompleteSets,
-    loading,
+    loading: loading || !initialized,
     error,
     setIsCollapsed,
     setIsTimerActive,

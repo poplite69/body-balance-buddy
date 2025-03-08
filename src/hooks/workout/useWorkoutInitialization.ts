@@ -18,62 +18,63 @@ export function useWorkoutInitialization() {
     duration: 0
   });
 
-  // Create workout on initial load
-  useEffect(() => {
-    const createWorkout = async () => {
-      if (!user) {
-        setLoading(false);
-        setError(new Error('Authentication required'));
-        toast({
-          variant: 'destructive',
-          title: 'Authentication required',
-          description: 'You must be logged in to start a workout'
-        });
-        return;
-      }
-      
-      setLoading(true);
-      try {
-        const { data, error } = await supabase
-          .from('workouts')
-          .insert({
-            user_id: user.id,
-            name: workout.name,
-            start_time: new Date().toISOString(),
-            status: 'in_progress'
-          })
-          .select()
-          .single();
-        
-        if (error) throw error;
-        
-        if (data) {
-          setWorkout(prev => ({
-            ...prev,
-            id: data.id,
-            start_time: data.start_time
-          }));
-          
-          toast({
-            title: 'Workout started',
-            description: 'Your workout has been started successfully.'
-          });
-        }
-      } catch (error) {
-        console.error('Error creating workout:', error);
-        setError(error instanceof Error ? error : new Error('Failed to start workout'));
-        toast({
-          variant: 'destructive',
-          title: 'Failed to start workout',
-          description: 'There was an error starting your workout.'
-        });
-      } finally {
-        setLoading(false);
-      }
-    };
+  // Create a new workout
+  const createWorkout = async () => {
+    if (!user) {
+      setLoading(false);
+      setError(new Error('Authentication required'));
+      toast({
+        variant: 'destructive',
+        title: 'Authentication required',
+        description: 'You must be logged in to start a workout'
+      });
+      return null;
+    }
     
-    createWorkout();
-  }, [user, toast]);
+    setLoading(true);
+    try {
+      const { data, error } = await supabase
+        .from('workouts')
+        .insert({
+          user_id: user.id,
+          name: workout.name,
+          start_time: new Date().toISOString(),
+          status: 'in_progress'
+        })
+        .select()
+        .single();
+      
+      if (error) throw error;
+      
+      if (data) {
+        setWorkout(prev => ({
+          ...prev,
+          id: data.id,
+          start_time: data.start_time
+        }));
+        
+        toast({
+          title: 'Workout started',
+          description: 'Your workout has been started successfully.'
+        });
+        
+        return data.id;
+      }
+    } catch (error) {
+      console.error('Error creating workout:', error);
+      setError(error instanceof Error ? error : new Error('Failed to start workout'));
+      toast({
+        variant: 'destructive',
+        title: 'Failed to start workout',
+        description: 'There was an error starting your workout.'
+      });
+      return null;
+    } finally {
+      setLoading(false);
+    }
+    
+    return null;
+  };
 
   // Fetch workout exercises whenever workout ID changes
   useEffect(() => {
@@ -115,6 +116,7 @@ export function useWorkoutInitialization() {
     workout,
     setWorkout,
     loading,
-    error
+    error,
+    createWorkout
   };
 }

@@ -1,5 +1,5 @@
 
-import React from 'react';
+import React, { useEffect } from 'react';
 import { AppLayout } from '@/components/layout/AppLayout';
 import { useActiveWorkout } from '@/hooks/workout/useActiveWorkout';
 import { MobileSkeletonList } from '@/components/mobile/MobileSkeletonList';
@@ -8,6 +8,7 @@ import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
 import { AlertCircle, Home } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { useNavigate } from 'react-router-dom';
+import { useAuth } from '@/context/AuthContext';
 
 import WorkoutHeader from '@/components/workout/WorkoutHeader';
 import WorkoutExerciseList from '@/components/workout/WorkoutExerciseList';
@@ -18,6 +19,14 @@ import SaveTemplateDialog from '@/components/workout/SaveTemplateDialog';
 
 const ActiveWorkoutPage: React.FC = () => {
   const navigate = useNavigate();
+  const { user, loading: authLoading } = useAuth();
+
+  // Redirect if not authenticated
+  useEffect(() => {
+    if (!authLoading && !user) {
+      navigate('/auth', { replace: true });
+    }
+  }, [authLoading, user, navigate]);
 
   const {
     workout,
@@ -49,6 +58,20 @@ const ActiveWorkoutPage: React.FC = () => {
     saveAsTemplateMutation
   } = useActiveWorkout();
   
+  // Handle authentication loading state
+  if (authLoading) {
+    return (
+      <AppLayout showBottomNav={false}>
+        <div className="flex flex-col h-full min-h-[90vh] max-w-md mx-auto px-4 py-6 justify-center items-center">
+          <Skeleton className="h-12 w-full max-w-xs" />
+          <div className="mt-4 text-center text-muted-foreground">
+            Checking authentication...
+          </div>
+        </div>
+      </AppLayout>
+    );
+  }
+  
   // Handle error state
   if (error) {
     return (
@@ -74,7 +97,7 @@ const ActiveWorkoutPage: React.FC = () => {
   }
   
   // Handle loading state
-  if (loading && !workout.id) {
+  if (loading || !workout.id) {
     return (
       <AppLayout showBottomNav={false}>
         <div className="flex flex-col h-full min-h-[90vh] max-w-md mx-auto px-4 pb-20">
