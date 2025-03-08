@@ -5,7 +5,8 @@ import { Link } from "react-router-dom";
 import { 
   ArrowRight,
   ExternalLink,
-  LogOut
+  LogOut,
+  LayoutDashboard
 } from "lucide-react";
 import { useAuth } from '@/context/AuthContext';
 
@@ -27,7 +28,10 @@ const HomePage = () => {
           {user ? (
             <>
               <Button asChild variant="ghost" size="sm">
-                <Link to="/workout">Workouts</Link>
+                <Link to="/dashboard">
+                  <LayoutDashboard className="h-4 w-4 mr-2" />
+                  Dashboard
+                </Link>
               </Button>
               <Button variant="ghost" size="sm" onClick={handleSignOut}>
                 <LogOut className="h-4 w-4 mr-2" />

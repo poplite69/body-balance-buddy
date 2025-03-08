@@ -15,7 +15,7 @@ export function useAuthRedirect() {
       setSession(data.session);
       
       if (data.session) {
-        navigate('/');
+        navigate('/dashboard');
       }
     };
     
@@ -26,7 +26,7 @@ export function useAuthRedirect() {
       (_event, session) => {
         setSession(session);
         if (session) {
-          navigate('/');
+          navigate('/dashboard');
         }
       }
     );

@@ -10,7 +10,7 @@ export function BottomNav() {
   const navItems = [
     { 
       icon: Home, 
-      path: '/', 
+      path: '/dashboard', 
       label: 'Home'
     },
     { 
